@@ -37,7 +37,7 @@ Aplikasi ini mendukung beberapa tingkatan akses pengguna:
 2. **Registered User (Pembeli & Penjual):** Memiliki akses penuh untuk menjual barang *preloved*, membeli barang, berpartisipasi (membuat *thread*/komentar) di forum, menyimpan acara, dan menggunakan fitur *outfit builder*.
 3. **Admin/Moderator:** Memiliki hak akses ke *dashboard* Django admin untuk mengelola pengguna, menyetujui/menghapus *listing* barang yang melanggar aturan, mengelola artikel berita, serta memoderasi forum.
 
-##Anggota tim:
+## Anggota tim:
 
 - **Luthfi Ahmad Fadhlan / 2506617203** 
 - **Maulana Farrel Arvindra / 2506552802** 
