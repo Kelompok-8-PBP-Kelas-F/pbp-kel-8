@@ -1,0 +1,560 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f2c14e">
+    <title>Masuk | Thrift.io</title>
+    {% tailwind_css %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@700&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-width: 320px;
+            background: #f2c14e;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .login-page {
+            display: grid;
+            grid-template-rows: 72px minmax(0, 1fr) 64px;
+            min-height: 100vh;
+            min-height: 100svh;
+            color: #121212;
+            background: #f2c14e;
+        }
+
+        .login-header,
+        .login-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: #f2c14e;
+        }
+
+        .login-header {
+            border-bottom: 1px solid #111;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 32px;
+            height: 32px;
+            place-items: center;
+            border: 1px solid #111;
+            background: #111;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .brand-name {
+            color: #3b2f12;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .login-shell {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            min-height: 0;
+        }
+
+        .brand-panel,
+        .form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 0;
+        }
+
+        .brand-panel {
+            flex-direction: column;
+            gap: 24px;
+            border-right: 1px solid #121212;
+            background: #1f4a3a;
+        }
+
+        .brand-content {
+            display: flex;
+            width: min(480px, calc(100% - 64px));
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .image-placeholder {
+            display: flex;
+            width: 100%;
+            aspect-ratio: 8 / 7;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid #121212;
+            background: #f2c14e;
+        }
+
+        .slow-fashion-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .placeholder-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .placeholder-marker img {
+            display: block;
+            width: 22px;
+            height: 22px;
+        }
+
+        .placeholder-marker span {
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .tagline h1 {
+            margin: 0 0 8px;
+            color: #f7d26a;
+            font-family: 'Familjen Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .tagline p {
+            margin: 0;
+            color: #fbf1d5;
+            font-size: 13px;
+            line-height: 1.25;
+        }
+
+        .form-panel {
+            padding: 32px;
+        }
+
+        .login-form {
+            display: flex;
+            width: min(400px, 100%);
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .form-heading,
+        .field-label-row,
+        .field-group,
+        .password-field,
+        .divider,
+        .register-prompt {
+            display: flex;
+        }
+
+        .form-heading,
+        .field-group,
+        .password-field {
+            flex-direction: column;
+        }
+
+        .form-heading,
+        .field-group,
+        .password-field {
+            gap: 8px;
+        }
+
+        .form-heading h2 {
+            margin: 0;
+            font-family: 'Familjen Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .form-heading p {
+            margin: 0;
+            color: #5c4a1a;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .field-label-row {
+            align-items: center;
+            justify-content: space-between;
+            min-height: 12px;
+        }
+
+        .field-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .forgot-link,
+        .password-toggle {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #121212;
+            font-size: 11px;
+            line-height: 1.2;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            cursor: pointer;
+        }
+
+        .text-input,
+        .password-control {
+            width: 100%;
+            height: 44px;
+            border: 2px solid #121212;
+            background: #fbf1d5;
+            box-shadow: 4px 4px 0 #121212;
+        }
+
+        .text-input {
+            padding: 0 14px;
+            color: #121212;
+            font-size: 12px;
+            outline-offset: 3px;
+        }
+
+        .text-input::placeholder {
+            color: #858585;
+            opacity: 1;
+        }
+
+        .password-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 14px;
+        }
+
+        .password-control input {
+            width: 100%;
+            min-width: 0;
+            height: 100%;
+            padding: 0;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: #121212;
+            font-size: 12px;
+        }
+
+        .password-control input::placeholder {
+            color: #858585;
+            opacity: 1;
+        }
+
+        .password-toggle {
+            flex: 0 0 auto;
+            margin-left: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            line-height: 16px;
+        }
+
+        .remember-row input {
+            width: 16px;
+            height: 16px;
+            flex: 0 0 16px;
+            margin: 0;
+            appearance: none;
+            border: 2px solid #121212;
+            background: #fbf1d5;
+            cursor: pointer;
+        }
+
+        .remember-row input:checked {
+            background: #e2652b;
+            box-shadow: inset 0 0 0 3px #fbf1d5;
+        }
+
+        .primary-button,
+        .google-button {
+            display: flex;
+            width: 100%;
+            height: 48px;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #121212;
+            box-shadow: 3px 3px 0 #121212;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .primary-button {
+            background: #e2652b;
+            color: #fff;
+        }
+
+        .google-button {
+            background: #fbf1d5;
+            color: #121212;
+        }
+
+        .primary-button:active,
+        .google-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #121212;
+        }
+
+        .divider {
+            align-items: center;
+            gap: 12px;
+            color: #5c4a1a;
+            font-size: 11px;
+            line-height: 1;
+        }
+
+        .divider::before,
+        .divider::after {
+            height: 1px;
+            flex: 1;
+            background: #121212;
+            content: '';
+        }
+
+        .register-prompt {
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #5c4a1a;
+            font-size: 12px;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .register-prompt a {
+            color: #121212;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .login-footer {
+            border-top: 1px solid #111;
+            color: #5c4a1a;
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        .footer-links {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+        }
+
+        @media (max-width: 760px) {
+            .login-page {
+                grid-template-rows: 60px 1fr auto;
+                min-height: 100vh;
+                min-height: 100svh;
+            }
+
+            .login-header {
+                padding: 12px 20px;
+            }
+
+            .login-shell {
+                grid-template-columns: 1fr;
+            }
+
+            .brand-panel {
+                gap: 20px;
+                padding: 32px 0;
+                border-right: 0;
+                border-bottom: 1px solid #121212;
+            }
+
+            .brand-content {
+                width: min(480px, calc(100% - 40px));
+                gap: 20px;
+            }
+
+            .image-placeholder {
+                aspect-ratio: 8 / 5;
+            }
+
+            .tagline h1 {
+                font-size: 26px;
+            }
+
+            .form-panel {
+                padding: 48px 20px;
+            }
+
+            .login-form {
+                width: min(400px, 100%);
+            }
+
+            .login-footer {
+                min-height: 56px;
+                gap: 12px;
+                padding: 14px 20px;
+                font-size: 10px;
+            }
+
+            .footer-links {
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .login-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .footer-links {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <header class="login-header">
+            <a class="brand" href="/" aria-label="Thrift.io beranda">
+                <span class="brand-mark">OB</span>
+                <span class="brand-name">Thrift.io</span>
+            </a>
+        </header>
+
+        <main class="login-shell">
+            <section class="brand-panel" aria-label="Tentang Thrift.io">
+                <div class="brand-content">
+                    <div class="image-placeholder" aria-label="Foto slow fashion">
+                        <img class="slow-fashion-image" src="{% static 'images/slowfashion.jpg' %}" alt="Pakaian preloved di rak">
+                    </div>
+                    <div class="tagline">
+                        <h1>Belanja sadar, gaya lestari.</h1>
+                        <p>Temukan barang preloved, ikut komunitas fashion, dan padukan outfit dari fotomu sendiri.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="form-panel" aria-labelledby="login-title">
+                <form class="login-form" method="post">
+                    {% csrf_token %}
+                    <div class="form-heading">
+                        <h2 id="login-title">Masuk</h2>
+                        <p>Selamat datang kembali di Thrift.io.</p>
+                    </div>
+
+                    <div class="field-group">
+                        <div class="field-label-row">
+                            <label class="field-label" for="email">Email</label>
+                        </div>
+                        <input class="text-input" id="email" name="email" type="email" autocomplete="email" placeholder="nama@email.com">
+                    </div>
+
+                    <div class="password-field">
+                        <div class="field-label-row">
+                            <label class="field-label" for="password">Password</label>
+                            <a class="forgot-link" href="#forgot-password">Lupa password?</a>
+                        </div>
+                        <div class="password-control">
+                            <input id="password" name="password" type="password" autocomplete="current-password" placeholder="••••••••">
+                            <button class="password-toggle" type="button" aria-controls="password" aria-pressed="false">Tampilkan</button>
+                        </div>
+                    </div>
+
+                    <label class="remember-row" for="remember">
+                        <input id="remember" name="remember" type="checkbox">
+                        <span>Ingat saya di perangkat ini</span>
+                    </label>
+
+                    <button class="primary-button" type="submit">Masuk</button>
+
+                    <div class="divider" aria-label="atau">atau</div>
+
+                    <button class="google-button" type="button">Lanjutkan dengan Google</button>
+
+                    <p class="register-prompt">
+                        <span>Belum punya akun?</span>
+                        <a href="#register">Daftar sekarang</a>
+                    </p>
+                </form>
+            </section>
+        </main>
+
+        <footer class="login-footer">
+            <span>Thrift.io · Slow Fashion</span>
+            <nav class="footer-links" aria-label="Tautan bantuan">
+                <a href="#bantuan">Bantuan</a>
+                <a href="#privasi">Privasi</a>
+                <span>Versi 1.0</span>
+            </nav>
+        </footer>
+    </div>
+    <script>
+        const passwordInput = document.querySelector('#password');
+        const passwordToggle = document.querySelector('.password-toggle');
+
+        passwordToggle.addEventListener('click', () => {
+            const isVisible = passwordInput.type === 'text';
+            passwordInput.type = isVisible ? 'password' : 'text';
+            passwordToggle.textContent = isVisible ? 'Tampilkan' : 'Sembunyikan';
+            passwordToggle.setAttribute('aria-pressed', String(!isVisible));
+        });
+    </script>
+</body>
+</html>
