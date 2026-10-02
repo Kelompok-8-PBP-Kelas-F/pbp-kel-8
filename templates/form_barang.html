@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="bg-[#fcebb6] min-h-screen p-6 pt-12 flex justify-center">
+    <div class="w-full max-w-xl border-2 border-black bg-[#fdf8eb] p-6 shadow-[6px_6px_0px_rgba(0,0,0,1)]">
+        
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-black">{{ title }}</h1>
+            <a href="{% url 'core:marketplace_penjual' %}" class="text-sm font-bold border-2 border-black px-3 py-1 bg-white hover:bg-gray-200 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                Kembali
+            </a>
+        </div>
+
+        <!-- Tambahkan enctype agar gambar bisa diupload -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="mb-2">
+                    <label class="block text-sm font-bold mb-1">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-600 text-xs font-bold mb-2 -mt-2">{{ field.errors.as_text }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="w-full bg-[#e05628] text-white border-2 border-black font-bold py-3 mt-4 shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b]">
+                Simpan Barang
+            </button>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
