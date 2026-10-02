@@ -6,7 +6,7 @@
 ## Arsitektur & Teknologi
 Aplikasi ini dikembangkan menggunakan tumpukan teknologi berikut:
 - **Backend:** Django (Python)
-- **Frontend:** Vanilla CSS & Vanilla JavaScript
+- **Frontend:** Tailwind css & Vanilla JavaScript
 - **Database:** SQLite / PostgreSQL (Bawaan Django / Disesuaikan)
 
 ## Fitur Utama & Daftar Modul Rencana
