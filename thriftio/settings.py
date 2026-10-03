@@ -14,12 +14,9 @@ from pathlib import Path
 
 import os
 from dotenv import load_dotenv
-import shutil
 
 # Load environment variables from .env file
 load_dotenv()
-
-NPM_BIN_PATH = shutil.which('npm')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,6 +80,7 @@ TEMPLATES = [
     },
 ]
 
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 WSGI_APPLICATION = 'thriftio.wsgi.application'
 
