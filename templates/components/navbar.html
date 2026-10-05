@@ -3,23 +3,23 @@
 <head>
 </head>
 <body>
-    <nav class="sticky top-0 z-0 flex h-18 bg-[#F2C14E] p-[1rem 1.5rem] items-center justify-between self-stretch font-par text-[#3B2F12] border-b border-solid border-[#111]">
-        <div class="flex items-center ml-3">
+    <nav class="sticky top-0 z-10 flex h-auto min-h-16 flex-wrap items-center justify-between gap-y-3 self-stretch border-b border-solid border-line bg-background px-4 py-3 font-main sm:px-6 lg:h-18 lg:flex-nowrap lg:px-6 lg:py-4">
+        <div class="ml-0 flex items-center gap-2 lg:ml-3">
             <div>
                 {% include 'components/icons/logo.html' %}
             </div>
-            <h2 class="text-[1rem] font-bold font-par">Thrift.io</h2>
+            <h2 class="text-[1rem] font-bold font-main text-foreground">Thrift.io</h2>
         </div>
-        <ul class="flex items-center gap-6 ">
+        <ul class="order-last flex w-full items-center justify-start gap-5 overflow-x-auto whitespace-nowrap text-xs text-foreground lg:order-0 lg:w-auto lg:gap-6 lg:text-base">
             <li><a href="">Marketplace</a></li>
             <li><a href="">Event</a></li>
             <li><a href="">News</a></li>
-            <li><a href="">Forum</a></li>
+            <li><a href="{% url 'forum:forum_page' %}">Forum</a></li>
             <li><a href="">Outfit Builder</a></li>
         </ul>
-        <div class="font-par mr-5 flex justify-end gap-3">
-            <button class="h-10 px-4 bg-orange-100 shadow-[3px_3px_0px_0px_rgba(18,18,18,1.00)] outline-2 outline-offset-[-2px] outline-neutral-900 inline-flex justify-center items-center gap-2 overflow-hidden">Login</button>
-            <button class="h-10 px-4 bg-orange-500 shadow-[3px_3px_0px_0px_rgba(18,18,18,1.00)] outline-2 outline-offset-[-2px] outline-neutral-900 inline-flex justify-center items-center gap-2 overflow-hidden">Register</button>
+        <div class="mr-0 flex justify-end gap-2 font-main lg:mr-5 lg:gap-3">
+            <button class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-surface px-3 text-xs text-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Login</button>
+            <button class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-accent px-3 text-xs text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Register</button>
         </div>
     </nav>
 </body>

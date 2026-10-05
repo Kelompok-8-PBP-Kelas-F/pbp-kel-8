@@ -1,5 +1,67 @@
+@import url("https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 @plugin "daisyui";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --background: #f2c14e;
+  --surface: #fbf1d5;
+  --foreground: #121212;
+  --muted: #5c4a1a;
+  --line: #121212;
+  --hero: #1f4a3a;
+  --hero-foreground: #fbf1d5;
+  --hero-accent: #f7d26a;
+  --accent: #E2652B;
+  --accent-foreground: #ffffff;
+  --highlight: #f7d26a;
+  --shadow-color: #121212;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #151a15;
+  --surface: #242c24;
+  --foreground: #f3e6c4;
+  --muted: #c2b58e;
+  --line: #d6c99f;
+  --hero: #0f2a20;
+  --hero-foreground: #fbf1d5;
+  --hero-accent: #f7d26a;
+  --accent: #f08a53;
+  --accent-foreground: #151a15;
+  --highlight: #e7bc55;
+  --shadow-color: #080b09;
+}
+
+@theme inline {
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+  --font-main: "Plus Jakarta Sans", sans-serif;
+  --font-heading: "Familjen Grotesk", sans-serif;
+
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-hero: var(--hero);
+  --color-hero-foreground: var(--hero-foreground);
+  --color-hero-accent: var(--hero-accent);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-highlight: var(--highlight);
+}
+
+@layer base {
+  body {
+    min-height: 100vh;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-main);
+  }
+}
 
 /**
   * A catch-all path to Django template files, JavaScript, and Python files
