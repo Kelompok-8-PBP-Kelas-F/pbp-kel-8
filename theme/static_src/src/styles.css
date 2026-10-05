@@ -2,128 +2,65 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-@import "tailwindcss";
-
-/* Dark mode lewat class "dark" di <html> */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ============ PALET DASAR (nilai mentah dari Figma) ============ */
-@theme {
-  /* Warna brand (versi berwarna) */
-  --color-mustard: #f2c14e;
-  --color-mustard-light: #f8e3a3;
-  --color-yellow: #f7d26a;
-  --color-cream: #fbf1d5;
-  --color-ivory: #f1e7cf;
-  --color-forest: #1f4a3a;
-  --color-forest-light: #36634f;
-  --color-moss: #86a981;
-  --color-sage: #afc9a6;
-  --color-orange: #e2652b;
-  --color-rust: #e0703a;
-  --color-peach: #eda36b;
-  --color-olive: #5c4a1a;
-  --color-bark: #3b2f12;
-
-  /* Peta */
-  --color-map-bg: #eae3cc;
-  --color-map-line: #d6cdb0;
-}
-
-/* ============ TOKEN SEMANTIK (berubah otomatis di dark mode) ============ */
 :root {
+  color-scheme: light;
   --background: #f2c14e;
-  --background-alt: #f8e3a3;
   --surface: #fbf1d5;
-  --surface-strong: #f7d26a;
   --foreground: #121212;
   --muted: #5c4a1a;
   --line: #121212;
   --hero: #1f4a3a;
   --hero-foreground: #fbf1d5;
   --hero-accent: #f7d26a;
-  --footer: #1f4a3a;
-  --footer-foreground: #fbf1d5;
-  --accent: #e2652b;
+  --accent: #E2652B;
   --accent-foreground: #ffffff;
   --highlight: #f7d26a;
-  --tag: #86a981;
-  --map-bg: #eae3cc;
-  --map-line: #d6cdb0;
   --shadow-color: #121212;
-  --nav-bg: #f2c14e;
-  --nav-border: #121212;
-  --nav-brand: #3b2f12;
-  --nav-link: #3b2f12;
-  --nav-link-active: #3b2f12;
-  --nav-mark-bg: #121212;
-  --nav-mark-text: #ffffff;
 }
 
 .dark {
+  color-scheme: dark;
   --background: #151a15;
-  --background-alt: #1d251e;
   --surface: #242c24;
-  --surface-strong: #2f3a2b;
   --foreground: #f3e6c4;
   --muted: #c2b58e;
   --line: #d6c99f;
   --hero: #0f2a20;
   --hero-foreground: #fbf1d5;
   --hero-accent: #f7d26a;
-  --footer: #0b1712;
-  --footer-foreground: #fbf1d5;
-  --accent: #e2652b;
-  --accent-foreground: #ffffff;
-  --highlight: #f7d26a;
-  --tag: #86a981;
-  --map-bg: #1e261f;
-  --map-line: #2d372d;
-  --shadow-color: #b58b2a;
-  --nav-bg: #151a15;
-  --nav-border: #d6c99f;
-  --nav-brand: #f3e6c4;
-  --nav-link: #c2b58e;
-  --nav-link-active: #f3e6c4;
-  --nav-mark-bg: #f3e6c4;
-  --nav-mark-text: #121212;
+  --accent: #f08a53;
+  --accent-foreground: #151a15;
+  --highlight: #e7bc55;
+  --shadow-color: #080b09;
 }
 
-/* Daftarkan token semantik supaya jadi class Tailwind */
 @theme inline {
   --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-main: "Plus Jakarta Sans", sans-serif;
   --font-heading: "Familjen Grotesk", sans-serif;
 
   --color-background: var(--background);
-  --color-background-alt: var(--background-alt);
   --color-surface: var(--surface);
-  --color-surface-strong: var(--surface-strong);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-hero: var(--hero);
   --color-hero-foreground: var(--hero-foreground);
   --color-hero-accent: var(--hero-accent);
-  --color-footer: var(--footer);
-  --color-footer-foreground: var(--footer-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-highlight: var(--highlight);
-  --color-tag: var(--tag);
-  --color-map-bg: var(--map-bg);
-  --color-map-line: var(--map-line);
-  --color-nav-bg: var(--nav-bg);
-  --color-nav-border: var(--nav-border);
-  --color-nav-brand: var(--nav-brand);
-  --color-nav-link: var(--nav-link);
-  --color-nav-link-active: var(--nav-link-active);
-  --color-nav-mark-bg: var(--nav-mark-bg);
-  --color-nav-mark-text: var(--nav-mark-text);
+}
 
-  /* Bayangan keras khas desainmu */
-  --shadow-hard: 4px 4px 0 0 var(--shadow-color);
-  --shadow-hard-sm: 2px 2px 0 0 var(--shadow-color);
+@layer base {
+  body {
+    min-height: 100vh;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-main);
+  }
 }
 
 /**
