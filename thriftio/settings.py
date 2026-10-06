@@ -27,6 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+CSRF_TRUSTED_ORIGINS = ["http://luthfi.ahmad51-thriftio.pws.cs.ui.ac.id"]
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-32a+-=divf1k7qe(zqaawg#y)ccg9i(8$22f-aejkuz1rc-#an'
 

@@ -1,8 +1,10 @@
+from django.contrib import messages
 from django.shortcuts import render
 from .models import ForumPost
+from .forms import ForumPostForm
 
 # Create your views here.
-def forum_page(request):
+def forum_main(request):
     dummy_posts = [
         {
             'id': 1,
@@ -70,4 +72,12 @@ def forum_page(request):
         'posts': posts
     }
 
-    return render(request, 'pages/forum/forum.html', context)
+    return render(request, 'pages/forum/forum_main.html', context)
+
+def forum_detail(request):
+    return render(request, 'pages/forum/forum_detail.html')
+
+
+    
+
+
