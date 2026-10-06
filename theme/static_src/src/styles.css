@@ -18,6 +18,7 @@
   --accent-foreground: #ffffff;
   --highlight: #f7d26a;
   --shadow-color: #121212;
+  --category: #86A981;
 }
 
 .dark {
@@ -34,6 +35,7 @@
   --accent-foreground: #151a15;
   --highlight: #e7bc55;
   --shadow-color: #080b09;
+  --category: #86A981;
 }
 
 @theme inline {
@@ -52,6 +54,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-highlight: var(--highlight);
+  --color-category: var(--category);
 }
 
 @layer base {
