@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import ForumPost
 
 # Create your views here.
 def forum_page(request):
@@ -12,7 +13,7 @@ def forum_page(request):
             'time_posted': '34 menit lalu',
             'total_likes': 92,
             'total_comments': 17,
-            'image_url': '/static/images/sashiko.jpg', # Pastikan ada gambar dummy di folder static
+            'image_url': '/static/images/ultramilk.jpg', # Pastikan ada gambar dummy di folder static
             'image_caption': 'Dokumentasi reparasi',  
             'image_count': 3,
         },
@@ -35,7 +36,7 @@ def forum_page(request):
             'time_posted': '4 jam lalu',
             'total_likes': 134,
             'total_comments': 24,
-            'image_url': '/static/images/upcycled_bag.jpg',
+            'image_url': '/static/images/ultramilk.jpg',
             'image_caption': 'Proyek upcycle',
             'image_count': 2,
         },
@@ -58,14 +59,15 @@ def forum_page(request):
             'time_posted': '1 hari lalu',
             'total_likes': 210,
             'total_comments': 43,
-            'image_url': '/static/images/ultramilk.jpeg',
+            'image_url': '/static/images/ultramilk.jpg',
             'image_caption': 'Hasil thrifting',
             'image_count': 4,
         }
     ]
+    posts = ForumPost.objects.all()
 
     context = {
-        'posts': dummy_posts
+        'posts': posts
     }
 
     return render(request, 'pages/forum/forum.html', context)
