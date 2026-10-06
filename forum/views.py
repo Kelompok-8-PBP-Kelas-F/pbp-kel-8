@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.contrib import messages
 from django.shortcuts import render
 from .models import ForumPost
@@ -77,7 +78,19 @@ def forum_main(request):
 def forum_detail(request):
     return render(request, 'pages/forum/forum_detail.html')
 
+def forum_create(request):
+    form = ForumPostForm(request.POST or None)
 
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Your forum post has been uploaded.")
+        return redirect('forum:forum_main')
+    
+    context = {
+        "form": form,
+    }
+
+    return render(request, 'pages/forum/forum_create.html', context)
     
 
 
