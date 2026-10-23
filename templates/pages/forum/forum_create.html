@@ -101,6 +101,17 @@
                 </p>
               </div>
 
+              <!-- Tag -->
+              <div class="flex flex-col gap-2">
+                <label for="{{ form.category.id_for_label }}" class="font-bold text-sm"
+                  >Tag <span class="text-accent">*</span></label
+                >
+                {{ form.category }}
+                {% if form.category.errors %}
+                  <p class="text-xs text-red-600">{{ form.category.errors }}</p>
+                {% endif %}
+              </div>
+
               <!-- URL Gambar -->
               <div class="flex flex-col gap-2">
                 <div class="flex justify-between items-center">

@@ -1,7 +1,7 @@
 from django.db import models
 import uuid
 
-class ForumPost(models.Model):
+class Forum(models.Model):
     CATEGORY_CHOICES = (
         ('DISCUSSION', 'Discussion'),
         ('QUESTION', 'Question'),
