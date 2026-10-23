@@ -1,14 +1,31 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.contrib import messages
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST, require_GET 
 from .models import Forum
 from .forms import ForumForm
 
 # Create your views here.
 def forum_main(request):
-    return render(request, 'pages/forum/forum_main.html')
+    form = ForumForm(request.POST or None)
+    show_create_modal = False
+
+    if request.method == "POST":
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author_username = request.user.username
+            post.save()
+            return redirect('forum:forum_main')
+        show_create_modal = True
+
+    return render(
+        request,
+        'pages/forum/forum_main.html',
+        {
+            'posts': Forum.objects.all(),
+            'form': form,
+            'show_create_modal': show_create_modal,
+        },
+    )
 
 def forum_detail(request):
     return render(request, 'pages/forum/forum_detail.html')
@@ -45,5 +62,3 @@ def create_post_api(request):
         return HttpResponse({'message': 'Post created successfully'}, status=201)
     else:
         return HttpResponse({'errors': form.errors}, status=400)
-
-

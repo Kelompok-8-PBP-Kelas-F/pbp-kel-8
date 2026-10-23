@@ -22,12 +22,17 @@ class ForumForm(ModelForm):
 
         widgets = {
             "title": TextInput(
-                attrs={"placeholder": "ex: Thrifting Tips and Trick",
-                "maxlength": 120}
+                attrs={
+                    "class": "w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0",
+                    "placeholder": "Contoh: Tips berburu pakaian vintage",
+                    "maxlength": 120,
+                }
             ),
             "content": Textarea(
                 attrs={
-                    "placeholder": "Describe your experience in detail. Don't forget to include the context.",
+                    "class": "w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0 resize-y",
+                    "placeholder": "Ceritakan pertanyaan atau pengalamanmu secara rinci.",
+                    "rows": 5,
                 }
             ),
             "category": Select(
@@ -37,7 +42,8 @@ class ForumForm(ModelForm):
             ),
             "image_url": URLInput(
                 attrs={
-                    "placeholder": "ex: https://example.com/burhan.jpg"
+                    "class": "w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0",
+                    "placeholder": "https://contoh.com/gambar.jpg",
                 }
-            )
+            ),
         }

@@ -39,7 +39,7 @@
           <h2 class="community-feed__title font-heading text-[1.5rem] font-bold leading-tight text-foreground sm:text-[1.75rem]" id="feed-title">Feed komunitas</h2>
           <p class="community-feed__description text-[0.8125rem] text-muted">Percakapan terbaru dari 8.421 anggota</p>
         </div>
-        <a class="community-feed__create inline-flex min-h-11 items-center justify-center gap-2 border-2 border-line bg-accent px-4.5 py-2 text-[0.8125rem] font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] sm:self-auto" href="#">
+        <button class="community-feed__create inline-flex min-h-11 items-center justify-center gap-2 border-2 border-line bg-accent px-4.5 py-2 text-[0.8125rem] font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] sm:self-auto" type="button" data-open-forum-create>
           <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
           <span>Buat post</span>
           <span class="hidden font-normal sm:inline">· Pengguna terdaftar</span>
@@ -129,10 +129,10 @@
                   <h3 class="font-heading text-lg font-bold text-foreground sm:text-xl">Belum ada percakapan</h3>
                   <p class="text-xs leading-relaxed text-muted sm:text-sm">Jadilah yang pertama memulai diskusi seputar reparasi pakaian, gaya vintage, atau tips berburu thrifting!</p>
                 </div>
-                <a href="{% url 'forum:forum_create' %}" class="inline-flex min-h-10 items-center justify-center gap-2 border-2 border-line bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-transform active:translate-x-0.5 active:translate-y-0.5 sm:text-[0.8125rem]" href="#">
+                <button type="button" data-open-forum-create class="inline-flex min-h-10 items-center justify-center gap-2 border-2 border-line bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-transform active:translate-x-0.5 active:translate-y-0.5 sm:text-[0.8125rem]">
                   <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
                   <span>Mulai buat post pertama</span>
-                </a>
+                </button>
               </div>
             </li>
             {% endfor %}
@@ -181,4 +181,27 @@
     </div>
   </section>
 </main>
+{% include 'pages/forum/components/forum_create.html' %}
+<script>
+  (() => {
+    const modal = document.getElementById("forum-create-modal");
+    if (!(modal instanceof HTMLDialogElement)) return;
+
+    document.querySelectorAll("[data-open-forum-create]").forEach((button) => {
+      button.addEventListener("click", () => modal.showModal());
+    });
+
+    modal.querySelectorAll("[data-close-forum-create]").forEach((button) => {
+      button.addEventListener("click", () => modal.close());
+    });
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) modal.close();
+    });
+
+    {% if show_create_modal %}
+      modal.showModal();
+    {% endif %}
+  })();
+</script>
 {% endblock %}
