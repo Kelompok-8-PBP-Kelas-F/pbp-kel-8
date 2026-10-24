@@ -41,23 +41,22 @@
         <article class="forum-post-detail flex flex-col gap-5 border-2 border-line bg-surface p-5 sm:p-7 shadow-[4px_4px_0_var(--shadow-color)]">
           <!-- Author Header -->
           <header class="flex items-start justify-between gap-4">
-            <div class="flex items-start gap-3">
+            <div class="flex items-center gap-3">
               <div class="avatar flex size-11 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-lg font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)]" aria-hidden="true">
                 {{ post.author_username|first|upper }}
               </div>
-              <div class="flex flex-col gap-1">
+              <div class="flex flex-col gap-0.5">
                 <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-sm font-bold text-foreground">@{{ post.author_username }}</span>
                   <span class="border-2 border-line bg-category px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-foreground">
                     {{ post.get_category_display|default:post.category }}
                   </span>
-                  <span class="text-sm font-bold text-foreground">@{{ post.author_username }}</span>
-                  <span class="hidden text-xs text-muted sm:inline">&middot; Anggota sejak 2024</span>
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
-                  <time datetime="{{ post.created_at|date:'c' }}">Diposting {{ post.created_at|timesince }} yang lalu</time>
+                  <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"d M Y, H:i" }}</time>
                   {% if post.updated_at != post.created_at %}
                   <span>&middot;</span>
-                  <span>Diedit {{ post.updated_at|timesince }} yang lalu</span>
+                  <span>Diedit {{ post.updated_at|date:"d M Y, H:i" }}</span>
                   {% endif %}
                 </div>
               </div>
