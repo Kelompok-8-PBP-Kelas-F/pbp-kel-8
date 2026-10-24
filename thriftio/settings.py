@@ -37,6 +37,8 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "luthfi.ahmad51-thriftio.pws.cs.ui.ac
 
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
+NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,7 +51,8 @@ INSTALLED_APPS = [
     'core',
     'tailwind',
     'theme',
-    'forum'
+    'forum',
+    'news'
 ]
 
 TAILWIND_APP_NAME = 'theme'
