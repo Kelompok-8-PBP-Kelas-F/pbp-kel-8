@@ -1,4 +1,5 @@
 import json
+from django.db.models import Q
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -49,9 +50,15 @@ def forum_detail(request, id):
 def get_posts_api(request):
     if request.method == "GET":
         posts = Forum.objects.order_by('-created_at')
-        title = request.GET.get('title')
-        if title:
-            posts = posts.filter(title__icontains=title.strip())
+        query = request.GET.get('title') or request.GET.get('q')
+        if query:
+            query = query.strip()
+            clean_query = query.lstrip('@')
+            posts = posts.filter(
+                Q(title__icontains=query) |
+                Q(category__icontains=query) |
+                Q(author_username__icontains=clean_query)
+            )
         posts_json = [serialize_post(post) for post in posts]
         return JsonResponse(posts_json, safe=False)
     return JsonResponse({'error': 'Invalid request method'}, status=405)

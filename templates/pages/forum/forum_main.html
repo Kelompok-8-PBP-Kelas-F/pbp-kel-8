@@ -22,14 +22,15 @@
           <input
             class="forum-search__input min-w-0 flex-1 bg-transparent py-2.5 text-xs text-foreground outline-none placeholder:text-muted sm:text-[0.8125rem]"
             id="forum-search-input" type="search" name="q" placeholder="Cari topik, judul post, atau nama pengguna">
-          <kbd
-            class="forum-search__shortcut hidden shrink-0 border border-line px-1.5 py-0.5 text-[0.625rem] text-muted sm:inline-flex">⌘
-            K</kbd>
         </div>
         <button
-          class="forum-search__button inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] sm:text-[0.8125rem]"
+          id="forum-search-button"
+          class="forum-search__button inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:text-[0.8125rem] cursor-pointer"
           type="submit">
-          Cari forum
+          <svg class="search-spinner size-3.5 shrink-0 hidden animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+          <span class="search-button-text">Cari forum</span>
         </button>
       </form>
     </div>
@@ -259,9 +260,9 @@
       avatar.setAttribute("aria-hidden", "true");
 
       const details = makeElement("div", "flex min-w-0 flex-col gap-0.5");
-      const userAndTag = makeElement("div", "flex min-w-0 flex-wrap items-center gap-2");
-      const author = makeElement("span", "forum-post__username truncate text-xs sm:text-[0.8125rem] font-bold text-foreground", `@${post.author_username.replace(/^@/, '')}`);
-      const category = makeElement("span", "badge border-2 border-line bg-category px-1.5 py-0.5 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shrink-0", post.category);
+      const userAndTag = makeElement("div", "flex min-w-0 flex-wrap items-center gap-1.5");
+      const author = makeElement("span", "forum-post__username truncate text-xs sm:text-[0.8125rem] font-bold text-foreground leading-[18px]", `@${post.author_username.replace(/^@/, '')}`);
+      const category = makeElement("span", "inline-flex h-[18px] items-center justify-center border-2 border-line bg-category px-1 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none", post.category);
       userAndTag.append(author, category);
 
       const time = makeElement("time", "forum-post__time text-[0.6875rem] text-muted", formatPostDateTime(post.created_at));
@@ -409,6 +410,7 @@
     }
 
     let currentTitleFilter = "";
+    let searchDebounceTimer = null;
 
     function createEmptyState(query = "") {
       const item = makeElement("li", "w-full");
@@ -441,11 +443,27 @@
 
     async function fetchPostsByFilter(title = "") {
       currentTitleFilter = title;
+      const searchButton = document.getElementById("forum-search-button") || document.querySelector(".forum-search__button");
+      const searchSpinner = searchButton?.querySelector(".search-spinner");
+
       try {
+        if (searchSpinner) searchSpinner.classList.remove("hidden");
+        if (searchButton) searchButton.disabled = true;
+
         const url = new URL(postList.dataset.postsUrl, window.location.origin);
         if (title.trim()) {
           url.searchParams.set("title", title.trim());
         }
+
+        // Tampilkan feedback memuat saat mencari
+        postList.replaceChildren();
+        const loadingItem = makeElement(
+          "li",
+          "w-full py-8 text-center text-xs text-muted",
+          title.trim() ? `Mencari post "${title.trim()}"...` : "Memuat post forum..."
+        );
+        loadingItem.setAttribute("role", "status");
+        postList.appendChild(loadingItem);
 
         const response = await fetch(url.toString(), {
           headers: { Accept: "application/json" },
@@ -465,14 +483,16 @@
         const errorItem = makeElement("li", "w-full py-8 text-center text-sm text-red-700", "Post forum gagal dimuat. Muat ulang halaman untuk mencoba lagi.");
         errorItem.setAttribute("role", "alert");
         postList.replaceChildren(errorItem);
+      } finally {
+        if (searchSpinner) searchSpinner.classList.add("hidden");
+        if (searchButton) searchButton.disabled = false;
       }
     }
 
     function debounce(callback, delay = 350) {
-      let timer = null;
       return function (...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
           callback.apply(this, args);
         }, delay);
       };
@@ -786,22 +806,51 @@
 
     const searchForm = document.querySelector(".forum-search");
     const searchInput = document.getElementById("forum-search-input");
+    const searchButton = document.getElementById("forum-search-button") || document.querySelector(".forum-search__button");
+
+    function executeSearch() {
+      if (searchDebounceTimer) {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = null;
+      }
+      const query = searchInput ? searchInput.value.trim() : "";
+      fetchPostsByFilter(query);
+    }
 
     if (searchInput) {
       searchInput.addEventListener("input", (event) => {
         debouncedFetchPosts(event.target.value);
+      });
+      searchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          executeSearch();
+        }
+      });
+    }
+
+    if (searchButton) {
+      searchButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        executeSearch();
       });
     }
 
     if (searchForm) {
       searchForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        const query = searchInput ? searchInput.value : "";
-        fetchPostsByFilter(query);
+        executeSearch();
       });
     }
 
-    loadPosts();
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get("title") || urlParams.get("q") || "";
+    if (initialQuery && searchInput) {
+      searchInput.value = initialQuery;
+      fetchPostsByFilter(initialQuery);
+    } else {
+      loadPosts();
+    }
 
     {% if show_create_modal %}
     modal.showPopover();

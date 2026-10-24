@@ -19,6 +19,8 @@ class ForumCreateModalTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="forum-create-modal"')
         self.assertContains(response, 'popovertarget="forum-create-modal"')
+        self.assertContains(response, 'id="forum-search-button"')
+        self.assertContains(response, 'id="forum-search-input"')
         self.assertContains(response, "Tag")
         self.assertContains(response, 'id="title-char-counter"')
         self.assertContains(response, 'id="content-char-counter"')
@@ -44,20 +46,26 @@ class ForumCreateModalTests(TestCase):
         self.assertEqual(response.json()[0]["detail_url"], reverse("forum:forum_detail", args=[post.id]))
 
     def test_posts_api_filter_by_title(self):
-        Forum.objects.create(author_username="user1", title="Jaket Vintage Denim", content="Konten 1")
-        Forum.objects.create(author_username="user2", title="Sepatu Kulit Murah", content="Konten 2")
+        Forum.objects.create(author_username="user1", title="Jaket Vintage Denim", content="Konten 1", category="OOTD")
+        Forum.objects.create(author_username="user2", title="Sepatu Kulit Murah", content="Konten 2", category="DISCUSSION")
 
-        # Match "Vintage"
+        # Match "Vintage" with title param
         res = self.client.get(reverse("forum:get_posts_api"), {"title": "vintage"})
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.json()), 1)
         self.assertEqual(res.json()[0]["title"], "Jaket Vintage Denim")
 
-        # Match "Kulit"
-        res = self.client.get(reverse("forum:get_posts_api"), {"title": "KULIT"})
+        # Match "Kulit" with q param
+        res = self.client.get(reverse("forum:get_posts_api"), {"q": "KULIT"})
         self.assertEqual(res.status_code, 200)
         self.assertEqual(len(res.json()), 1)
         self.assertEqual(res.json()[0]["title"], "Sepatu Kulit Murah")
+
+        # Match author username with @
+        res = self.client.get(reverse("forum:get_posts_api"), {"q": "@user1"})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 1)
+        self.assertEqual(res.json()[0]["title"], "Jaket Vintage Denim")
 
         # No match
         res = self.client.get(reverse("forum:get_posts_api"), {"title": "tidak ada"})
