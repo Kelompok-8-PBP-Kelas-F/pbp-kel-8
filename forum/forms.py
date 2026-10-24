@@ -11,6 +11,7 @@ class ForumForm(ModelForm):
             "content",
             "category",
             "image_url",
+            "image_caption",
         ]
 
         labels = {
@@ -18,6 +19,7 @@ class ForumForm(ModelForm):
             "content": "Forum post content",
             "category": "Tag",
             "image_url": "Forum post image url",
+            "image_caption": "Caption gambar",
         }
 
         widgets = {
@@ -44,6 +46,13 @@ class ForumForm(ModelForm):
                 attrs={
                     "class": "w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0",
                     "placeholder": "https://contoh.com/gambar.jpg",
+                }
+            ),
+            "image_caption": TextInput(
+                attrs={
+                    "class": "w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0",
+                    "placeholder": "Contoh: Dokumentasi jaket denim vintage",
+                    "maxlength": 200,
                 }
             ),
         }

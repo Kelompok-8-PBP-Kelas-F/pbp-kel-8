@@ -18,8 +18,14 @@ class ForumCreateModalTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'id="forum-create-modal"')
-        self.assertContains(response, 'data-open-forum-create')
+        self.assertContains(response, 'popovertarget="forum-create-modal"')
         self.assertContains(response, "Tag")
+        self.assertContains(response, 'id="title-char-counter"')
+        self.assertContains(response, 'id="content-char-counter"')
+        self.assertContains(response, 'id="form-image-preview-container"')
+        self.assertContains(response, 'id="sidebar-image-preview-container"')
+        self.assertContains(response, 'id="preview-post-title"')
+        self.assertContains(response, 'id="preview-post-content"')
 
     def test_invalid_post_rerenders_modal_with_errors(self):
         response = self.client.post(
@@ -40,7 +46,8 @@ class ForumCreateModalTests(TestCase):
                 "title": "Tips thrifting",
                 "content": "Bagikan tips memilih pakaian vintage.",
                 "category": "DISCUSSION",
-                "image_url": "",
+                "image_url": "https://example.com/jacket.jpg",
+                "image_caption": "Foto jaket denim",
             },
         )
 
@@ -48,3 +55,42 @@ class ForumCreateModalTests(TestCase):
         post = Forum.objects.get()
         self.assertEqual(post.title, "Tips thrifting")
         self.assertEqual(post.author_username, self.user.username)
+        self.assertEqual(post.image_caption, "Foto jaket denim")
+
+    def test_posts_api_returns_json(self):
+        Forum.objects.create(
+            author_username=self.user.username,
+            title="Forum API",
+            content="Post dari endpoint API.",
+        )
+
+        response = self.client.get(reverse("forum:get_posts_api"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()[0]["title"], "Forum API")
+        self.assertEqual(response.json()[0]["category"], "Discussion")
+
+    def test_create_api_returns_json_and_saves_post(self):
+        response = self.client.post(
+            reverse("forum:create_post_api"),
+            {
+                "title": "Post via API",
+                "content": "Isi post dari JavaScript.",
+                "category": "QUESTION",
+                "image_url": "",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.json()["post"]["category"], "Question")
+        self.assertEqual(Forum.objects.get().author_username, self.user.username)
+
+    def test_create_api_returns_json_validation_errors(self):
+        response = self.client.post(
+            reverse("forum:create_post_api"),
+            {"title": "", "content": "", "category": "INVALID"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("errors", response.json())
+        self.assertEqual(Forum.objects.count(), 0)

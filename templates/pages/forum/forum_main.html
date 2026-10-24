@@ -39,11 +39,11 @@
           <h2 class="community-feed__title font-heading text-[1.5rem] font-bold leading-tight text-foreground sm:text-[1.75rem]" id="feed-title">Feed komunitas</h2>
           <p class="community-feed__description text-[0.8125rem] text-muted">Percakapan terbaru dari 8.421 anggota</p>
         </div>
-        <button class="community-feed__create inline-flex min-h-11 items-center justify-center gap-2 border-2 border-line bg-accent px-4.5 py-2 text-[0.8125rem] font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] sm:self-auto" type="button" data-open-forum-create>
+        <button class="community-feed__create inline-flex min-h-11 items-center justify-center gap-2 border-2 border-line bg-accent px-4.5 py-2 text-[0.8125rem] font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all duration-150 hover:shadow-[4px_4px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto cursor-pointer" type="button" popovertarget="forum-create-modal" popovertargetaction="show">
           <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
           <span>Buat post</span>
           <span class="hidden font-normal sm:inline">· Pengguna terdaftar</span>
-        </a>
+        </button>
       </header>
 
       <div class="community-feed__layout grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
@@ -68,79 +68,12 @@
             <a class="guest-note__link pl-6 text-[0.6875rem] font-bold text-accent sm:pl-0" href="#">Masuk untuk suka &amp; berkomentar →</a>
           </div>
 
-          <ul class="post-list flex min-w-0 flex-col gap-3">
-            {% for post in posts %}
-            <li>
-              <article class="forum-post flex min-w-0 flex-col gap-4 border-2 border-line bg-surface p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-[4px_4px_0_var(--shadow-color)]">
-                <header class="forum-post__author flex min-w-0 items-start gap-3">
-                  <div class="avatar flex size-10 shrink-0 self-start items-center justify-center border-2 border-line bg-background font-heading text-base font-bold text-foreground" aria-hidden="true">{{ post.author_username|first|upper }}</div>
-                  <div class="forum-post__author-details flex min-w-0 flex-1 flex-col gap-1">
-                    <div class="forum-post__meta flex min-w-0 flex-wrap items-center gap-2">
-                      <span class="badge badge--category bg-category px-2 py-1 text-[0.5625rem] font-bold uppercase tracking-wide text-foreground rounded-none border-2 border-line leading-none">{{ post.category }}</span>
-                      <a class="forum-post__username truncate text-[0.6875rem] font-semibold text-muted" href="#">{{ post.author_username }}</a>
-                    </div>
-                    <time class="forum-post__time text-[0.625rem] text-muted">{{ post.time_posted }}</time>
-                  </div>
-                  <button class="icon-button grid size-9 shrink-0 place-items-center text-muted self-start" type="button" aria-label="Opsi post">
-                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                  </button>
-                </header>
-                <div class="forum-post__content flex flex-col gap-2">
-                  <h3 class="forum-post__title font-heading text-[1.25rem] font-bold leading-tight tracking-[-0.0125rem] text-foreground sm:text-[1.375rem]">
-                    <a class="hover:underline" href="#">{{ post.title }}</a>
-                  </h3>
-                  <p class="forum-post__body text-[0.8125rem] leading-[1.6] text-muted sm:text-sm">{{ post.content }}</p>
-                </div>
-                {% if post.image_url %}
-                <figure class="forum-post__media group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]">
-                  <div class="relative flex w-full items-center justify-center overflow-hidden bg-background max-h-125 sm:max-h-135">
-                    <!-- Ambient blurred backdrop untuk foto portrait/non-standar -->
-                    <img src="{{ post.image_url }}" alt="" aria-hidden="true" class="absolute inset-0 h-full w-full object-cover blur-xl opacity-20 scale-110 pointer-events-none select-none">
-                    <!-- Foto utama yang tampil utuh (portrait maupun landscape) -->
-                    <img src="{{ post.image_url }}" alt="{{ post.title }}" class="relative z-1 max-h-125 sm:max-h-135 w-auto max-w-full object-contain transition-transform duration-300 ease-out group-hover:scale-[1.01]" loading="lazy">
-                  </div>
-                  <figcaption class="absolute bottom-3 right-3 z-2 flex items-center gap-1.5 border-2 border-line bg-surface/95 px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.0625rem] text-foreground shadow-[2px_2px_0_var(--shadow-color)] backdrop-blur-xs">
-                    <svg class="size-3.5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                    <span>{{ post.image_caption|default:"Dokumentasi foto" }}</span>
-                    {% if post.image_count %}
-                    <span aria-hidden="true">·</span>
-                    <span>{{ post.image_count }} foto</span>
-                    {% endif %}
-                  </figcaption>
-                </figure>
-                {% endif %}
-                <footer class="forum-post__actions flex flex-wrap items-center gap-2 border-t border-line pt-3.5">
-                  <button class="post-action inline-flex min-h-8 items-center gap-1.5 border-2 border-line bg-surface px-2.5 text-[0.6875rem] font-semibold text-muted aria-pressed:text-accent" type="button" aria-pressed="false"><svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg><span>{{ post.total_likes|default:0 }} suka</span></button>
-                  <a class="post-action inline-flex min-h-8 items-center gap-1.5 border-2 border-line bg-surface px-2.5 text-[0.6875rem] font-semibold text-muted" href="#"><svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"/></svg><span>{{ post.total_comments|default:0 }} komentar</span></a>
-                  <button class="post-action post-action--save ml-auto inline-flex min-h-8 items-center gap-1.5 border-2 border-transparent bg-transparent px-2.5 text-[0.6875rem] font-normal text-muted aria-pressed:text-accent" type="button" aria-pressed="false"><svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6 4.75A1.75 1.75 0 0 1 7.75 3h8.5A1.75 1.75 0 0 1 18 4.75V21l-6-4-6 4V4.75Z"/></svg><span>Simpan</span></button>
-                </footer>
-              </article>
+          <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}">
+            <li class="w-full py-8 text-center text-sm text-muted" data-posts-loading role="status">
+              Memuat post forum...
             </li>
-            {% empty %}
-            <li class="w-full">
-              <div class="empty-state flex min-w-0 flex-col items-center justify-center gap-4 border-2 border-line bg-surface p-8 text-center shadow-[3px_3px_0_var(--shadow-color)] sm:p-12 sm:shadow-[4px_4px_0_var(--shadow-color)]">
-                <div class="flex size-16 items-center justify-center border-2 border-line bg-highlight shadow-[3px_3px_0_var(--shadow-color)]" aria-hidden="true">
-                  <svg class="size-8 text-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />
-                    <path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.5" />
-                  </svg>
-                </div>
-                <div class="flex max-w-md flex-col gap-1.5">
-                  <h3 class="font-heading text-lg font-bold text-foreground sm:text-xl">Belum ada percakapan</h3>
-                  <p class="text-xs leading-relaxed text-muted sm:text-sm">Jadilah yang pertama memulai diskusi seputar reparasi pakaian, gaya vintage, atau tips berburu thrifting!</p>
-                </div>
-                <button type="button" data-open-forum-create class="inline-flex min-h-10 items-center justify-center gap-2 border-2 border-line bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-transform active:translate-x-0.5 active:translate-y-0.5 sm:text-[0.8125rem]">
-                  <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-                  <span>Mulai buat post pertama</span>
-                </button>
-              </div>
-            </li>
-            {% endfor %}
           </ul>
 
-          {% if posts %}
-          <button class="load-more flex min-h-11 w-full items-center justify-center border-2 border-line bg-surface px-4 text-[0.8125rem] font-bold text-foreground shadow-[3px_3px_0_var(--shadow-color)]" type="button">Muat lebih banyak post</button>
-          {% endif %}
         </div>
 
         <aside class="forum-sidebar flex w-full flex-col gap-3.5 lg:sticky lg:top-24 lg:w-auto" aria-label="Informasi forum">
@@ -185,22 +118,453 @@
 <script>
   (() => {
     const modal = document.getElementById("forum-create-modal");
-    if (!(modal instanceof HTMLDialogElement)) return;
+    const postList = document.querySelector("[data-posts-url]");
+    const postForm = modal?.querySelector("form");
+    const apiError = document.getElementById("forum-create-api-error");
+    if (!(modal instanceof HTMLElement) || !postList || !(postForm instanceof HTMLFormElement)) return;
 
-    document.querySelectorAll("[data-open-forum-create]").forEach((button) => {
-      button.addEventListener("click", () => modal.showModal());
+    function makeElement(tag, className, text) {
+      const element = document.createElement(tag);
+      element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    }
+
+    function createIcon(pathData, className) {
+      const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      icon.setAttribute("class", className);
+      icon.setAttribute("viewBox", "0 0 24 24");
+      icon.setAttribute("fill", "none");
+      icon.setAttribute("stroke", "currentColor");
+      icon.setAttribute("stroke-width", "1.8");
+      icon.setAttribute("aria-hidden", "true");
+      pathData.forEach((data) => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", data);
+        icon.appendChild(path);
+      });
+      return icon;
+    }
+
+    function formatSimpleTime(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return dateString;
+
+      const now = new Date();
+      const diffSeconds = Math.max(0, Math.floor((now - date) / 1000));
+
+      if (diffSeconds < 60) return "just now";
+      const diffMinutes = Math.floor(diffSeconds / 60);
+      if (diffMinutes < 60) return `${diffMinutes} minutes ago`;
+      const diffHours = Math.floor(diffMinutes / 60);
+      if (diffHours < 24) return `${diffHours} hours ago`;
+      const diffDays = Math.floor(diffHours / 24);
+      if (diffDays === 1) return "yesterday";
+      if (diffDays < 7) return `${diffDays} days ago`;
+
+      return date.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: date.getFullYear() === now.getFullYear() ? undefined : "numeric",
+      });
+    }
+
+    function createPostCard(post) {
+      const item = makeElement("li", "");
+      const article = makeElement("article", "forum-post flex min-w-0 flex-col gap-4 border-2 border-line bg-surface p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-[4px_4px_0_var(--shadow-color)]");
+      const header = makeElement("header", "forum-post__author flex min-w-0 items-start gap-3");
+      const avatar = makeElement("div", "avatar flex size-10 shrink-0 self-start items-center justify-center border-2 border-line bg-background font-heading text-base font-bold text-foreground", post.author_username.charAt(0).toUpperCase());
+      avatar.setAttribute("aria-hidden", "true");
+      const details = makeElement("div", "forum-post__author-details flex min-w-0 flex-1 flex-col gap-1");
+      const meta = makeElement("div", "forum-post__meta flex min-w-0 flex-wrap items-center gap-2");
+      const category = makeElement("span", "badge badge--category rounded-none border-2 border-line bg-category px-2 py-1 text-[0.5625rem] font-bold uppercase leading-none tracking-wide text-foreground", post.category);
+      const author = makeElement("span", "forum-post__username truncate text-[0.6875rem] font-semibold text-muted", post.author_username);
+      const createdAt = new Date(post.created_at);
+      const time = makeElement("time", "forum-post__time text-[0.625rem] text-muted", formatSimpleTime(post.created_at));
+      time.dateTime = post.created_at;
+      time.title = !Number.isNaN(createdAt.getTime()) ? createdAt.toLocaleString("id-ID") : post.created_at;
+      const content = makeElement("div", "forum-post__content flex flex-col gap-2");
+      const title = makeElement("h3", "forum-post__title font-heading text-[1.25rem] font-bold leading-tight tracking-[-0.0125rem] text-foreground sm:text-[1.375rem]", post.title);
+      const body = makeElement("p", "forum-post__body text-[0.8125rem] leading-[1.6] text-muted sm:text-sm", post.content);
+
+      meta.append(category, author);
+      details.append(meta, time);
+      header.append(avatar, details);
+      content.append(title, body);
+      article.append(header, content);
+
+      if (post.image_url) {
+        const figure = makeElement("figure", "forum-post__media group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]");
+        const imageContainer = makeElement("div", "relative flex max-h-125 w-full items-center justify-center overflow-hidden bg-background sm:max-h-135");
+        const image = makeElement("img", "relative z-1 max-h-125 w-auto max-w-full object-contain sm:max-h-135");
+        image.src = post.image_url;
+        image.alt = post.title;
+        image.loading = "lazy";
+        imageContainer.append(image);
+
+          const caption = makeElement("figcaption", "absolute bottom-3 right-3 z-2 flex items-center gap-1.5 border-2 border-line bg-surface/95 px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.0625rem] text-foreground shadow-[2px_2px_0_var(--shadow-color)] backdrop-blur-xs");
+          caption.append(createIcon(["M3 3h18v18H3z", "M8 8h.01", "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"], "size-3.5 shrink-0 text-muted"));
+        caption.append(makeElement("span", "", post.image_caption || "Dokumentasi foto"));
+          if (post.image_count) {
+          caption.append(makeElement("span", "", "·"));
+            caption.append(makeElement("span", "", `${post.image_count} foto`));
+          }
+        figure.append(imageContainer, caption);
+        article.append(figure);
+      }
+
+      const footer = makeElement("footer", "forum-post__actions flex flex-wrap items-center gap-2 border-t border-line pt-3.5");
+      const likes = makeElement("span", "post-action inline-flex min-h-8 items-center gap-1.5 border-2 border-line bg-surface px-2.5 text-[0.6875rem] font-semibold text-muted", `${post.total_likes ?? 0} suka`);
+      likes.prepend(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-4"));
+      const comments = makeElement("span", "post-action inline-flex min-h-8 items-center gap-1.5 border-2 border-line bg-surface px-2.5 text-[0.6875rem] font-semibold text-muted", `${post.total_comments ?? 0} komentar`);
+      comments.prepend(createIcon(["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"], "size-4"));
+      footer.append(likes, comments);
+      article.append(footer);
+      item.append(article);
+      return item;
+    }
+
+    function createEmptyState() {
+      const item = makeElement("li", "w-full");
+      const state = makeElement("div", "empty-state flex min-w-0 flex-col items-center justify-center gap-4 border-2 border-line bg-surface p-8 text-center shadow-[3px_3px_0_var(--shadow-color)] sm:p-12 sm:shadow-[4px_4px_0_var(--shadow-color)]");
+      const title = makeElement("h3", "font-heading text-lg font-bold text-foreground sm:text-xl", "Belum ada percakapan");
+      const description = makeElement("p", "text-xs leading-relaxed text-muted sm:text-sm", "Jadilah yang pertama memulai diskusi seputar reparasi pakaian, gaya vintage, atau tips berburu thrifting!");
+      const createButton = makeElement("button", "inline-flex min-h-10 items-center justify-center gap-2 border-2 border-line bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all duration-150 hover:shadow-[4px_4px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:text-[0.8125rem] cursor-pointer", "Mulai buat post pertama");
+      createButton.type = "button";
+      createButton.setAttribute("popovertarget", "forum-create-modal");
+      createButton.setAttribute("popovertargetaction", "show");
+      attachDebouncedClick(createButton);
+      state.append(title, description, createButton);
+      item.append(state);
+      return item;
+    }
+
+    async function loadPosts() {
+      try {
+        const response = await fetch(postList.dataset.postsUrl, {
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error(`Gagal mengambil post (${response.status}).`);
+        const posts = await response.json();
+        if (!Array.isArray(posts)) throw new Error("Format data post dari server tidak valid.");
+
+        postList.replaceChildren();
+        if (!posts.length) {
+          postList.appendChild(createEmptyState());
+          return;
+        }
+        posts.forEach((post) => postList.appendChild(createPostCard(post)));
+      } catch (error) {
+        console.error("Tidak dapat memuat post forum:", error);
+        const errorItem = makeElement("li", "w-full py-8 text-center text-sm text-red-700", "Post forum gagal dimuat. Muat ulang halaman untuk mencoba lagi.");
+        errorItem.setAttribute("role", "alert");
+        postList.replaceChildren(errorItem);
+      }
+    }
+
+    function closePopoverWithAnimation() {
+      if (!modal.matches(":popover-open")) return;
+      modal.classList.add("translate-y-3", "opacity-0");
+      setTimeout(() => {
+        if (modal.matches(":popover-open")) modal.hidePopover();
+        modal.classList.remove("translate-y-3", "opacity-0");
+      }, 180);
+    }
+
+    modal.querySelectorAll('[popovertargetaction="hide"]').forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        closePopoverWithAnimation();
+      });
     });
 
-    modal.querySelectorAll("[data-close-forum-create]").forEach((button) => {
-      button.addEventListener("click", () => modal.close());
+    modal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePopoverWithAnimation();
+      }
     });
 
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal) modal.close();
+    // Elements for form interactivity
+    const titleInput = document.getElementById("id_title");
+    const titleCharCounter = document.getElementById("title-char-counter");
+    const previewPostTitle = document.getElementById("preview-post-title");
+
+    const contentInput = document.getElementById("id_content");
+    const contentCharCounter = document.getElementById("content-char-counter");
+    const previewPostContent = document.getElementById("preview-post-content");
+
+    const categoryInput = document.getElementById("id_category");
+    const previewCategoryBadge = document.getElementById("preview-category-badge");
+
+    const imageUrlInput = document.getElementById("id_image_url");
+    const imageCaptionInput = document.getElementById("id_image_caption");
+    const captionCharCounter = document.getElementById("caption-char-counter");
+
+    const formImagePlaceholder = document.getElementById("form-image-placeholder");
+    const formImageLoading = document.getElementById("form-image-loading");
+    const formImageError = document.getElementById("form-image-error");
+    const formImageElement = document.getElementById("form-image-element");
+
+    const sidebarImagePlaceholder = document.getElementById("sidebar-image-placeholder");
+    const sidebarImageLoading = document.getElementById("sidebar-image-loading");
+    const sidebarImageElement = document.getElementById("sidebar-image-element");
+
+    const submitButton = postForm.querySelector('[type="submit"]');
+    const submitButtonText = document.getElementById("submit-button-text");
+
+    // Debounce timer for image preview (0.5 detik)
+    let imageDebounceTimer = null;
+    const IMAGE_DEBOUNCE_DELAY = 500;
+
+    // Button click debouncer with micro-animation
+    function attachDebouncedClick(button, callback, delay = 500) {
+      if (!button) return;
+      let isThrottled = false;
+      button.addEventListener("click", (event) => {
+        if (isThrottled) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+        isThrottled = true;
+
+        // Button press animation
+        button.classList.add("scale-95");
+        setTimeout(() => button.classList.remove("scale-95"), 150);
+
+        if (callback) callback(event);
+
+        setTimeout(() => {
+          isThrottled = false;
+        }, delay);
+      });
+    }
+
+    // Interactive Character Counting
+    function updateTitleCounter() {
+      if (!titleInput || !titleCharCounter) return;
+      const len = titleInput.value.length;
+      titleCharCounter.textContent = `${len} / 120`;
+      if (len >= 120) {
+        titleCharCounter.classList.add("text-accent", "font-bold");
+      } else {
+        titleCharCounter.classList.remove("text-accent", "font-bold");
+      }
+      if (previewPostTitle) {
+        previewPostTitle.textContent = titleInput.value.trim() || "Judul post akan tampil di sini";
+      }
+    }
+
+    function updateContentCounter() {
+      if (!contentInput || !contentCharCounter) return;
+      const len = contentInput.value.length;
+      const formatted = len.toLocaleString("id-ID");
+      contentCharCounter.textContent = `${formatted} / 2.000`;
+      if (len >= 2000) {
+        contentCharCounter.classList.add("text-accent", "font-bold");
+      } else {
+        contentCharCounter.classList.remove("text-accent", "font-bold");
+      }
+      if (previewPostContent) {
+        previewPostContent.textContent = contentInput.value.trim() || "Isi post akan tampil di sini setelah kamu mulai menulis...";
+      }
+    }
+
+    function updateCategoryPreview() {
+      if (!categoryInput || !previewCategoryBadge) return;
+      const selectedOption = categoryInput.options[categoryInput.selectedIndex];
+      previewCategoryBadge.textContent = selectedOption ? selectedOption.text : "Tag";
+    }
+
+    function updateCaptionCounter() {
+      if (!imageCaptionInput || !captionCharCounter) return;
+      const len = imageCaptionInput.value.length;
+      captionCharCounter.textContent = `${len} / 200`;
+      if (len >= 200) {
+        captionCharCounter.classList.add("text-accent", "font-bold");
+      } else {
+        captionCharCounter.classList.remove("text-accent", "font-bold");
+      }
+    }
+
+    // Image preview debouncer (0.5 detik)
+    function resetImagePreview() {
+      if (imageDebounceTimer) {
+        clearTimeout(imageDebounceTimer);
+        imageDebounceTimer = null;
+      }
+
+      formImageLoading?.classList.add("hidden");
+      formImageError?.classList.add("hidden");
+      if (formImageElement) {
+        formImageElement.src = "";
+        formImageElement.classList.add("hidden", "opacity-0");
+      }
+      formImagePlaceholder?.classList.remove("hidden");
+
+      sidebarImageLoading?.classList.add("hidden");
+      if (sidebarImageElement) {
+        sidebarImageElement.src = "";
+        sidebarImageElement.classList.add("hidden", "opacity-0");
+      }
+      sidebarImagePlaceholder?.classList.remove("hidden");
+    }
+
+    function handleImageDebounce() {
+      if (imageDebounceTimer) {
+        clearTimeout(imageDebounceTimer);
+        imageDebounceTimer = null;
+      }
+
+      if (!imageUrlInput) return;
+      const url = imageUrlInput.value.trim();
+
+      if (!url) {
+        resetImagePreview();
+        return;
+      }
+
+      imageDebounceTimer = setTimeout(() => {
+        applyImagePreview(url);
+      }, IMAGE_DEBOUNCE_DELAY);
+    }
+
+    function applyImagePreview(url) {
+      // Loading state
+      formImagePlaceholder?.classList.add("hidden");
+      formImageError?.classList.add("hidden");
+      if (formImageElement) {
+        formImageElement.classList.add("hidden", "opacity-0");
+      }
+      formImageLoading?.classList.remove("hidden");
+
+      sidebarImagePlaceholder?.classList.add("hidden");
+      if (sidebarImageElement) {
+        sidebarImageElement.classList.add("hidden", "opacity-0");
+      }
+      sidebarImageLoading?.classList.remove("hidden");
+
+      const tester = new Image();
+      tester.src = url;
+
+      tester.onload = () => {
+        // Discard if input changed in between
+        if (imageUrlInput.value.trim() !== url) return;
+
+        formImageLoading?.classList.add("hidden");
+        if (formImageElement) {
+          formImageElement.src = url;
+          formImageElement.classList.remove("hidden");
+          setTimeout(() => formImageElement.classList.remove("opacity-0"), 30);
+        }
+
+        sidebarImageLoading?.classList.add("hidden");
+        if (sidebarImageElement) {
+          sidebarImageElement.src = url;
+          sidebarImageElement.classList.remove("hidden");
+          setTimeout(() => sidebarImageElement.classList.remove("opacity-0"), 30);
+        }
+      };
+
+      tester.onerror = () => {
+        if (imageUrlInput.value.trim() !== url) return;
+
+        formImageLoading?.classList.add("hidden");
+        formImageError?.classList.remove("hidden");
+
+        sidebarImageLoading?.classList.add("hidden");
+        sidebarImagePlaceholder?.classList.remove("hidden");
+      };
+    }
+
+    function syncFormInteractiveState() {
+      updateTitleCounter();
+      updateContentCounter();
+      updateCaptionCounter();
+      updateCategoryPreview();
+      if (imageUrlInput?.value.trim()) {
+        applyImagePreview(imageUrlInput.value.trim());
+      } else {
+        resetImagePreview();
+      }
+    }
+
+    // Attach listeners for interactive form
+    titleInput?.addEventListener("input", updateTitleCounter);
+    contentInput?.addEventListener("input", updateContentCounter);
+    categoryInput?.addEventListener("change", updateCategoryPreview);
+    imageCaptionInput?.addEventListener("input", updateCaptionCounter);
+    imageUrlInput?.addEventListener("input", handleImageDebounce);
+
+    postForm.addEventListener("reset", () => {
+      setTimeout(() => {
+        syncFormInteractiveState();
+        if (apiError) apiError.hidden = true;
+      }, 0);
     });
+
+    // Attach button click debouncer and animation to main "Buat post" button
+    document.querySelectorAll(".community-feed__create").forEach((btn) => {
+      attachDebouncedClick(btn);
+    });
+
+    modal.addEventListener("toggle", (event) => {
+      if (event.newState === "open") {
+        modal.classList.add("translate-y-3", "opacity-0");
+        setTimeout(() => modal.classList.remove("translate-y-3", "opacity-0"), 10);
+        syncFormInteractiveState();
+      }
+    });
+
+    postForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      apiError.hidden = true;
+      if (submitButton) {
+        submitButton.disabled = true;
+        if (submitButtonText) submitButtonText.textContent = "Memublikasikan...";
+      }
+      const formData = new FormData(postForm);
+      const csrfToken = formData.get("csrfmiddlewaretoken");
+
+      try {
+        const response = await fetch("{% url 'forum:create_post_api' %}", {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          const errors = Object.values(result.errors || {})
+            .flat()
+            .map((error) => error.message)
+            .join(" ");
+          throw new Error(errors || "Post gagal dikirim. Silakan coba lagi.");
+        }
+
+        postForm.reset();
+        syncFormInteractiveState();
+        closePopoverWithAnimation();
+        await loadPosts();
+      } catch (error) {
+        apiError.textContent = error.message;
+        apiError.hidden = false;
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          if (submitButtonText) submitButtonText.textContent = "Publikasikan post";
+        }
+      }
+    });
+
+    loadPosts();
 
     {% if show_create_modal %}
-      modal.showModal();
+      modal.showPopover();
     {% endif %}
   })();
 </script>

@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST, require_GET 
 from .models import Forum
@@ -21,7 +21,6 @@ def forum_main(request):
         request,
         'pages/forum/forum_main.html',
         {
-            'posts': Forum.objects.all(),
             'form': form,
             'show_create_modal': show_create_modal,
         },
@@ -32,14 +31,14 @@ def forum_detail(request):
 
 @require_GET 
 def get_posts_api(request):
-    posts = Forum.objects.all()
+    posts = Forum.objects.order_by('-created_at')
     posts_json = [
         {
             'id': str(post.id),
             'author_username': post.author_username,
             'title': post.title,
             'content': post.content,
-            'category': post.category,
+            'category': post.get_category_display(),
             'image_url': post.image_url,
             'image_caption': post.image_caption,
             'image_count': post.image_count,
@@ -50,7 +49,7 @@ def get_posts_api(request):
         }
         for post in posts
     ]
-    return HttpResponse(posts_json, content_type='application/json')
+    return JsonResponse(posts_json, safe=False)
 
 @require_POST
 def create_post_api(request):
@@ -59,6 +58,24 @@ def create_post_api(request):
         post = form.save(commit=False)
         post.author_username = request.user.username
         post.save()
-        return HttpResponse({'message': 'Post created successfully'}, status=201)
-    else:
-        return HttpResponse({'errors': form.errors}, status=400)
+        return JsonResponse(
+            {
+                'message': 'Post created successfully',
+                'post': {
+                    'id': str(post.id),
+                    'author_username': post.author_username,
+                    'title': post.title,
+                    'content': post.content,
+                    'category': post.get_category_display(),
+                    'image_url': post.image_url,
+                    'image_caption': post.image_caption,
+                    'image_count': post.image_count,
+                    'created_at': post.created_at.isoformat(),
+                    'updated_at': post.updated_at.isoformat(),
+                    'total_likes': post.total_likes,
+                    'total_comments': post.total_comments,
+                },
+            },
+            status=201,
+        )
+    return JsonResponse({'errors': form.errors.get_json_data()}, status=400)
