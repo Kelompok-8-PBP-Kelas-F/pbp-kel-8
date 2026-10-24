@@ -43,6 +43,27 @@ class ForumCreateModalTests(TestCase):
         self.assertEqual(response.json()[0]["category"], "Discussion")
         self.assertEqual(response.json()[0]["detail_url"], reverse("forum:forum_detail", args=[post.id]))
 
+    def test_posts_api_filter_by_title(self):
+        Forum.objects.create(author_username="user1", title="Jaket Vintage Denim", content="Konten 1")
+        Forum.objects.create(author_username="user2", title="Sepatu Kulit Murah", content="Konten 2")
+
+        # Match "Vintage"
+        res = self.client.get(reverse("forum:get_posts_api"), {"title": "vintage"})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 1)
+        self.assertEqual(res.json()[0]["title"], "Jaket Vintage Denim")
+
+        # Match "Kulit"
+        res = self.client.get(reverse("forum:get_posts_api"), {"title": "KULIT"})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 1)
+        self.assertEqual(res.json()[0]["title"], "Sepatu Kulit Murah")
+
+        # No match
+        res = self.client.get(reverse("forum:get_posts_api"), {"title": "tidak ada"})
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(res.json()), 0)
+
     def test_create_api_returns_json_and_saves_post(self):
         response = self.client.post(
             reverse("forum:create_post_api"),

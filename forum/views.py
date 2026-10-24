@@ -49,6 +49,9 @@ def forum_detail(request, id):
 def get_posts_api(request):
     if request.method == "GET":
         posts = Forum.objects.order_by('-created_at')
+        title = request.GET.get('title')
+        if title:
+            posts = posts.filter(title__icontains=title.strip())
         posts_json = [serialize_post(post) for post in posts]
         return JsonResponse(posts_json, safe=False)
     return JsonResponse({'error': 'Invalid request method'}, status=405)
