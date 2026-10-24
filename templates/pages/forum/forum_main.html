@@ -68,7 +68,7 @@
             <a class="guest-note__link pl-6 text-[0.6875rem] font-bold text-accent sm:pl-0" href="#">Masuk untuk suka &amp; berkomentar →</a>
           </div>
 
-          <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}">
+          <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}" data-current-user="{{ request.user.username|default:'' }}">
             <li class="w-full py-8 text-center text-sm text-muted" data-posts-loading role="status">
               Memuat post forum...
             </li>
@@ -171,8 +171,9 @@
     }
 
     function createPostCard(post) {
+      const detailUrl = post.detail_url || `/forum/${post.id}/`;
       const item = makeElement("li", "");
-      const article = makeElement("article", "forum-post flex min-w-0 flex-col gap-4 border-2 border-line bg-surface p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-[4px_4px_0_var(--shadow-color)]");
+      const article = makeElement("article", "forum-post flex min-w-0 flex-col gap-4 border-2 border-line bg-surface p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-[4px_4px_0_var(--shadow-color)] transition-all duration-150 hover:shadow-[5px_5px_0_var(--shadow-color)] sm:hover:shadow-[6px_6px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer");
       const header = makeElement("header", "forum-post__author flex min-w-0 items-start gap-3");
       const avatar = makeElement("div", "avatar flex size-10 shrink-0 self-start items-center justify-center border-2 border-line bg-background font-heading text-base font-bold text-foreground", post.author_username.charAt(0).toUpperCase());
       avatar.setAttribute("aria-hidden", "true");
@@ -185,7 +186,10 @@
       time.dateTime = post.created_at;
       time.title = !Number.isNaN(createdAt.getTime()) ? createdAt.toLocaleString("id-ID") : post.created_at;
       const content = makeElement("div", "forum-post__content flex flex-col gap-2");
-      const title = makeElement("h3", "forum-post__title font-heading text-[1.25rem] font-bold leading-tight tracking-[-0.0125rem] text-foreground sm:text-[1.375rem]", post.title);
+      const title = makeElement("h3", "forum-post__title font-heading text-[1.25rem] font-bold leading-tight tracking-[-0.0125rem] text-foreground sm:text-[1.375rem]");
+      const titleLink = makeElement("a", "hover:underline focus:outline-none", post.title);
+      titleLink.href = detailUrl;
+      title.append(titleLink);
       const body = makeElement("p", "forum-post__body text-[0.8125rem] leading-[1.6] text-muted sm:text-sm", post.content);
 
       meta.append(category, author);
@@ -221,6 +225,27 @@
       comments.prepend(createIcon(["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"], "size-4"));
       footer.append(likes, comments);
       article.append(footer);
+
+      article.addEventListener("click", (e) => {
+        if (e.target.closest("a, button, input, textarea, select")) {
+          return;
+        }
+        if (e.ctrlKey || e.metaKey) {
+          window.open(detailUrl, "_blank");
+          return;
+        }
+        window.location.href = detailUrl;
+      });
+
+      article.addEventListener("auxclick", (e) => {
+        if (e.button === 1) {
+          if (e.target.closest("a, button, input, textarea, select")) {
+            return;
+          }
+          window.open(detailUrl, "_blank");
+        }
+      });
+
       item.append(article);
       return item;
     }

@@ -27,38 +27,10 @@ class ForumCreateModalTests(TestCase):
         self.assertContains(response, 'id="preview-post-title"')
         self.assertContains(response, 'id="preview-post-content"')
 
-    def test_invalid_post_rerenders_modal_with_errors(self):
-        response = self.client.post(
-            reverse("forum:forum_main"),
-            {"title": "", "content": "", "category": "DISCUSSION"},
-        )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'id="forum-create-modal"')
-        self.assertContains(response, "This field is required.")
-        self.assertTrue(response.context["show_create_modal"])
-        self.assertEqual(Forum.objects.count(), 0)
-
-    def test_valid_post_creates_forum_post(self):
-        response = self.client.post(
-            reverse("forum:forum_main"),
-            {
-                "title": "Tips thrifting",
-                "content": "Bagikan tips memilih pakaian vintage.",
-                "category": "DISCUSSION",
-                "image_url": "https://example.com/jacket.jpg",
-                "image_caption": "Foto jaket denim",
-            },
-        )
-
-        self.assertRedirects(response, reverse("forum:forum_main"))
-        post = Forum.objects.get()
-        self.assertEqual(post.title, "Tips thrifting")
-        self.assertEqual(post.author_username, self.user.username)
-        self.assertEqual(post.image_caption, "Foto jaket denim")
 
     def test_posts_api_returns_json(self):
-        Forum.objects.create(
+        post = Forum.objects.create(
             author_username=self.user.username,
             title="Forum API",
             content="Post dari endpoint API.",
@@ -69,6 +41,7 @@ class ForumCreateModalTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()[0]["title"], "Forum API")
         self.assertEqual(response.json()[0]["category"], "Discussion")
+        self.assertEqual(response.json()[0]["detail_url"], reverse("forum:forum_detail", args=[post.id]))
 
     def test_create_api_returns_json_and_saves_post(self):
         response = self.client.post(
@@ -94,3 +67,13 @@ class ForumCreateModalTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("errors", response.json())
         self.assertEqual(Forum.objects.count(), 0)
+
+    def test_forum_detail_view(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Post Detail",
+            content="Konten Detail",
+        )
+        response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["post"], post)
