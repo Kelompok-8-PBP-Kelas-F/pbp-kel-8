@@ -35,6 +35,8 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "luthfi.ahmad51-thriftio.pws.cs.ui.ac
 
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
+LOGIN_URL = 'login'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -68,7 +70,6 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-        'DIRS': [ BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

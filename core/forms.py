@@ -1,5 +1,6 @@
 from django import forms
 from .models import PrelovedItem
+from django.contrib.auth.forms import AuthenticationForm
 
 class PrelovedItemForm(forms.ModelForm):
     class Meta:
@@ -16,3 +17,17 @@ class PrelovedItemForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': default_classes}),
             'gambar': forms.FileInput(attrs={'class': 'w-full border-2 border-black p-2 bg-white shadow-[2px_2px_0px_rgba(0,0,0,1)] cursor-pointer mb-4'}),
         }
+
+class CustomLoginForm(AuthenticationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'w-full border-2 border-black p-2.5 text-sm font-semibold bg-white shadow-[3px_3px_0px_rgba(0,0,0,1)] focus:outline-none focus:bg-amber-50',
+            'placeholder': 'Masukkan username'
+        })
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            'class': 'w-full border-2 border-black p-2.5 text-sm font-semibold bg-white shadow-[3px_3px_0px_rgba(0,0,0,1)] focus:outline-none focus:bg-amber-50',
+            'placeholder': 'Masukkan password'
+        })
+    )

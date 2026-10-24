@@ -1,9 +1,20 @@
-{% extends 'base.html' %}
+{% extends 'pages/marketplace_seller/base.html' %}
 {% block content %}
 <div class="max-w-6xl mx-auto mt-8 p-4">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Marketplace Penjual</h1>
-        <a href="{% url 'core:tambah_barang' %}" class="bg-orange-600 text-white px-4 py-2 rounded shadow hover:bg-orange-700">Tambah Barang</a>
+        
+        <!-- Wadah Tombol Aksi -->
+        <div class="flex gap-3">
+            <a href="{% url 'core:tambah_barang' %}" class="bg-orange-600 text-white px-4 py-2 rounded shadow hover:bg-orange-700 font-bold text-sm flex items-center">
+                + Tambah Barang
+            </a>
+            
+            <!-- Tombol Poin 2 -->
+            <a href="{% url 'core:seller_profile' username=user.username %}" class="bg-white text-black border-2 border-black px-4 py-2 font-bold text-sm shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-gray-100 flex items-center gap-2">
+                👤 Lihat Profil Saya
+            </a>
+        </div>
     </div>
 
     <!-- Filter & Search Bar -->
@@ -53,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const query = searchInput.value;
         const status = statusFilter.value;
         
-        fetch(`/ajax-filter-barang/?q=${query}&status=${status}`)
+        fetch(`{% url 'core:ajax_filter_barang' %}?q=${query}&status=${status}`)
             .then(response => response.json())
             .then(data => {
                 productGrid.innerHTML = ''; // Bersihkan grid
@@ -68,8 +79,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <span class="text-xs px-2 py-1 bg-gray-200 border border-black rounded">${item.status}</span>
                                 
                                 <div class="mt-4 flex justify-between gap-2">
-                                    <a href="/edit/${item.id}/" class="flex-1 text-center bg-yellow-400 border-2 border-black font-bold py-1 hover:bg-yellow-500">Edit</a>
-                                    <form action="/hapus/${item.id}/" method="POST" class="flex-1">
+                                    <a href="/marketplace-penjual/edit/${item.id}/" class="flex-1 text-center bg-yellow-400 border-2 border-black font-bold py-1 hover:bg-yellow-500">Edit</a>
+                                    <form action="/marketplace-penjual/hapus/${item.id}/" method="POST" class="flex-1">
                                         <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
                                         <button type="submit" class="w-full text-center bg-red-500 text-white border-2 border-black font-bold py-1 hover:bg-red-600">Hapus</button>
                                     </form>

@@ -1,19 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
+from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from .models import PrelovedItem
-from .forms import PrelovedItemForm
-
-# Helper untuk mendapatkan atau membuat user default secara otomatis
-def get_default_seller(request):
-    if request.user.is_authenticated:
-        return request.user
-    # Buat user dummy jika belum login
-    seller, _ = User.objects.get_or_create(
-        username='Burhan',
-        defaults={'email': 'guest@thrift.io'}
-    )
-    return seller
+from .forms import PrelovedItemForm, CustomLoginForm
 
 def landing_page(request):
     query = request.GET.get('q', '')
@@ -21,19 +11,36 @@ def landing_page(request):
     if query:
         items = items.filter(nama__icontains=query)
     
-    return render(request, 'pages\core\landing.html', {
+    return render(request, 'pages/core/landing.html', {
         'items': items, 
         'query': query,
         'total_items': items.count()
     })
 
 
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('core:marketplace_penjual')
+    
+    if request.method == 'POST':
+        form = CustomLoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('core:marketplace_penjual')
+    else:
+        form = CustomLoginForm()
+    return render(request, 'pages/marketplace_seller/login.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('core:landing_page')
+
 # --- READ (Marketplace Penjual) ---
 def marketplace_penjual(request):
-    # Tampilkan semua barang tanpa filter user
     items = PrelovedItem.objects.all().order_by('-created_at')
-    return render(request, 'marketplace_seller.html', {'items': items})
-
+    return render(request, 'pages/marketplace_seller/marketplace_seller.html', {'items': items})
 
 # --- CREATE ---
 def tambah_barang(request):
@@ -41,19 +48,16 @@ def tambah_barang(request):
         form = PrelovedItemForm(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
-            item.seller = get_default_seller(request)  # Pakai user terlogin ATAU guest_seller
+            item.seller = request.user
             item.save()
             return redirect('core:marketplace_penjual')
     else:
         form = PrelovedItemForm()
-    return render(request, 'form_barang.html', {'form': form, 'title': 'Tambah Barang'})
-
+    return render(request, 'pages/marketplace_seller/form_barang.html', {'form': form, 'title': 'Tambah Barang'})
 
 # --- UPDATE ---
 def edit_barang(request, pk):
     item = get_object_or_404(PrelovedItem, pk=pk)
-    
-    # Langsung izinkan edit tanpa pengecekan pembuat barang
     if request.method == 'POST':
         form = PrelovedItemForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
@@ -61,26 +65,21 @@ def edit_barang(request, pk):
             return redirect('core:marketplace_penjual')
     else:
         form = PrelovedItemForm(instance=item)
-    return render(request, 'form_barang.html', {'form': form, 'title': 'Edit Barang'})
-
+    return render(request, 'pages/marketplace_seller/form_barang.html', {'form': form, 'title': 'Edit Barang'})
 
 # --- DELETE ---
 def hapus_barang(request, pk):
     item = get_object_or_404(PrelovedItem, pk=pk)
-    
-    # Langsung izinkan hapus tanpa pengecekan pembuat barang
     if request.method == 'POST':
         item.delete()
         return redirect('core:marketplace_penjual')
-    return render(request, 'konfirmasi_hapus.html', {'item': item})
-
+    return render(request, 'pages/marketplace_seller/konfirmasi_hapus.html', {'item': item})
 
 # --- AJAX LIVE SEARCH / FILTER ---
 def ajax_filter_barang(request):
     query = request.GET.get('q', '')
     status = request.GET.get('status', '')
     
-    # Ambil semua barang
     items = PrelovedItem.objects.all().order_by('-created_at')
     
     if query:
@@ -99,23 +98,16 @@ def ajax_filter_barang(request):
         })
     return JsonResponse({'items': data})
 
+
 def seller_profile(request, username='Burhan'):
-    # Cari penjual berdasarkan username (default: Burhan)
     seller = get_object_or_404(User, username=username)
-    
-    # Ambil semua barang milik penjual ini
     items = PrelovedItem.objects.filter(seller=seller).order_by('-created_at')
     
-    # Hitung statistik sederhana
-    total_items = items.count()
-    items_tersedia = items.filter(status='Tersedia').count()
-    items_terjual = items.filter(status='Terjual').count()
-
     context = {
         'seller': seller,
         'items': items,
-        'total_items': total_items,
-        'items_tersedia': items_tersedia,
-        'items_terjual': items_terjual,
+        'total_items': items.count(),
+        'items_tersedia': items.filter(status='Tersedia').count(),
+        'items_terjual': items.filter(status='Terjual').count(),
     }
-    return render(request, 'seller_profile.html', context)
+    return render(request, 'pages/marketplace_seller/seller_profile.html', context)
