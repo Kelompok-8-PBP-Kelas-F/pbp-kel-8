@@ -1,0 +1,277 @@
+<div
+  id="forum-edit-modal"
+  popover="manual"
+  role="dialog"
+  aria-modal="true"
+  class="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none translate-y-3 overflow-y-auto border-0 bg-background p-0 text-foreground opacity-0 transition duration-200 ease-out"
+  style="position:fixed;inset:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;margin:0;padding:0;border:0"
+  aria-labelledby="forum-edit-title"
+>
+  <div class="min-h-full">
+    <div class="border-b-2 border-line">
+      <div class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        <div class="mb-4 flex justify-end">
+          <button
+            type="button"
+            class="grid size-10 shrink-0 place-items-center text-foreground cursor-pointer"
+            popovertarget="forum-edit-modal"
+            popovertargetaction="hide"
+            aria-label="Tutup form edit"
+          >
+            <svg
+              class="size-7"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="m18 6-12 12M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="flex flex-col justify-between gap-6 pr-1 md:flex-row md:items-end">
+          <div>
+            <p class="mb-2 ml-0.5 text-xs font-bold uppercase tracking-widest text-muted">
+              Forum Komunitas &middot; Edit Post
+            </p>
+            <h2 id="forum-edit-title" class="font-heading text-4xl font-bold lg:text-5xl">
+              Edit post
+            </h2>
+          </div>
+          <p class="text-sm text-muted md:max-w-md md:text-base">
+            Perbarui pertanyaan, tips, atau pengalamanmu. Perubahan akan langsung disimpan pada thread ini.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+          <div class="flex h-full flex-col border-2 border-line bg-surface">
+            <form id="forum-edit-form" method="post" action="{% url 'forum:edit_post_api' post.id %}" class="flex h-full flex-col">
+              {% csrf_token %}
+              <div class="flex grow flex-col gap-6 p-6 md:p-8">
+                <div id="forum-edit-api-error" class="border-2 border-red-600 bg-red-50 p-3 text-sm text-red-700" role="alert" hidden></div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="id_edit_title" class="text-sm font-bold">
+                      Judul post <span class="text-accent">*</span>
+                    </label>
+                    <span id="edit-title-char-counter" class="text-xs text-muted transition-colors">{{ post.title|length }} / 120</span>
+                  </div>
+                  <input
+                    type="text"
+                    name="title"
+                    value="{{ post.title }}"
+                    maxlength="120"
+                    required
+                    id="id_edit_title"
+                    class="w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0"
+                    placeholder="Contoh: Tips berburu pakaian vintage"
+                  >
+                  <p class="text-xs text-muted">Tulis judul yang jelas dan spesifik agar mudah ditemukan anggota lain.</p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="id_edit_content" class="text-sm font-bold">
+                      Isi post <span class="text-accent">*</span>
+                    </label>
+                    <span id="edit-content-char-counter" class="text-xs text-muted transition-colors">{{ post.content|length }} / 2.000</span>
+                  </div>
+                  <textarea
+                    name="content"
+                    rows="5"
+                    required
+                    id="id_edit_content"
+                    class="w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0 resize-y"
+                    placeholder="Ceritakan pertanyaan atau pengalamanmu secara rinci."
+                  >{{ post.content }}</textarea>
+                  <p class="text-xs text-muted">Gunakan paragraf pendek agar mudah dibaca.</p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <label for="id_edit_category" class="text-sm font-bold">
+                    Tag <span class="text-accent">*</span>
+                  </label>
+                  <select
+                    name="category"
+                    id="id_edit_category"
+                    class="w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0"
+                  >
+                    <option value="DISCUSSION" {% if post.category == 'DISCUSSION' %}selected{% endif %}>Discussion</option>
+                    <option value="QUESTION" {% if post.category == 'QUESTION' %}selected{% endif %}>Question</option>
+                    <option value="OOTD" {% if post.category == 'OOTD' %}selected{% endif %}>OOTD</option>
+                    <option value="INSPO" {% if post.category == 'INSPO' %}selected{% endif %}>Inspo</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="id_edit_image_url" class="text-sm font-bold">
+                      URL gambar <span class="font-normal text-muted">(opsional)</span>
+                    </label>
+                    <span class="text-xs text-muted">JPG, PNG, atau WEBP</span>
+                  </div>
+                  <input
+                    type="url"
+                    name="image_url"
+                    value="{{ post.image_url|default:'' }}"
+                    id="id_edit_image_url"
+                    class="w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0"
+                    placeholder="https://contoh.com/gambar.jpg"
+                  >
+                  <p class="text-xs text-muted">Tempel tautan gambar langsung. Gambar akan tampil di bawah isi post.</p>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="id_edit_image_caption" class="text-sm font-bold">
+                      Caption gambar <span class="font-normal text-muted">(opsional)</span>
+                    </label>
+                    <span id="edit-caption-char-counter" class="text-xs text-muted transition-colors">{{ post.image_caption|length|default:0 }} / 200</span>
+                  </div>
+                  <input
+                    type="text"
+                    name="image_caption"
+                    value="{{ post.image_caption|default:'' }}"
+                    maxlength="200"
+                    id="id_edit_image_caption"
+                    class="w-full bg-white border-2 border-line px-4 py-3 text-sm focus:outline-none focus:ring-0"
+                    placeholder="Contoh: Dokumentasi jaket denim vintage"
+                  >
+                  <p class="text-xs text-muted">Deskripsi singkat gambar untuk memberikan konteks.</p>
+                </div>
+
+                <div id="edit-form-image-preview-container" class="mt-2 flex aspect-video w-full flex-col items-center justify-center overflow-hidden border-2 border-line bg-background text-muted relative transition-all">
+                  <div id="edit-form-image-placeholder" class="{% if post.image_url %}hidden{% endif %} flex flex-col items-center justify-center gap-2 p-4 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                      <circle cx="9" cy="9" r="2"></circle>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                    </svg>
+                    <p class="text-xs font-bold uppercase tracking-widest">Pratinjau Gambar - Muncul setelah URL valid</p>
+                  </div>
+                  <div id="edit-form-image-loading" class="hidden flex flex-col items-center justify-center gap-2 p-4 text-center">
+                    <svg class="size-7 animate-spin text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <p class="text-xs font-bold uppercase tracking-wider text-muted">Memeriksa URL gambar...</p>
+                  </div>
+                  <div id="edit-form-image-error" class="hidden flex flex-col items-center justify-center gap-2 p-4 text-center text-red-600">
+                    <svg class="size-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p class="text-xs font-bold uppercase tracking-wide">Gambar tidak dapat dimuat dari URL ini</p>
+                  </div>
+                  <img
+                    id="edit-form-image-element"
+                    src="{{ post.image_url|default:'' }}"
+                    class="{% if not post.image_url %}hidden opacity-0{% endif %} h-full w-full object-contain transition-opacity duration-300"
+                    alt="Pratinjau gambar form edit"
+                  >
+                </div>
+              </div>
+
+              <div class="mt-auto flex flex-col items-center justify-between gap-4 border-t-2 border-line bg-surface p-6 md:flex-row md:px-8 md:py-4">
+                <button
+                  type="button"
+                  popovertarget="forum-edit-modal"
+                  popovertargetaction="hide"
+                  class="text-xs font-bold text-muted hover:text-foreground cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  class="btn-submit-edit inline-flex min-h-11 w-full items-center justify-center gap-2 border-2 border-line bg-accent px-6 py-2.5 text-sm font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all duration-150 hover:opacity-95 hover:shadow-[4px_4px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] md:w-auto cursor-pointer"
+                >
+                  <svg id="edit-submit-button-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                  <span id="edit-submit-button-text">Simpan perubahan</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <aside class="flex flex-col gap-6 lg:col-span-1">
+          <section class="flex flex-col gap-4 border-2 border-line bg-surface p-6 shadow-[3px_3px_0_var(--shadow-color)]">
+            <div class="flex items-center justify-between border-b border-line pb-2.5">
+              <h3 class="text-lg font-bold">Pratinjau post</h3>
+              <span id="edit-preview-category-badge" class="badge badge--category rounded-none border-2 border-line bg-category px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-foreground">
+                {{ post.get_category_display|default:post.category }}
+              </span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex size-10 items-center justify-center border-2 border-line bg-background font-bold">
+                {{ post.author_username|default:"A"|make_list|first|upper }}
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold">@{{ post.author_username }}</span>
+                <span class="text-xs text-muted">Sedang diedit</span>
+              </div>
+            </div>
+            <div class="mt-2 flex flex-col gap-2">
+              <h4 id="edit-preview-post-title" class="text-lg font-bold leading-tight break-words">{{ post.title }}</h4>
+              <p id="edit-preview-post-content" class="text-sm text-muted whitespace-pre-line break-words">{{ post.content }}</p>
+            </div>
+            <div id="edit-sidebar-image-preview-container" class="mt-2 flex aspect-video w-full items-center justify-center overflow-hidden border-2 border-line bg-background text-muted relative transition-all">
+              <div id="edit-sidebar-image-placeholder" class="{% if post.image_url %}hidden{% endif %} flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                  <circle cx="9" cy="9" r="2"></circle>
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                </svg>
+              </div>
+              <div id="edit-sidebar-image-loading" class="hidden flex items-center justify-center">
+                <svg class="size-5 animate-spin text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              </div>
+              <img
+                id="edit-sidebar-image-element"
+                src="{{ post.image_url|default:'' }}"
+                class="{% if not post.image_url %}hidden opacity-0{% endif %} h-full w-full object-cover transition-opacity duration-300"
+                alt="Pratinjau gambar sidebar edit"
+              >
+            </div>
+          </section>
+
+          <section class="border-2 border-line bg-surface p-6">
+            <h3 class="mb-6 text-lg font-bold">Tips mengedit post</h3>
+            <ul class="flex flex-col gap-4">
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">1</span>
+                <span class="text-sm text-muted">Pastikan judul tetap relevan dengan isi diskusi yang berlangsung.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">2</span>
+                <span class="text-sm text-muted">Tambahkan update jika kamu telah mencoba saran dari anggota lain.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">3</span>
+                <span class="text-sm text-muted">Periksa kembali link gambar agar tetap dapat dimuat dengan baik.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">4</span>
+                <span class="text-sm text-muted">Gunakan bahasa yang sopan dan saling menghargai.</span>
+              </li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>

@@ -2,8 +2,6 @@ from django.urls import path
 from .views import (
     forum_main,
     forum_detail,
-    edit_post,
-    delete_post,
     get_posts_api,
     create_post_api,
     edit_post_api,

@@ -47,7 +47,7 @@
               </div>
               <div class="flex flex-col gap-1">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="badge border-2 border-line bg-category px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-foreground">
+                  <span class="border-2 border-line bg-category px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-foreground">
                     {{ post.get_category_display|default:post.category }}
                   </span>
                   <span class="text-sm font-bold text-foreground">@{{ post.author_username }}</span>
@@ -71,17 +71,15 @@
                 </svg>
               </button>
               <div id="post-options-menu" class="absolute right-0 top-full z-20 mt-1 hidden min-w-44 border-2 border-line bg-surface py-1 shadow-[3px_3px_0_var(--shadow-color)]" role="menu">
-                {% if request.user.is_authenticated and request.user.username == post.author_username or request.user.is_staff %}
-                <button type="button" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-background cursor-pointer" role="menuitem">
+                <button type="button" id="menu-edit-post-btn" popovertarget="forum-edit-modal" popovertargetaction="show" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                   <span>Edit post</span>
                 </button>
-                <button type="button" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer" role="menuitem">
+                <button type="button" id="menu-delete-post-btn" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                   <span>Hapus post</span>
                 </button>
                 <hr class="border-line/20 my-1">
-                {% endif %}
                 <button type="button" id="copy-link-menu-btn" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-foreground hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                   <span>Salin tautan thread</span>
@@ -570,6 +568,8 @@
   </footer>
 </main>
 
+{% include 'pages/forum/components/forum_edit.html' %}
+
 <!-- Interactive Script for Detail Page -->
 <script>
   (() => {
@@ -679,6 +679,218 @@
       e.stopPropagation();
       optionsMenu?.classList.add("hidden");
       copyCurrentUrl();
+    });
+
+    // 7. Delete post handler (Calls delete_post_api)
+    async function handleDeletePost() {
+      const confirmed = confirm("Apakah kamu yakin ingin menghapus thread forum ini? Tindakan ini tidak dapat dibatalkan.");
+      if (!confirmed) return;
+
+      try {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+        const response = await fetch("{% url 'forum:delete_post_api' post.id %}", {
+          method: "DELETE",
+          headers: {
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+          },
+        });
+        if (!response.ok) {
+          const result = await response.json().catch(() => ({}));
+          throw new Error(result.error || "Gagal menghapus post.");
+        }
+        window.location.href = "{% url 'forum:forum_main' %}";
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    document.getElementById("action-delete-btn")?.addEventListener("click", handleDeletePost);
+    document.getElementById("menu-delete-post-btn")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      optionsMenu?.classList.add("hidden");
+      handleDeletePost();
+    });
+
+    // 8. Edit post modal interactivity
+    const editModal = document.getElementById("forum-edit-modal");
+    const editForm = document.getElementById("forum-edit-form");
+    const editApiError = document.getElementById("forum-edit-api-error");
+
+    const editTitleInput = document.getElementById("id_edit_title");
+    const editTitleCounter = document.getElementById("edit-title-char-counter");
+    const editPreviewTitle = document.getElementById("edit-preview-post-title");
+
+    const editContentInput = document.getElementById("id_edit_content");
+    const editContentCounter = document.getElementById("edit-content-char-counter");
+    const editPreviewContent = document.getElementById("edit-preview-post-content");
+
+    const editCategoryInput = document.getElementById("id_edit_category");
+    const editPreviewCategory = document.getElementById("edit-preview-category-badge");
+
+    const editCaptionInput = document.getElementById("id_edit_image_caption");
+    const editCaptionCounter = document.getElementById("edit-caption-char-counter");
+
+    const editImageUrlInput = document.getElementById("id_edit_image_url");
+    const editFormImagePlaceholder = document.getElementById("edit-form-image-placeholder");
+    const editFormImageLoading = document.getElementById("edit-form-image-loading");
+    const editFormImageError = document.getElementById("edit-form-image-error");
+    const editFormImageElement = document.getElementById("edit-form-image-element");
+
+    const editSidebarImagePlaceholder = document.getElementById("edit-sidebar-image-placeholder");
+    const editSidebarImageLoading = document.getElementById("edit-sidebar-image-loading");
+    const editSidebarImageElement = document.getElementById("edit-sidebar-image-element");
+
+    const editSubmitBtn = editForm?.querySelector(".btn-submit-edit");
+    const editSubmitText = document.getElementById("edit-submit-button-text");
+
+    let editImageDebounceTimer = null;
+
+    function updateEditTitle() {
+      if (!editTitleInput || !editTitleCounter) return;
+      const len = editTitleInput.value.length;
+      editTitleCounter.textContent = `${len} / 120`;
+      if (editPreviewTitle) editPreviewTitle.textContent = editTitleInput.value.trim() || "Judul post akan tampil di sini";
+    }
+
+    function updateEditContent() {
+      if (!editContentInput || !editContentCounter) return;
+      const len = editContentInput.value.length;
+      editContentCounter.textContent = `${len.toLocaleString("id-ID")} / 2.000`;
+      if (editPreviewContent) editPreviewContent.textContent = editContentInput.value.trim() || "Isi post akan tampil di sini...";
+    }
+
+    function updateEditCategory() {
+      if (!editCategoryInput || !editPreviewCategory) return;
+      const opt = editCategoryInput.options[editCategoryInput.selectedIndex];
+      editPreviewCategory.textContent = opt ? opt.text : "Tag";
+    }
+
+    function updateEditCaption() {
+      if (!editCaptionInput || !editCaptionCounter) return;
+      const len = editCaptionInput.value.length;
+      editCaptionCounter.textContent = `${len} / 200`;
+    }
+
+    function applyEditImagePreview(url) {
+      if (!url) {
+        editFormImageLoading?.classList.add("hidden");
+        editFormImageError?.classList.add("hidden");
+        if (editFormImageElement) {
+          editFormImageElement.src = "";
+          editFormImageElement.classList.add("hidden", "opacity-0");
+        }
+        editFormImagePlaceholder?.classList.remove("hidden");
+
+        editSidebarImageLoading?.classList.add("hidden");
+        if (editSidebarImageElement) {
+          editSidebarImageElement.src = "";
+          editSidebarImageElement.classList.add("hidden", "opacity-0");
+        }
+        editSidebarImagePlaceholder?.classList.remove("hidden");
+        return;
+      }
+
+      editFormImagePlaceholder?.classList.add("hidden");
+      editFormImageError?.classList.add("hidden");
+      editFormImageLoading?.classList.remove("hidden");
+
+      editSidebarImagePlaceholder?.classList.add("hidden");
+      editSidebarImageLoading?.classList.remove("hidden");
+
+      const tester = new Image();
+      tester.src = url;
+      tester.onload = () => {
+        if (editImageUrlInput.value.trim() !== url) return;
+        editFormImageLoading?.classList.add("hidden");
+        if (editFormImageElement) {
+          editFormImageElement.src = url;
+          editFormImageElement.classList.remove("hidden");
+          setTimeout(() => editFormImageElement.classList.remove("opacity-0"), 30);
+        }
+        editSidebarImageLoading?.classList.add("hidden");
+        if (editSidebarImageElement) {
+          editSidebarImageElement.src = url;
+          editSidebarImageElement.classList.remove("hidden");
+          setTimeout(() => editSidebarImageElement.classList.remove("opacity-0"), 30);
+        }
+      };
+      tester.onerror = () => {
+        if (editImageUrlInput.value.trim() !== url) return;
+        editFormImageLoading?.classList.add("hidden");
+        editFormImageError?.classList.remove("hidden");
+        editSidebarImageLoading?.classList.add("hidden");
+        editSidebarImagePlaceholder?.classList.remove("hidden");
+      };
+    }
+
+    editTitleInput?.addEventListener("input", updateEditTitle);
+    editContentInput?.addEventListener("input", updateEditContent);
+    editCategoryInput?.addEventListener("change", updateEditCategory);
+    editCaptionInput?.addEventListener("input", updateEditCaption);
+    editImageUrlInput?.addEventListener("input", () => {
+      clearTimeout(editImageDebounceTimer);
+      editImageDebounceTimer = setTimeout(() => {
+        applyEditImagePreview(editImageUrlInput.value.trim());
+      }, 500);
+    });
+
+    if (editModal) {
+      editModal.addEventListener("toggle", (event) => {
+        if (event.newState === "open") {
+          editModal.classList.add("translate-y-3", "opacity-0");
+          setTimeout(() => editModal.classList.remove("translate-y-3", "opacity-0"), 10);
+        }
+      });
+    }
+
+    editForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (editApiError) editApiError.hidden = true;
+      if (editSubmitBtn) {
+        editSubmitBtn.disabled = true;
+        if (editSubmitText) editSubmitText.textContent = "Menyimpan perubahan...";
+      }
+
+      const payload = {
+        title: editTitleInput.value.trim(),
+        content: editContentInput.value.trim(),
+        category: editCategoryInput.value,
+        image_url: editImageUrlInput.value.trim(),
+        image_caption: editCaptionInput.value.trim(),
+      };
+      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+
+      try {
+        const response = await fetch("{% url 'forum:edit_post_api' post.id %}", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          const errors = Object.values(result.errors || {})
+            .flat()
+            .map((err) => err.message)
+            .join(" ");
+          throw new Error(errors || "Gagal memperbarui post.");
+        }
+        window.location.reload();
+      } catch (err) {
+        if (editApiError) {
+          editApiError.textContent = err.message;
+          editApiError.hidden = false;
+        }
+      } finally {
+        if (editSubmitBtn) {
+          editSubmitBtn.disabled = false;
+          if (editSubmitText) editSubmitText.textContent = "Simpan perubahan";
+        }
+      }
     });
   })();
 </script>

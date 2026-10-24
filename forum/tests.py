@@ -82,6 +82,32 @@ class ForumCreateModalTests(TestCase):
         self.assertContains(response, "Kembali ke Forum")
         self.assertContains(response, 'id="tulis-komentar"')
         self.assertContains(response, 'id="comments-heading"')
+        self.assertContains(response, 'id="action-edit-btn"')
+        self.assertContains(response, 'id="action-delete-btn"')
+        self.assertContains(response, 'id="forum-edit-modal"')
+
+    def test_forum_edit_view(self):
+        post = Forum.objects.create(
+            author_username="someone",
+            title="Edit Page Post",
+            content="Konten yang mau diedit",
+        )
+        self.client.logout()  # Unauthenticated to verify no auth check
+        response = self.client.get(reverse("forum:edit_post", args=[post.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Edit post")
+        self.assertContains(response, "Edit Page Post")
+
+    def test_forum_delete_view_calls_delete_api(self):
+        post = Forum.objects.create(
+            author_username="someone",
+            title="Post to Delete",
+            content="Konten",
+        )
+        self.client.logout()  # Unauthenticated to verify no auth check
+        response = self.client.post(reverse("forum:delete_post", args=[post.id]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Forum.objects.filter(pk=post.id).exists())
 
     def test_edit_post_api_put(self):
         from urllib.parse import urlencode
