@@ -1,0 +1,231 @@
+<div
+  id="forum-create-modal"
+  popover="manual"
+  role="dialog"
+  aria-modal="true"
+  class="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none translate-y-3 overflow-y-auto border-0 bg-background p-0 text-foreground opacity-0 transition duration-200 ease-out"
+  style="position:fixed;inset:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;margin:0;padding:0;border:0"
+  aria-labelledby="forum-create-title"
+>
+  <div class="min-h-full">
+    <div class="border-b-2 border-line">
+      <div class="mx-auto max-w-6xl px-4 py-5 lg:px-8">
+        <div class="mb-3 flex justify-end">
+          <button
+            type="button"
+            class="grid size-9 shrink-0 place-items-center text-foreground cursor-pointer"
+            popovertarget="forum-create-modal"
+            popovertargetaction="hide"
+            aria-label="Tutup form"
+          >
+            <svg
+              class="size-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              aria-hidden="true"
+            >
+              <path d="m18 6-12 12M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="flex flex-col justify-between gap-4 pr-1 md:flex-row md:items-end">
+          <div>
+            <p class="mb-1.5 ml-0.5 text-xs font-bold uppercase tracking-widest text-muted">
+              Forum Komunitas &middot; Create Post
+            </p>
+            <h2 id="forum-create-title" class="font-heading text-2xl font-bold lg:text-3xl">
+              Create a new post
+            </h2>
+          </div>
+          <p class="text-xs text-muted md:max-w-md sm:text-sm">
+            Bagikan pertanyaan, tips, atau pengalamanmu. Post akan tampil di
+            feed komunitas setelah dipublikasikan.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <main class="mx-auto max-w-6xl px-4 py-6 lg:px-8">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+          <div class="flex h-full flex-col border-2 border-line bg-surface">
+            <form method="post" action="{% url 'forum:forum_main' %}" class="flex h-full flex-col">
+              {% csrf_token %}
+              <div class="flex grow flex-col gap-6 p-6 md:p-8">
+                <div id="forum-create-api-error" class="border-2 border-red-600 bg-red-50 p-3 text-sm text-red-700" role="alert" hidden></div>
+                {% if form.non_field_errors %}
+                  <div class="border-2 border-red-600 bg-red-50 p-3 text-sm text-red-700" role="alert">
+                    {{ form.non_field_errors }}
+                  </div>
+                {% endif %}
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="{{ form.title.id_for_label }}" class="text-sm font-bold">
+                      Judul post <span class="text-accent">*</span>
+                    </label>
+                    <span id="title-char-counter" class="text-xs text-muted transition-colors">0 / 120</span>
+                  </div>
+                  {{ form.title }}
+                  <p class="text-xs text-muted">Tulis judul yang jelas dan spesifik agar mudah ditemukan anggota lain.</p>
+                  {% if form.title.errors %}<p class="text-xs text-red-600" role="alert">{{ form.title.errors }}</p>{% endif %}
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="{{ form.content.id_for_label }}" class="text-sm font-bold">
+                      Isi post <span class="text-accent">*</span>
+                    </label>
+                    <span id="content-char-counter" class="text-xs text-muted transition-colors">0 / 2.000</span>
+                  </div>
+                  {{ form.content }}
+                  <p class="text-xs text-muted">Gunakan paragraf pendek agar mudah dibaca.</p>
+                  {% if form.content.errors %}<p class="text-xs text-red-600" role="alert">{{ form.content.errors }}</p>{% endif %}
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <label for="{{ form.category.id_for_label }}" class="text-sm font-bold">
+                    Tag <span class="text-accent">*</span>
+                  </label>
+                  {{ form.category }}
+                  {% if form.category.errors %}<p class="text-xs text-red-600" role="alert">{{ form.category.errors }}</p>{% endif %}
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="{{ form.image_url.id_for_label }}" class="text-sm font-bold">
+                      URL gambar <span class="font-normal text-muted">(opsional)</span>
+                    </label>
+                    <span class="text-xs text-muted">JPG, PNG, atau WEBP</span>
+                  </div>
+                  {{ form.image_url }}
+                  <p class="text-xs text-muted">Tempel tautan gambar langsung. Gambar akan tampil di bawah isi post.</p>
+                  {% if form.image_url.errors %}<p class="text-xs text-red-600" role="alert">{{ form.image_url.errors }}</p>{% endif %}
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center justify-between">
+                    <label for="{{ form.image_caption.id_for_label }}" class="text-sm font-bold">
+                      Caption gambar <span class="font-normal text-muted">(opsional)</span>
+                    </label>
+                    <span id="caption-char-counter" class="text-xs text-muted transition-colors">0 / 200</span>
+                  </div>
+                  {{ form.image_caption }}
+                  <p class="text-xs text-muted">Deskripsi singkat gambar untuk memberikan konteks.</p>
+                  {% if form.image_caption.errors %}<p class="text-xs text-red-600" role="alert">{{ form.image_caption.errors }}</p>{% endif %}
+                </div>
+
+                <div id="form-image-preview-container" class="mt-2 flex aspect-video w-full flex-col items-center justify-center overflow-hidden border-2 border-line bg-background text-muted relative transition-all">
+                  <div id="form-image-placeholder" class="flex flex-col items-center justify-center gap-2 p-4 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                      <circle cx="9" cy="9" r="2"></circle>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                    </svg>
+                    <p class="text-xs font-bold uppercase tracking-widest">Pratinjau Gambar - Muncul setelah URL valid</p>
+                  </div>
+                  <div id="form-image-loading" class="hidden flex flex-col items-center justify-center gap-2 p-4 text-center">
+                    <svg class="size-7 animate-spin text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    <p class="text-xs font-bold uppercase tracking-wider text-muted">Memeriksa URL gambar...</p>
+                  </div>
+                  <div id="form-image-error" class="hidden flex flex-col items-center justify-center gap-2 p-4 text-center text-red-600">
+                    <svg class="size-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <p class="text-xs font-bold uppercase tracking-wide">Gambar tidak dapat dimuat dari URL ini</p>
+                  </div>
+                  <img id="form-image-element" class="hidden h-full w-full object-contain transition-opacity duration-300 opacity-0" alt="Pratinjau gambar form">
+                </div>
+              </div>
+
+              <div class="mt-auto flex flex-col items-center justify-between gap-4 border-t-2 border-line bg-surface p-6 md:flex-row md:px-8 md:py-4">
+                <p class="w-full text-center text-xs text-muted md:w-auto md:text-left">
+                  Dengan memublikasikan, kamu menyetujui
+                  <a href="#" class="text-accent hover:underline">panduan komunitas</a>
+                </p>
+                <button
+                  type="submit"
+                  class="btn-submit-post inline-flex min-h-11 w-full items-center justify-center gap-2 border-2 border-line bg-accent px-6 py-2.5 text-sm font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all duration-150 hover:opacity-95 hover:shadow-[4px_4px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] md:w-auto cursor-pointer"
+                >
+                  <svg id="submit-button-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m22 2-7 20-4-9-9-4Z"></path>
+                    <path d="M22 2 11 13"></path>
+                  </svg>
+                  <span id="submit-button-text">Publikasikan post</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <aside class="flex flex-col gap-6 lg:col-span-1">
+          <section class="flex flex-col gap-4 border-2 border-line bg-surface p-6 shadow-[3px_3px_0_var(--shadow-color)]">
+            <div class="flex items-center justify-between border-b border-line pb-2.5">
+              <h3 class="text-lg font-bold">Pratinjau post</h3>
+              <span id="preview-category-badge" class="badge badge--category rounded-none border-2 border-line bg-category px-2 py-0.5 text-[0.5625rem] font-bold uppercase tracking-wide text-foreground">Tag</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="flex size-10 items-center justify-center border-2 border-line bg-background font-bold">
+                {{ request.user.username|default:"B"|make_list|first|upper }}
+              </div>
+              <div class="flex flex-col">
+                <span class="text-sm font-bold">@{{ request.user.username|default:"burhan" }}</span>
+                <span class="text-xs text-muted">Baru saja</span>
+              </div>
+            </div>
+            <div class="mt-2 flex flex-col gap-2">
+              <h4 id="preview-post-title" class="text-lg font-bold leading-tight break-words">Judul post akan tampil di sini</h4>
+              <p id="preview-post-content" class="text-sm text-muted whitespace-pre-line break-words">Isi post akan tampil di sini setelah kamu mulai menulis...</p>
+            </div>
+            <div id="sidebar-image-preview-container" class="mt-2 flex aspect-video w-full items-center justify-center overflow-hidden border-2 border-line bg-background text-muted relative transition-all">
+              <div id="sidebar-image-placeholder" class="flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+                  <circle cx="9" cy="9" r="2"></circle>
+                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+                </svg>
+              </div>
+              <div id="sidebar-image-loading" class="hidden flex items-center justify-center">
+                <svg class="size-5 animate-spin text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                </svg>
+              </div>
+              <img id="sidebar-image-element" class="hidden h-full w-full object-cover transition-opacity duration-300 opacity-0" alt="Pratinjau gambar sidebar">
+            </div>
+          </section>
+
+          <section class="border-2 border-line bg-surface p-6">
+            <h3 class="mb-6 text-lg font-bold">Tips menulis post yang baik</h3>
+            <ul class="flex flex-col gap-4">
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">1</span>
+                <span class="text-sm text-muted">Tulis judul yang jelas dan spesifik.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">2</span>
+                <span class="text-sm text-muted">Jelaskan konteks dan hal yang sudah kamu coba.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">3</span>
+                <span class="text-sm text-muted">Gunakan gambar yang relevan dan bebas hak cipta.</span>
+              </li>
+              <li class="flex items-start gap-4">
+                <span class="mt-0.5 flex size-6 shrink-0 items-center justify-center bg-line text-xs font-bold text-surface">4</span>
+                <span class="text-sm text-muted">Gunakan bahasa yang sopan dan saling menghargai.</span>
+              </li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+    </main>
+  </div>
+</div>
