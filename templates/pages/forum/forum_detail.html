@@ -7,8 +7,8 @@
 {% block content %}
 <main id="main-content" class="forum-detail-page w-full bg-background font-main text-foreground min-h-screen">
   <!-- Top Navigation / Breadcrumbs -->
-  <section class="border-b-2 border-line bg-background px-4 py-6 sm:px-6 md:px-12 lg:px-16">
-    <div class="mx-auto flex w-full max-w-360 flex-col gap-4">
+  <section class="border-b-2 border-line bg-background px-4 py-4 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-3">
       <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-2 text-xs">
           <a href="{% url 'forum:forum_main' %}" class="inline-flex items-center gap-1.5 font-bold text-foreground transition-colors hover:text-accent">
@@ -23,36 +23,36 @@
         </p>
       </div>
 
-      <div class="flex flex-col gap-1">
+      <div class="flex flex-col gap-0.5">
         <p class="text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Forum Komunitas &middot; Detail Thread</p>
-        <h1 class="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl lg:text-4xl">Percakapan komunitas</h1>
+        <h1 class="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl lg:text-3xl">Percakapan komunitas</h1>
       </div>
     </div>
   </section>
 
   <!-- Content Layout -->
-  <section class="px-4 py-8 sm:px-6 md:px-12 md:py-10 lg:px-16">
-    <div class="mx-auto grid w-full max-w-360 min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+  <section class="px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto grid w-full max-w-6xl min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
       
       <!-- Left Column: Post and Comments -->
-      <div class="flex min-w-0 flex-col gap-6">
+      <div class="flex min-w-0 flex-col gap-5">
         
         <!-- Main Post Card -->
-        <article class="forum-post-detail flex flex-col gap-5 border-2 border-line bg-surface p-5 sm:p-7 shadow-[4px_4px_0_var(--shadow-color)]">
+        <article class="forum-post-detail flex flex-col gap-4 border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
           <!-- Author Header -->
-          <header class="flex items-start justify-between gap-4">
-            <div class="flex items-center gap-3">
-              <div class="avatar flex size-11 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-lg font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)]" aria-hidden="true">
+          <header class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div class="avatar flex size-9 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-sm font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
                 {{ post.author_username|first|upper }}
               </div>
               <div class="flex flex-col gap-0.5">
                 <div class="flex flex-wrap items-center gap-2">
-                  <span class="text-sm font-bold text-foreground">@{{ post.author_username }}</span>
-                  <span class="border-2 border-line bg-category px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-foreground">
+                  <span class="text-xs sm:text-[0.8125rem] font-bold text-foreground">@{{ post.author_username }}</span>
+                  <span class="border-2 border-line bg-category px-1.5 py-0.5 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground">
                     {{ post.get_category_display|default:post.category }}
                   </span>
                 </div>
-                <div class="flex flex-wrap items-center gap-1.5 text-xs text-muted">
+                <div class="flex flex-wrap items-center gap-1.5 text-[0.6875rem] text-muted">
                   <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"d M Y, H:i" }}</time>
                   {% if post.updated_at != post.created_at %}
                   <span>&middot;</span>
@@ -64,26 +64,26 @@
 
             <!-- Post Actions Dropdown -->
             <div class="relative">
-              <button id="post-options-btn" class="grid size-8 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer" type="button" aria-label="Menu opsi post" aria-haspopup="true">
-                <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <button id="post-options-btn" class="grid size-7 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer" type="button" aria-label="Menu opsi post" aria-haspopup="true">
+                <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
                 </svg>
               </button>
-              <div id="post-options-menu" class="absolute right-0 top-full z-20 mt-1 hidden min-w-44 border-2 border-line bg-surface py-1 shadow-[3px_3px_0_var(--shadow-color)]" role="menu">
-                <button type="button" id="menu-edit-post-btn" popovertarget="forum-edit-modal" popovertargetaction="show" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-foreground hover:bg-background cursor-pointer" role="menuitem">
+              <div id="post-options-menu" class="absolute right-0 top-full z-20 mt-1 hidden min-w-40 border-2 border-line bg-surface py-1 shadow-[3px_3px_0_var(--shadow-color)]" role="menu">
+                <button type="button" id="menu-edit-post-btn" popovertarget="forum-edit-modal" popovertargetaction="show" class="flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold text-foreground hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                   <span>Edit post</span>
                 </button>
-                <button type="button" id="menu-delete-post-btn" class="flex w-full items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer" role="menuitem">
+                <button type="button" id="menu-delete-post-btn" class="flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                   <span>Hapus post</span>
                 </button>
                 <hr class="border-line/20 my-1">
-                <button type="button" id="copy-link-menu-btn" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-foreground hover:bg-background cursor-pointer" role="menuitem">
+                <button type="button" id="copy-link-menu-btn" class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-foreground hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                   <span>Salin tautan thread</span>
                 </button>
-                <button type="button" class="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-muted hover:bg-background cursor-pointer" role="menuitem">
+                <button type="button" class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-muted hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
                   <span>Laporkan post</span>
                 </button>
@@ -92,24 +92,24 @@
           </header>
 
           <!-- Post Title -->
-          <h2 class="font-heading text-2xl font-bold leading-tight text-foreground sm:text-3xl">
+          <h2 class="font-heading text-lg font-bold leading-snug text-foreground sm:text-xl">
             {{ post.title }}
           </h2>
 
           <!-- Post Content -->
-          <div class="post-content font-main text-sm sm:text-base leading-[1.7] text-foreground whitespace-pre-line space-y-3">
+          <div class="post-content font-main text-xs sm:text-[0.8125rem] leading-relaxed text-foreground whitespace-pre-line space-y-2.5">
             {{ post.content }}
           </div>
 
           <!-- Post Image (if present) -->
           {% if post.image_url %}
           <figure class="group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]">
-            <div class="relative flex max-h-140 w-full items-center justify-center overflow-hidden bg-background">
-              <img class="relative z-1 max-h-140 w-auto max-w-full object-contain" src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy">
+            <div class="relative flex max-h-72 sm:max-h-84 w-full items-center justify-center overflow-hidden bg-background">
+              <img class="relative z-1 max-h-72 sm:max-h-84 w-auto max-w-full object-contain" src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy">
             </div>
             {% if post.image_caption %}
-            <figcaption class="absolute bottom-3 right-3 z-2 flex items-center gap-1.5 border-2 border-line bg-surface/95 px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.0625rem] text-foreground shadow-[2px_2px_0_var(--shadow-color)] backdrop-blur-xs">
-              <svg class="size-3.5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3h18v18H3z"/><path d="M8 8h.01"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <figcaption class="absolute bottom-2.5 right-2.5 z-2 flex items-center gap-1.5 border-2 border-line bg-surface/95 px-2 py-0.5 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shadow-[2px_2px_0_var(--shadow-color)] backdrop-blur-xs">
+              <svg class="size-3 shrink-0 text-muted sm:size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 3h18v18H3z"/><path d="M8 8h.01"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
               <span>{{ post.image_caption }}</span>
             </figcaption>
             {% endif %}
@@ -117,7 +117,7 @@
           {% endif %}
 
           <!-- Post Stats -->
-          <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line/30 pt-4 text-xs text-muted">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line/30 pt-3 text-[0.6875rem] text-muted">
             <div class="flex flex-wrap items-center gap-2">
               <span>1.284 kali dilihat</span>
               <span>&middot;</span>
@@ -125,36 +125,36 @@
               <span>&middot;</span>
               <span>2 menit baca</span>
             </div>
-            <div class="font-mono text-[0.6875rem] uppercase tracking-wider text-muted">
+            <div class="font-mono text-[0.625rem] uppercase tracking-wider text-muted">
               THREAD #PRWT-{{ post.id|stringformat:".4s" }}
             </div>
           </div>
 
           <!-- Action Buttons Row -->
-          <footer class="flex flex-wrap items-center gap-2.5 pt-1">
-            <button id="like-btn" class="inline-flex min-h-9 items-center gap-2 border-2 border-line bg-surface px-4 py-1.5 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <footer class="flex flex-wrap items-center gap-2 pt-1">
+            <button id="like-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
+              <svg class="size-3.5 text-accent sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/>
               </svg>
               <span id="like-count">{{ post.total_likes|default:38 }} suka</span>
             </button>
 
-            <a href="#tulis-komentar" class="inline-flex min-h-9 items-center gap-2 border-2 border-line bg-surface px-4 py-1.5 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5">
-              <svg class="size-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <a href="#tulis-komentar" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5">
+              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"/>
               </svg>
               <span>{{ post.total_comments|default:12 }} komentar</span>
             </a>
 
-            <button id="save-btn" class="inline-flex min-h-9 items-center gap-2 border-2 border-line bg-surface px-4 py-1.5 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <button id="save-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
+              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
               </svg>
               <span id="save-btn-text">Simpan</span>
             </button>
 
-            <button id="share-btn" class="inline-flex min-h-9 items-center gap-2 border-2 border-line bg-surface px-4 py-1.5 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <button id="share-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
+              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
               </svg>
               <span>Bagikan</span>
@@ -172,35 +172,35 @@
         </div>
 
         <!-- Comment Input Section -->
-        <section id="tulis-komentar" class="border-2 border-line bg-surface p-5 sm:p-6 shadow-[4px_4px_0_var(--shadow-color)]">
-          <header class="flex items-start justify-between gap-4">
-            <div class="flex items-center gap-3">
-              <div class="avatar flex size-9 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-sm font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)]" aria-hidden="true">
+        <section id="tulis-komentar" class="border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
+          <header class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+              <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
                 {% if request.user.is_authenticated %}{{ request.user.username|first|upper }}{% else %}A{% endif %}
               </div>
               <div class="flex flex-col">
-                <h3 class="font-heading text-base font-bold text-foreground">Tulis komentar</h3>
-                <p class="text-xs text-muted">Sebagai {{ request.user.username|default:"anindita" }} &middot; {% if request.user.is_authenticated %}Pengguna terdaftar{% else %}Pengguna terdaftar{% endif %}</p>
+                <h3 class="font-heading text-sm font-bold text-foreground sm:text-base">Tulis komentar</h3>
+                <p class="text-[0.6875rem] text-muted">Sebagai {{ request.user.username|default:"anindita" }} &middot; {% if request.user.is_authenticated %}Pengguna terdaftar{% else %}Pengguna terdaftar{% endif %}</p>
               </div>
             </div>
-            <p class="hidden text-xs text-muted sm:block">Jaga percakapan tetap ramah dan relevan.</p>
+            <p class="hidden text-[0.6875rem] text-muted sm:block">Jaga percakapan tetap ramah dan relevan.</p>
           </header>
 
-          <form id="comment-form" class="mt-4 flex flex-col gap-3">
+          <form id="comment-form" class="mt-3 flex flex-col gap-2.5">
             <div class="relative">
-              <textarea id="comment-textarea" rows="4" maxlength="2000" placeholder="Bagikan pengalaman atau saran perawatanmu..." class="w-full resize-none border-2 border-line bg-background p-3.5 pb-7 text-xs sm:text-sm text-foreground outline-none placeholder:text-muted focus:bg-surface transition-colors"></textarea>
-              <span id="comment-char-counter" class="absolute bottom-2 right-3 text-[0.625rem] font-semibold text-muted">0 / 2.000</span>
+              <textarea id="comment-textarea" rows="3" maxlength="2000" placeholder="Bagikan pengalaman atau saran perawatanmu..." class="w-full resize-none border-2 border-line bg-background p-3 pb-6 text-xs text-foreground outline-none placeholder:text-muted focus:bg-surface transition-colors"></textarea>
+              <span id="comment-char-counter" class="absolute bottom-2 right-3 text-[0.5625rem] font-semibold text-muted">0 / 2.000</span>
             </div>
-            <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
-              <div class="flex items-center gap-1.5 text-muted">
-                <button type="button" class="grid size-7.5 place-items-center border border-line/40 bg-surface font-serif text-xs font-bold hover:bg-background cursor-pointer" title="Tebal (Bold)">B</button>
-                <button type="button" class="grid size-7.5 place-items-center border border-line/40 bg-surface font-serif text-xs italic hover:bg-background cursor-pointer" title="Miring (Italic)">I</button>
-                <button type="button" class="grid size-7.5 place-items-center border border-line/40 bg-surface hover:bg-background cursor-pointer" title="Lampiran">
+            <div class="flex flex-wrap items-center justify-between gap-2.5 pt-0.5">
+              <div class="flex items-center gap-1 text-muted">
+                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface font-serif text-xs font-bold hover:bg-background cursor-pointer" title="Tebal (Bold)">B</button>
+                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface font-serif text-xs italic hover:bg-background cursor-pointer" title="Miring (Italic)">I</button>
+                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface hover:bg-background cursor-pointer" title="Lampiran">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
                 </button>
               </div>
-              <button type="submit" class="inline-flex min-h-10 items-center justify-center gap-2 border-2 border-line bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer">
-                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+              <button type="submit" class="inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer">
+                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                 <span>Kirim komentar</span>
               </button>
             </div>
@@ -208,15 +208,15 @@
         </section>
 
         <!-- Comments List Container -->
-        <section class="flex flex-col gap-5 border-2 border-line bg-surface p-5 sm:p-7 shadow-[4px_4px_0_var(--shadow-color)]" aria-labelledby="comments-heading">
-          <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-line/30 pb-4">
+        <section class="flex flex-col gap-4 border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]" aria-labelledby="comments-heading">
+          <header class="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between border-b border-line/30 pb-3">
             <div>
-              <h3 id="comments-heading" class="font-heading text-xl font-bold text-foreground sm:text-2xl">12 komentar</h3>
+              <h3 id="comments-heading" class="font-heading text-lg font-bold text-foreground sm:text-xl">12 komentar</h3>
               <p class="text-xs text-muted">Diskusi dari 8 anggota komunitas</p>
             </div>
             <div class="flex items-center gap-2 self-start sm:self-auto">
               <label for="comment-sort" class="text-xs font-medium text-muted">Urutkan:</label>
-              <select id="comment-sort" class="border-2 border-line bg-surface px-3 py-1.5 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] outline-none cursor-pointer">
+              <select id="comment-sort" class="border-2 border-line bg-surface px-2.5 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] outline-none cursor-pointer">
                 <option value="helpful">Paling membantu</option>
                 <option value="newest">Terbaru</option>
                 <option value="oldest">Terlama</option>
@@ -504,8 +504,8 @@
   </section>
 
   <!-- Community Footer (matching mockup exactly with Thrift.io palette) -->
-  <footer class="mt-12 border-t-2 border-line bg-hero text-hero-foreground px-4 py-12 sm:px-6 md:px-12 lg:px-16">
-    <div class="mx-auto flex w-full max-w-360 flex-col gap-10">
+  <footer class="mt-10 border-t-2 border-line bg-hero text-hero-foreground px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-8">
       <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
         <div class="flex flex-col gap-4 lg:col-span-2">
           <div class="flex items-center gap-2">

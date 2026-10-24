@@ -6,39 +6,28 @@
 
 {% block content %}
 <main id="main-content" class="forum-page w-full bg-background font-main text-foreground">
-  <section class="forum-intro border-b-2 border-line bg-background px-4 py-8 sm:px-6 md:px-12 md:py-10 lg:px-16">
-    <div class="mx-auto flex w-full max-w-360 flex-col gap-7">
-      <div class="forum-intro__row flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div class="forum-intro__copy flex max-w-3xl flex-col gap-2">
-          <p class="forum-intro__label text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Forum
-            komunitas</p>
-          <h1
-            class="forum-intro__title font-heading text-[2rem] font-bold leading-[1.05] tracking-[-0.075rem] text-foreground sm:text-[2.5rem] lg:text-[3rem]"
-            id="forum-title">Temukan percakapan yang kamu butuhkan.</h1>
-        </div>
-        <p class="forum-intro__access max-w-108 text-[0.8125rem] leading-relaxed text-muted sm:text-right">
-          Guest dapat membaca. Pengguna terdaftar dapat menyukai, membuat post, dan berkomentar.
-        </p>
-      </div>
+  <section class="forum-intro bg-background px-4 pt-5 pb-2 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-2">
+      <p class="forum-intro__label text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Forum komunitas</p>
 
       <form class="forum-search flex flex-col gap-2 sm:flex-row" role="search" action="#" method="get">
         <div
-          class="forum-search__field flex min-w-0 flex-1 items-center gap-3 border-2 border-line bg-surface px-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:px-4">
-          <svg class="size-5 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          class="forum-search__field flex min-w-0 flex-1 items-center gap-2.5 border-2 border-line bg-surface px-3 shadow-[3px_3px_0_var(--shadow-color)] sm:px-3.5">
+          <svg class="size-4 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="1.8" aria-hidden="true">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-4-4" />
           </svg>
           <label class="sr-only" for="forum-search-input">Cari forum</label>
           <input
-            class="forum-search__input min-w-0 flex-1 bg-transparent py-3 text-[0.8125rem] text-foreground outline-none placeholder:text-muted sm:py-3.5"
+            class="forum-search__input min-w-0 flex-1 bg-transparent py-2.5 text-xs text-foreground outline-none placeholder:text-muted sm:text-[0.8125rem]"
             id="forum-search-input" type="search" name="q" placeholder="Cari topik, judul post, atau nama pengguna">
           <kbd
-            class="forum-search__shortcut hidden shrink-0 border border-line px-1.5 py-1 text-[0.625rem] text-muted sm:inline-flex">⌘
+            class="forum-search__shortcut hidden shrink-0 border border-line px-1.5 py-0.5 text-[0.625rem] text-muted sm:inline-flex">⌘
             K</kbd>
         </div>
         <button
-          class="forum-search__button inline-flex min-h-11 items-center justify-center gap-2 border-2 border-line bg-accent px-5 text-[0.8125rem] font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)]"
+          class="forum-search__button inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] sm:text-[0.8125rem]"
           type="submit">
           Cari forum
         </button>
@@ -46,21 +35,21 @@
     </div>
   </section>
 
-  <section class="community-feed bg-background px-4 pb-12 pt-8 sm:px-6 md:px-12 md:pb-14 md:pt-9 lg:px-16"
+  <section class="community-feed bg-background px-4 pb-10 pt-2 sm:px-6 lg:px-8"
     aria-labelledby="feed-title">
-    <div class="mx-auto flex w-full max-w-360 flex-col gap-5">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-4">
       <header
-        class="community-feed__header flex flex-col items-stretch justify-between gap-4 sm:flex-row sm:items-center">
-        <div class="community-feed__heading flex flex-col gap-1.25">
+        class="community-feed__header flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+        <div class="community-feed__heading flex flex-col gap-1">
           <h2
-            class="community-feed__title font-heading text-[1.5rem] font-bold leading-tight text-foreground sm:text-[1.75rem]"
+            class="community-feed__title font-heading text-xl font-bold leading-tight text-foreground sm:text-2xl"
             id="feed-title">Feed komunitas</h2>
-          <p class="community-feed__description text-[0.8125rem] text-muted">Percakapan terbaru dari 8.421 anggota</p>
+          <p class="community-feed__description text-xs text-muted">Percakapan terbaru dari 8.421 anggota</p>
         </div>
         <button
-          class="community-feed__create inline-flex min-h-11 items-center justify-center gap-2 border-2 border-line bg-accent px-4.5 py-2 text-[0.8125rem] font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all duration-150 hover:shadow-[4px_4px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto cursor-pointer"
+          class="community-feed__create inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto sm:text-[0.8125rem] cursor-pointer"
           type="button" popovertarget="forum-create-modal" popovertargetaction="show">
-          <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          <svg class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             aria-hidden="true">
             <path d="M12 5v14M5 12h14" />
           </svg>
@@ -69,16 +58,16 @@
         </button>
       </header>
 
-      <div class="community-feed__layout grid min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div class="community-feed__layout grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <div class="community-feed__main flex min-w-0 flex-col gap-3">
           <div
-            class="feed-controls flex min-h-12 flex-wrap items-center gap-2 border-2 border-line bg-surface px-2.5 py-2 shadow-[3px_3px_0_var(--shadow-color)] sm:flex-nowrap sm:px-3">
-            <div class="feed-controls__sort flex min-w-0 flex-1 items-center gap-1 sm:flex-initial sm:gap-2"
+            class="feed-controls flex min-h-10 flex-wrap items-center gap-2 border-2 border-line bg-surface px-2.5 py-1.5 shadow-[3px_3px_0_var(--shadow-color)] sm:flex-nowrap sm:px-3">
+            <div class="feed-controls__sort flex min-w-0 flex-1 items-center gap-1 sm:flex-initial sm:gap-1.5"
               role="group" aria-label="Urutkan post">
               <button
-                class="sort-option inline-flex min-h-8 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.6875rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3.5 sm:shadow-[3px_3px_0_var(--shadow-color)]"
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
                 type="button" aria-pressed="true">
-                <svg class="size-3.5 shrink-0 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                <svg class="size-3 shrink-0 sm:size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-width="1.8" aria-hidden="true">
                   <path d="m3 17 6-6 4 4 8-8" />
                   <path d="M15 7h6v6" />
@@ -86,138 +75,122 @@
                 Trending
               </button>
               <button
-                class="sort-option inline-flex min-h-8 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.6875rem] font-bold text-muted sm:flex-initial sm:px-3.5"
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
                 type="button" aria-pressed="false">Terbaru</button>
               <button
-                class="sort-option inline-flex min-h-8 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.6875rem] font-bold text-muted sm:flex-initial sm:px-3.5"
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
                 type="button" aria-pressed="false">Diikuti</button>
             </div>
             <p class="feed-controls__count w-full text-right text-[0.625rem] text-muted sm:ml-auto sm:w-auto">128 post
               minggu ini</p>
           </div>
 
-          <div
-            class="guest-note flex flex-col items-start gap-2 border-2 border-line bg-surface px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
-            role="note">
-            <p
-              class="guest-note__copy flex items-start gap-2 text-[0.6875rem] leading-relaxed text-muted sm:items-center">
-              <svg class="mt-0.5 size-4 shrink-0 sm:mt-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="1.8" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 11v5m0-8h.01" />
-              </svg>
-              <span>Guest dapat membaca semua post tanpa akun.</span>
-            </p>
-            <a class="guest-note__link pl-6 text-[0.6875rem] font-bold text-accent sm:pl-0" href="#">Masuk untuk suka
-              &amp; berkomentar →</a>
-          </div>
-
           <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}"
             data-current-user="{{ request.user.username|default:'' }}">
-            <li class="w-full py-8 text-center text-sm text-muted" data-posts-loading role="status">
+            <li class="w-full py-6 text-center text-xs text-muted" data-posts-loading role="status">
               Memuat post forum...
             </li>
           </ul>
 
         </div>
 
-        <aside class="forum-sidebar flex w-full flex-col gap-3.5 lg:sticky lg:top-24 lg:w-auto"
+        <aside class="forum-sidebar flex w-full flex-col gap-3 lg:sticky lg:top-24 lg:w-auto"
           aria-label="Informasi forum">
           <section
-            class="popular-topics flex flex-col gap-3.5 border-2 border-line bg-surface p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-[4px_4px_0_var(--shadow-color)]"
+            class="popular-topics flex flex-col gap-3 border-2 border-line bg-surface p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4"
             aria-labelledby="popular-topics-title">
-            <header class="popular-topics__header flex items-center justify-between border-b border-line pb-3.5">
-              <h2 class="popular-topics__title font-heading text-base font-bold text-foreground"
+            <header class="popular-topics__header flex items-center justify-between border-b border-line pb-2.5">
+              <h2 class="popular-topics__title font-heading text-sm font-bold text-foreground sm:text-base"
                 id="popular-topics-title">Topik populer</h2>
-              <a class="icon-button grid size-8 place-items-center text-muted" href="#"
-                aria-label="Lihat semua topik"><svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              <a class="icon-button grid size-7 place-items-center text-muted" href="#"
+                aria-label="Lihat semua topik"><svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-width="1.8" aria-hidden="true">
                   <path d="M7 17 17 7M8 7h9v9" />
                 </svg></a>
             </header>
-            <ol class="popular-topics__list flex flex-col gap-3.5">
-              <li><a class="topic-row flex min-h-8 items-center gap-2.5" href="#"><span
-                    class="topic-row__rank w-5 shrink-0 text-[0.6875rem] font-bold text-muted">01</span><span
-                    class="topic-row__details flex min-w-0 flex-1 flex-col gap-0.75"><span
-                      class="topic-row__name text-[0.8125rem] font-semibold text-foreground">Perawatan
+            <ol class="popular-topics__list flex flex-col gap-2.5">
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">01</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Perawatan
                       pakaian</span><span class="topic-row__count text-[0.625rem] text-muted">2,4 rb
-                      post</span></span><span class="topic-row__arrow text-[0.6875rem] text-muted"
+                      post</span></span><span class="topic-row__arrow text-[0.625rem] text-muted"
                     aria-hidden="true">→</span></a></li>
-              <li><a class="topic-row flex min-h-8 items-center gap-2.5" href="#"><span
-                    class="topic-row__rank w-5 shrink-0 text-[0.6875rem] font-bold text-muted">02</span><span
-                    class="topic-row__details flex min-w-0 flex-1 flex-col gap-0.75"><span
-                      class="topic-row__name text-[0.8125rem] font-semibold text-foreground">Styling ulang</span><span
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">02</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Styling ulang</span><span
                       class="topic-row__count text-[0.625rem] text-muted">1,8 rb post</span></span><span
-                    class="topic-row__arrow text-[0.6875rem] text-muted" aria-hidden="true">→</span></a></li>
-              <li><a class="topic-row flex min-h-8 items-center gap-2.5" href="#"><span
-                    class="topic-row__rank w-5 shrink-0 text-[0.6875rem] font-bold text-muted">03</span><span
-                    class="topic-row__details flex min-w-0 flex-1 flex-col gap-0.75 class=" topic-row__name
-                    text-[0.8125rem] font-semibold text-foreground">Thrifting cerdas</span><span
-                    class="topic-row__count text-[0.625rem] text-muted">1,6 rb post</span></span><span
-                    class="topic-row__arrow text-[0.6875rem] text-muted" aria-hidden="true">→</span></a></li>
-              <li><a class="topic-row flex min-h-8 items-center gap-2.5" href="#"><span
-                    class="topic-row__rank w-5 shrink-0 text-[0.6875rem] font-bold text-muted">04</span><span
-                    class="topic-row__details flex min-w-0 flex-1 flex-col gap-0.75"><span
-                      class="topic-row__name text-[0.8125rem] font-semibold text-foreground">Reparasi &amp;
+                    class="topic-row__arrow text-[0.625rem] text-muted" aria-hidden="true">→</span></a></li>
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">03</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Thrifting cerdas</span><span
+                      class="topic-row__count text-[0.625rem] text-muted">1,6 rb post</span></span><span
+                    class="topic-row__arrow text-[0.625rem] text-muted" aria-hidden="true">→</span></a></li>
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">04</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Reparasi &amp;
                       upcycle</span><span class="topic-row__count text-[0.625rem] text-muted">1,2 rb
-                      post</span></span><span class="topic-row__arrow text-[0.6875rem] text-muted"
+                      post</span></span><span class="topic-row__arrow text-[0.625rem] text-muted"
                     aria-hidden="true">→</span></a></li>
-              <li><a class="topic-row flex min-h-8 items-center gap-2.5" href="#"><span
-                    class="topic-row__rank w-5 shrink-0 text-[0.6875rem] font-bold text-muted">05</span><span
-                    class="topic-row__details flex min-w-0 flex-1 flex-col gap-0.75"><span
-                      class="topic-row__name text-[0.8125rem] font-semibold text-foreground">Sustainable
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">05</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Sustainable
                       fashion</span><span class="topic-row__count text-[0.625rem] text-muted">984
-                      post</span></span><span class="topic-row__arrow text-[0.6875rem] text-muted"
+                      post</span></span><span class="topic-row__arrow text-[0.625rem] text-muted"
                     aria-hidden="true">→</span></a></li>
             </ol>
           </section>
 
           <section
-            class="community-guide flex flex-col gap-3.5 border-2 border-line bg-surface p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-[4px_4px_0_var(--shadow-color)]"
+            class="community-guide flex flex-col gap-3 border-2 border-line bg-surface p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4"
             aria-labelledby="guide-title">
-            <h2 class="community-guide__title font-heading text-base font-bold text-foreground" id="guide-title">Panduan
+            <h2 class="community-guide__title font-heading text-sm font-bold text-foreground sm:text-base" id="guide-title">Panduan
               komunitas</h2>
-            <p class="community-guide__description text-[0.6875rem] leading-relaxed text-muted">Ruang aman untuk berbagi
+            <p class="community-guide__description text-[0.625rem] leading-relaxed text-muted">Ruang aman untuk berbagi
               pengetahuan slow fashion yang praktis, jujur, dan saling menghargai.</p>
-            <ol class="community-guide__list flex flex-col gap-3.5">
-              <li class="guide-item flex items-start gap-2.5"><span
-                  class="guide-item__number grid size-5.5 shrink-0 place-items-center bg-foreground text-[0.625rem] font-bold text-surface"
+            <ol class="community-guide__list flex flex-col gap-2.5">
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
                   aria-hidden="true">1</span><span
-                  class="guide-item__rule text-[0.6875rem] leading-relaxed text-muted">Bagikan pengalaman, bukan
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Bagikan pengalaman, bukan
                   menghakimi.</span></li>
-              <li class="guide-item flex items-start gap-2.5"><span
-                  class="guide-item__number grid size-5.5 shrink-0 place-items-center bg-foreground text-[0.625rem] font-bold text-surface"
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
                   aria-hidden="true">2</span><span
-                  class="guide-item__rule text-[0.6875rem] leading-relaxed text-muted">Cantumkan sumber untuk klaim
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Cantumkan sumber untuk klaim
                   data.</span></li>
-              <li class="guide-item flex items-start gap-2.5"><span
-                  class="guide-item__number grid size-5.5 shrink-0 place-items-center bg-foreground text-[0.625rem] font-bold text-surface"
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
                   aria-hidden="true">3</span><span
-                  class="guide-item__rule text-[0.6875rem] leading-relaxed text-muted">Hindari promosi tanpa
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Hindari promosi tanpa
                   konteks.</span></li>
-              <li class="guide-item flex items-start gap-2.5"><span
-                  class="guide-item__number grid size-5.5 shrink-0 place-items-center bg-foreground text-[0.625rem] font-bold text-surface"
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
                   aria-hidden="true">4</span><span
-                  class="guide-item__rule text-[0.6875rem] leading-relaxed text-muted">Laporkan konten yang
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Laporkan konten yang
                   merugikan.</span></li>
             </ol>
-            <a class="community-guide__link text-[0.6875rem] font-bold text-accent" href="#">Baca panduan lengkap</a>
+            <a class="community-guide__link text-[0.625rem] font-bold text-accent" href="#">Baca panduan lengkap</a>
           </section>
 
           <section
-            class="member-access flex flex-col gap-3 border-2 border-line bg-hero p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-none"
+            class="member-access flex flex-col gap-2.5 border-2 border-line bg-hero p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4"
             aria-labelledby="member-title">
-            <svg class="member-access__icon size-7 text-hero-accent" viewBox="0 0 24 24" fill="none"
+            <svg class="member-access__icon size-6 text-hero-accent" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="1.8" aria-hidden="true">
               <circle cx="9" cy="8" r="3.5" />
               <path
                 d="M2.5 20v-1.5A4.5 4.5 0 0 1 7 14h4a4.5 4.5 0 0 1 4.5 4.5V20M16 4.8a3.5 3.5 0 0 1 0 6.4m2 3.1a4.5 4.5 0 0 1 3.5 4.4V20" />
             </svg>
-            <h2 class="member-access__title font-heading text-base font-bold text-hero-accent" id="member-title">Ikut
+            <h2 class="member-access__title font-heading text-sm font-bold text-hero-accent sm:text-base" id="member-title">Ikut
               dalam percakapan</h2>
-            <p class="member-access__description text-[0.6875rem] leading-relaxed text-hero-foreground">Pengguna
+            <p class="member-access__description text-[0.625rem] leading-relaxed text-hero-foreground">Pengguna
               terdaftar dapat menyukai post, membuat post baru, dan menulis komentar.</p>
-            <a class="member-access__action grid min-h-10 place-items-center border-2 border-line bg-highlight px-4 py-2 text-[0.6875rem] font-bold text-foreground"
+            <a class="member-access__action grid min-h-8.5 place-items-center border-2 border-line bg-highlight px-3 py-1.5 text-xs font-bold text-foreground"
               href="#">Daftar gratis</a>
           </section>
         </aside>
@@ -278,49 +251,109 @@
     function createPostCard(post) {
       const detailUrl = post.detail_url || `/forum/${post.id}/`;
       const item = makeElement("li", "");
-      const article = makeElement("article", "forum-post flex min-w-0 flex-col gap-4 border-2 border-line bg-surface p-4 shadow-[3px_3px_0_var(--shadow-color)] sm:p-5 sm:shadow-[4px_4px_0_var(--shadow-color)] transition-all duration-150 hover:shadow-[5px_5px_0_var(--shadow-color)] sm:hover:shadow-[6px_6px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 cursor-pointer");
+      const article = makeElement("article", "forum-post flex min-w-0 flex-col gap-3.5 border-2 border-line bg-surface p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4.5 transition-colors cursor-pointer");
 
-      const header = makeElement("header", "forum-post__author flex min-w-0 items-center justify-between gap-3");
-      const authorGroup = makeElement("div", "flex min-w-0 items-center gap-3");
-      const avatar = makeElement("div", "avatar flex size-10 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-base font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]", post.author_username.charAt(0).toUpperCase());
+      const header = makeElement("header", "forum-post__author flex min-w-0 items-center justify-between gap-2.5");
+      const authorGroup = makeElement("div", "flex min-w-0 items-center gap-2.5");
+      const avatar = makeElement("div", "avatar flex size-8.5 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs sm:text-sm font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]", post.author_username.charAt(0).toUpperCase());
       avatar.setAttribute("aria-hidden", "true");
 
       const details = makeElement("div", "flex min-w-0 flex-col gap-0.5");
       const userAndTag = makeElement("div", "flex min-w-0 flex-wrap items-center gap-2");
-      const author = makeElement("span", "forum-post__username truncate text-sm font-bold text-foreground", `@${post.author_username.replace(/^@/, '')}`);
-      const category = makeElement("span", "badge border-2 border-line bg-category px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-wider text-foreground shrink-0", post.category);
+      const author = makeElement("span", "forum-post__username truncate text-xs sm:text-[0.8125rem] font-bold text-foreground", `@${post.author_username.replace(/^@/, '')}`);
+      const category = makeElement("span", "badge border-2 border-line bg-category px-1.5 py-0.5 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shrink-0", post.category);
       userAndTag.append(author, category);
 
-      const time = makeElement("time", "forum-post__time text-xs text-muted", formatPostDateTime(post.created_at));
+      const time = makeElement("time", "forum-post__time text-[0.6875rem] text-muted", formatPostDateTime(post.created_at));
       time.dateTime = post.created_at;
       time.title = !Number.isNaN(new Date(post.created_at).getTime()) ? new Date(post.created_at).toLocaleString("id-ID") : post.created_at;
 
       details.append(userAndTag, time);
       authorGroup.append(avatar, details);
 
-      header.append(authorGroup);
+      const optionsContainer = makeElement("div", "relative");
+      const optionsBtn = makeElement("button", "grid size-7 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer shrink-0");
+      optionsBtn.type = "button";
+      optionsBtn.setAttribute("aria-label", "Menu opsi post");
+      optionsBtn.innerHTML = `
+        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
+        </svg>
+      `;
 
-      const content = makeElement("div", "forum-post__content flex flex-col gap-2");
-      const title = makeElement("h3", "forum-post__title font-heading text-[1.25rem] font-bold leading-tight tracking-[-0.0125rem] text-foreground sm:text-[1.375rem]");
+      const optionsMenu = makeElement("div", "absolute right-0 top-full z-20 mt-1 hidden min-w-40 border-2 border-line bg-surface py-1 shadow-[3px_3px_0_var(--shadow-color)]");
+      const copyLinkBtn = makeElement("button", "flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-foreground hover:bg-background cursor-pointer");
+      copyLinkBtn.type = "button";
+      copyLinkBtn.innerHTML = `
+        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <span>Salin tautan post</span>
+      `;
+      copyLinkBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        optionsMenu.classList.add("hidden");
+        try {
+          await navigator.clipboard.writeText(new URL(detailUrl, window.location.origin).href);
+          const span = copyLinkBtn.querySelector("span");
+          if (span) span.textContent = "Tautan tersalin!";
+          setTimeout(() => {
+            if (span) span.textContent = "Salin tautan post";
+          }, 2000);
+        } catch (err) {
+          console.error("Gagal menyalin tautan:", err);
+        }
+      });
+
+      const reportBtn = makeElement("button", "flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-muted hover:bg-background cursor-pointer");
+      reportBtn.type = "button";
+      reportBtn.innerHTML = `
+        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+        <span>Laporkan post</span>
+      `;
+      reportBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        optionsMenu.classList.add("hidden");
+      });
+
+      optionsMenu.append(copyLinkBtn, reportBtn);
+
+      optionsBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelectorAll(".forum-post header .relative > div:not(.hidden)").forEach((m) => {
+          if (m !== optionsMenu) m.classList.add("hidden");
+        });
+        optionsMenu.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!optionsContainer.contains(e.target)) {
+          optionsMenu.classList.add("hidden");
+        }
+      });
+
+      optionsContainer.append(optionsBtn, optionsMenu);
+      header.append(authorGroup, optionsContainer);
+
+      const content = makeElement("div", "forum-post__content flex flex-col gap-1.5");
+      const title = makeElement("h3", "forum-post__title font-heading text-base font-bold leading-snug tracking-tight text-foreground sm:text-lg");
       const titleLink = makeElement("a", "hover:underline focus:outline-none", post.title);
       titleLink.href = detailUrl;
       title.append(titleLink);
-      const body = makeElement("p", "forum-post__body text-[0.8125rem] leading-[1.6] text-muted sm:text-sm", post.content);
+      const body = makeElement("p", "forum-post__body text-xs sm:text-[0.8125rem] leading-relaxed text-muted", post.content);
       content.append(title, body);
 
       article.append(header, content);
 
       if (post.image_url) {
         const figure = makeElement("figure", "forum-post__media group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]");
-        const imageContainer = makeElement("div", "relative flex max-h-125 w-full items-center justify-center overflow-hidden bg-background sm:max-h-135");
-        const image = makeElement("img", "relative z-1 max-h-125 w-auto max-w-full object-contain sm:max-h-135");
+        const imageContainer = makeElement("div", "relative flex max-h-72 w-full items-center justify-center overflow-hidden bg-background sm:max-h-84");
+        const image = makeElement("img", "relative z-1 max-h-72 w-auto max-w-full object-contain sm:max-h-84");
         image.src = post.image_url;
         image.alt = post.title;
         image.loading = "lazy";
         imageContainer.append(image);
 
-        const caption = makeElement("figcaption", "absolute bottom-3 right-3 z-2 flex items-center gap-1.5 border-2 border-line bg-surface/95 px-2.5 py-1 text-[0.625rem] font-bold uppercase tracking-[0.0625rem] text-foreground shadow-[2px_2px_0_var(--shadow-color)] backdrop-blur-xs");
-        caption.append(createIcon(["M3 3h18v18H3z", "M8 8h.01", "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"], "size-3.5 shrink-0 text-muted"));
+        const caption = makeElement("figcaption", "absolute bottom-2.5 right-2.5 z-2 flex items-center gap-1.5 border-2 border-line bg-surface/95 px-2 py-0.5 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shadow-[2px_2px_0_var(--shadow-color)] backdrop-blur-xs");
+        caption.append(createIcon(["M3 3h18v18H3z", "M8 8h.01", "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"], "size-3 shrink-0 text-muted sm:size-3.5"));
         caption.append(makeElement("span", "", post.image_caption || "Dokumentasi foto"));
         if (post.image_count) {
           caption.append(makeElement("span", "", "·"));
@@ -330,11 +363,24 @@
         article.append(figure);
       }
 
-      const footer = makeElement("footer", "forum-post__actions flex flex-wrap items-center gap-2 border-t border-line pt-3.5");
-      const likes = makeElement("span", "post-action inline-flex min-h-8 items-center gap-1.5 border-2 border-line bg-surface px-2.5 text-[0.6875rem] font-semibold text-muted", `${post.total_likes ?? 0} suka`);
-      likes.prepend(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-4"));
-      const comments = makeElement("span", "post-action inline-flex min-h-8 items-center gap-1.5 border-2 border-line bg-surface px-2.5 text-[0.6875rem] font-semibold text-muted", `${post.total_comments ?? 0} komentar`);
-      comments.prepend(createIcon(["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"], "size-4"));
+      const footer = makeElement("footer", "forum-post__actions flex flex-wrap items-center gap-2 border-t-2 border-line pt-3");
+      const likes = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      likes.type = "button";
+      likes.append(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
+      likes.append(makeElement("span", "", `${post.total_likes ?? 0} suka`));
+      likes.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+
+      const comments = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      comments.type = "button";
+      comments.append(createIcon(["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
+      comments.append(makeElement("span", "", `${post.total_comments ?? 0} komentar`));
+      comments.addEventListener("click", (e) => {
+        e.stopPropagation();
+        window.location.href = `${detailUrl}#comments-heading`;
+      });
+
       footer.append(likes, comments);
       article.append(footer);
 
@@ -366,12 +412,12 @@
 
     function createEmptyState(query = "") {
       const item = makeElement("li", "w-full");
-      const state = makeElement("div", "empty-state flex min-w-0 flex-col items-center justify-center gap-4 border-2 border-line bg-surface p-8 text-center shadow-[3px_3px_0_var(--shadow-color)] sm:p-12 sm:shadow-[4px_4px_0_var(--shadow-color)]");
+      const state = makeElement("div", "empty-state flex min-w-0 flex-col items-center justify-center gap-3.5 border-2 border-line bg-surface p-6 text-center shadow-[3px_3px_0_var(--shadow-color)] sm:p-8");
       
       if (query) {
-        const title = makeElement("h3", "font-heading text-lg font-bold text-foreground sm:text-xl", `Tidak ada hasil untuk "${query}"`);
-        const description = makeElement("p", "text-xs leading-relaxed text-muted sm:text-sm", "Coba gunakan kata kunci lain untuk menemukan judul post yang kamu cari.");
-        const resetButton = makeElement("button", "inline-flex min-h-10 items-center justify-center gap-2 border-2 border-line bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all duration-150 hover:shadow-[4px_4px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:text-[0.8125rem] cursor-pointer", "Hapus pencarian");
+        const title = makeElement("h3", "font-heading text-base font-bold text-foreground sm:text-lg", `Tidak ada hasil untuk "${query}"`);
+        const description = makeElement("p", "text-xs leading-relaxed text-muted", "Coba gunakan kata kunci lain untuk menemukan judul post yang kamu cari.");
+        const resetButton = makeElement("button", "inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer", "Hapus pencarian");
         resetButton.type = "button";
         resetButton.addEventListener("click", () => {
           const searchInput = document.getElementById("forum-search-input");
@@ -380,9 +426,9 @@
         });
         state.append(title, description, resetButton);
       } else {
-        const title = makeElement("h3", "font-heading text-lg font-bold text-foreground sm:text-xl", "Belum ada percakapan");
-        const description = makeElement("p", "text-xs leading-relaxed text-muted sm:text-sm", "Jadilah yang pertama memulai diskusi seputar reparasi pakaian, gaya vintage, atau tips berburu thrifting!");
-        const createButton = makeElement("button", "inline-flex min-h-10 items-center justify-center gap-2 border-2 border-line bg-accent px-5 py-2 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all duration-150 hover:shadow-[4px_4px_0_var(--shadow-color)] hover:-translate-x-0.5 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:text-[0.8125rem] cursor-pointer", "Mulai buat post pertama");
+        const title = makeElement("h3", "font-heading text-base font-bold text-foreground sm:text-lg", "Belum ada percakapan");
+        const description = makeElement("p", "text-xs leading-relaxed text-muted", "Jadilah yang pertama memulai diskusi seputar reparasi pakaian, gaya vintage, atau tips berburu thrifting!");
+        const createButton = makeElement("button", "inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer", "Mulai buat post pertama");
         createButton.type = "button";
         createButton.setAttribute("popovertarget", "forum-create-modal");
         createButton.setAttribute("popovertargetaction", "show");
