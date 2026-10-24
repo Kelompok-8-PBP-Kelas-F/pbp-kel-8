@@ -77,3 +77,8 @@ class ForumCreateModalTests(TestCase):
         response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["post"], post)
+        self.assertContains(response, "Post Detail")
+        self.assertContains(response, "Konten Detail")
+        self.assertContains(response, "Kembali ke Forum")
+        self.assertContains(response, 'id="tulis-komentar"')
+        self.assertContains(response, 'id="comments-heading"')
