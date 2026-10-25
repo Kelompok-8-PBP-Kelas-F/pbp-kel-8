@@ -18,8 +18,8 @@
             <li><a href="">Outfit Builder</a></li>
         </ul>
         <div class="mr-0 flex justify-end gap-2 font-main lg:mr-5 lg:gap-3">
-            <button class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-surface px-3 text-xs text-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Login</button>
-            <button class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-accent px-3 text-xs text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Register</button>
+            <button href="{% url 'user:login' %}" class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-surface px-3 text-xs text-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Login</button>
+            <button href="{% url 'user:register' %}" class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-accent px-3 text-xs text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Register</button>
         </div>
     </nav>
 </body>
