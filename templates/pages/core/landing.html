@@ -1,14 +1,575 @@
 {% extends 'base.html' %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  {% block content %}
-  <body class="bg-amber-50">
-    <h1 class="text-9xl">Thrift.io</h1>
-  </body>
-  {% endblock %}
-</html>
+
+{% block meta %}
+<title>Thrift.io - Gaya yang dikurasi, bumi yang terjaga</title>
+{% endblock meta %}
+
+{% block content %}
+<main class="w-full bg-[#f2c14e] font-main text-[#121212] overflow-x-hidden">
+
+  <!-- ========================================== -->
+  <!-- HERO SECTION                               -->
+  <!-- ========================================== -->
+  <section class="w-full border-b-2 border-[#121212]">
+    <div class="grid grid-cols-1 lg:grid-cols-12 min-h-[520px]">
+      
+      <!-- Left Column: Dark Green Hero -->
+      <div class="lg:col-span-6 bg-[#1f4a3a] p-8 sm:p-12 lg:p-16 flex flex-col justify-center border-b-2 lg:border-b-0 lg:border-r-2 border-[#121212]">
+        <p class="text-xs sm:text-sm font-semibold tracking-wide text-[#f7d26a] mb-3">
+          Thrift.io - Slow fashion &amp; conscious shopping
+        </p>
+        
+        <h1 class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-extrabold text-[#fbf1d5] leading-[1.12] tracking-tight">
+          Gaya yang dikurasi,<br />bumi yang terjaga.
+        </h1>
+        
+        <p class="text-sm sm:text-base text-[#fbf1d5]/85 leading-relaxed max-w-lg mt-5 mb-8">
+          Marketplace pakaian preloved pilihan, bazar thrift terdekat, dan komunitas yang percaya bahwa gaya terbaik tidak harus selalu baru.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap items-center gap-3">
+          <a href="#" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#fbf1d5] text-[#121212] font-bold text-xs sm:text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] hover:bg-white transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
+            <span>Eksplorasi Katalog</span>
+            <span>&rarr;</span>
+          </a>
+          <a href="#" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#E2652B] text-white font-bold text-xs sm:text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
+            <span>Bazar Terdekat</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right Column: Yellow Hero with Badges & Graphic -->
+      <div class="lg:col-span-6 bg-[#f2c14e] p-8 sm:p-12 relative flex items-center justify-center min-h-[380px] lg:min-h-full overflow-hidden">
+        
+        <!-- Badge 1: 100% Preloved (Top Left) -->
+        <div class="absolute top-6 left-6 sm:top-10 sm:left-12 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#86A981] border-2 border-[#121212] shadow-[3px_3px_0_#121212] flex items-center justify-center text-center p-2">
+          <span class="font-extrabold text-xs sm:text-sm text-[#121212] leading-tight">
+            100%<br />Preloved
+          </span>
+        </div>
+
+        <!-- Badge 2: Slow Fashion (Top Right) -->
+        <div class="absolute top-8 right-6 sm:top-12 sm:right-12 w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] flex items-center justify-center text-center p-2">
+          <span class="font-extrabold text-xs sm:text-sm text-[#121212] leading-tight">
+            Slow<br />Fashion
+          </span>
+        </div>
+
+        <!-- Center Graphic Placeholder -->
+        <div class="flex flex-col items-center justify-center text-center p-4 my-auto">
+          <div class="mb-3 text-[#121212]/80">
+            <svg class="w-12 h-12 sm:w-14 sm:h-14 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+              <circle cx="9" cy="9" r="2"/>
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+          </div>
+          <p class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#121212]/75 max-w-xs">
+            FOTO BANNER: TRUCKER JACKET + CELANA WIDE-LEG
+          </p>
+        </div>
+
+        <!-- Badge 3: Eco-Friendly (Bottom Right) -->
+        <div class="absolute bottom-6 right-6 sm:bottom-10 sm:right-12 -rotate-6">
+          <div class="px-5 py-1.5 sm:px-6 sm:py-2 bg-[#E2652B] border-2 border-[#121212] shadow-[3px_3px_0_#121212] rounded-full">
+            <span class="font-extrabold text-xs sm:text-sm text-white tracking-wide">
+              Eco-Friendly
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================== -->
+  <!-- SECTION 01: MARKETPLACE                   -->
+  <!-- ========================================== -->
+  <section class="w-full px-4 sm:px-6 lg:px-12 py-10 sm:py-14 border-b-2 border-[#121212]">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Eyebrow & Header -->
+      <p class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#5c4a1a] mb-1">
+        01 / Marketplace
+      </p>
+
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <h2 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#121212] tracking-tight">
+          Pilihan &amp; new arrivals
+        </h2>
+
+        <!-- Action Controls -->
+        <div class="flex items-center gap-2 self-start sm:self-auto">
+          <a href="#" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#fbf1d5] text-[#121212] font-bold text-xs sm:text-sm border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:bg-white transition-all">
+            <span>Lihat semua katalog</span>
+            <span>&rarr;</span>
+          </a>
+          <button type="button" class="w-8 h-8 flex items-center justify-center bg-[#fbf1d5] text-[#121212] font-bold text-xs border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:bg-white transition-all" aria-label="Previous">
+            &lt;
+          </button>
+          <button type="button" class="w-8 h-8 flex items-center justify-center bg-[#E2652B] text-white font-bold text-xs border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:opacity-95 transition-all" aria-label="Next">
+            &gt;
+          </button>
+        </div>
+      </div>
+
+      <!-- 5 Product Cards Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4">
+        
+        <!-- Card 1 -->
+        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] p-2.5 sm:p-3 flex flex-col justify-between">
+          <div class="w-full aspect-[4/5] bg-[#f09a67] border-2 border-[#121212] relative flex items-center justify-center mb-2.5 overflow-hidden">
+            <span class="absolute top-2 left-2 bg-[#86A981] border border-[#121212] px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-[#121212]">
+              Vintage 80s
+            </span>
+            <!-- Shirt / Jacket Outline Icon -->
+            <svg class="w-10 h-10 sm:w-12 sm:h-12 text-[#121212] stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs sm:text-sm font-bold text-[#121212] truncate">Trucker jacket denim</p>
+            <p class="text-xs sm:text-sm font-extrabold text-[#121212] mt-0.5">Rp 185.000</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] p-2.5 sm:p-3 flex flex-col justify-between">
+          <div class="w-full aspect-[4/5] bg-[#a3c49e] border-2 border-[#121212] relative flex items-center justify-center mb-2.5 overflow-hidden">
+            <span class="absolute top-2 left-2 bg-[#86A981] border border-[#121212] px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-[#121212]">
+              Seperti baru
+            </span>
+            <!-- Photo Placeholder Icon -->
+            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-[#121212] stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+              <circle cx="9" cy="9" r="2"/>
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs sm:text-sm font-bold text-[#121212] truncate">Celana wide-leg hitam</p>
+            <p class="text-xs sm:text-sm font-extrabold text-[#121212] mt-0.5">Rp 120.000</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] p-2.5 sm:p-3 flex flex-col justify-between">
+          <div class="w-full aspect-[4/5] bg-[#fbf1d5] border-2 border-[#121212] relative flex items-center justify-center mb-2.5 overflow-hidden">
+            <span class="absolute top-2 left-2 bg-[#86A981] border border-[#121212] px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-[#121212]">
+              Baik
+            </span>
+            <!-- Shirt Icon -->
+            <svg class="w-10 h-10 sm:w-12 sm:h-12 text-[#121212] stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs sm:text-sm font-bold text-[#121212] truncate">Kemeja flanel kotak</p>
+            <p class="text-xs sm:text-sm font-extrabold text-[#121212] mt-0.5">Rp 110.000</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] p-2.5 sm:p-3 flex flex-col justify-between">
+          <div class="w-full aspect-[4/5] bg-[#e27344] border-2 border-[#121212] relative flex items-center justify-center mb-2.5 overflow-hidden">
+            <span class="absolute top-2 left-2 bg-[#86A981] border border-[#121212] px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-[#121212]">
+              Cukup baik
+            </span>
+            <!-- Photo / Shoes Icon -->
+            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-[#121212] stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+              <circle cx="9" cy="9" r="2"/>
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs sm:text-sm font-bold text-[#121212] truncate">Sepatu kanvas putih</p>
+            <p class="text-xs sm:text-sm font-extrabold text-[#121212] mt-0.5">Rp 95.000</p>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] p-2.5 sm:p-3 flex flex-col justify-between">
+          <div class="w-full aspect-[4/5] bg-[#a3c49e] border-2 border-[#121212] relative flex items-center justify-center mb-2.5 overflow-hidden">
+            <span class="absolute top-2 left-2 bg-[#86A981] border border-[#121212] px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-[#121212]">
+              Seperti baru
+            </span>
+            <!-- Photo / Bag Icon -->
+            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-[#121212] stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+              <circle cx="9" cy="9" r="2"/>
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs sm:text-sm font-bold text-[#121212] truncate">Totebag kanvas</p>
+            <p class="text-xs sm:text-sm font-extrabold text-[#121212] mt-0.5">Rp 55.000</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================== -->
+  <!-- SECTION 02: EVENT                         -->
+  <!-- ========================================== -->
+  <section class="w-full px-4 sm:px-6 lg:px-12 py-10 sm:py-14 border-b-2 border-[#121212]">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Eyebrow & Header -->
+      <p class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#5c4a1a] mb-1">
+        02 / Event
+      </p>
+
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+        <h2 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#121212] tracking-tight">
+          Bazar thrift di sekitarmu
+        </h2>
+        <p class="text-xs sm:text-sm text-[#121212]/80 max-w-sm sm:text-right leading-relaxed">
+          Lihat lokasi flea market dan bazar pakaian bekas bulan ini, lengkap dengan tanggal dan jaraknya darimu.
+        </p>
+      </div>
+
+      <!-- Main Grid: Map & Event List -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        
+        <!-- Left: Map Container (~60% / 7 cols) -->
+        <div class="lg:col-span-7 bg-[#fbf1d5] border-2 border-[#121212] shadow-[4px_4px_0_#121212] p-4 relative min-h-[380px] sm:min-h-[440px] flex flex-col justify-between overflow-hidden">
+          
+          <!-- Subtle Map Grid Pattern -->
+          <div class="absolute inset-0 grid grid-cols-6 grid-rows-5 pointer-events-none opacity-40">
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-b border-[#121212]/30"></div>
+            
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-b border-[#121212]/30"></div>
+
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-b border-[#121212]/30"></div>
+
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-r border-b border-[#121212]/30"></div>
+            <div class="border-b border-[#121212]/30"></div>
+
+            <div class="border-r border-[#121212]/30"></div>
+            <div class="border-r border-[#121212]/30"></div>
+            <div class="border-r border-[#121212]/30"></div>
+            <div class="border-r border-[#121212]/30"></div>
+            <div class="border-r border-[#121212]/30"></div>
+            <div></div>
+          </div>
+
+          <!-- Top Bar: Search & Zoom -->
+          <div class="flex items-start justify-between w-full relative z-10">
+            <!-- Search Box -->
+            <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[2px_2px_0_#121212] px-3 py-1.5 flex items-center gap-2 w-56 sm:w-64">
+              <input type="text" placeholder="Cari lokasi atau kota" class="bg-transparent text-xs text-[#121212] placeholder:text-[#5c4a1a]/80 outline-none w-full font-medium" />
+            </div>
+
+            <!-- Zoom Controls -->
+            <div class="flex flex-col border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">
+              <button type="button" class="w-7 h-7 flex items-center justify-center font-bold text-sm border-b-2 border-[#121212] hover:bg-white transition-colors" aria-label="Zoom in">+</button>
+              <button type="button" class="w-7 h-7 flex items-center justify-center font-bold text-sm hover:bg-white transition-colors" aria-label="Zoom out">&minus;</button>
+            </div>
+          </div>
+
+          <!-- Interactive Pins on Map -->
+          <div class="absolute inset-0 pointer-events-none">
+            
+            <!-- Pin 1 with Tooltip Card (Center) -->
+            <div class="absolute top-[52%] left-[40%] -translate-x-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-auto">
+              <!-- Pin Circle -->
+              <div class="w-6 h-6 rounded-full bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex items-center justify-center text-white text-[11px] font-extrabold shrink-0">
+                1
+              </div>
+              
+              <!-- Tooltip Card -->
+              <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[2px_2px_0_#121212] p-2 min-w-[130px]">
+                <p class="font-extrabold text-xs text-[#121212] leading-tight">Bazar Preloved Depok</p>
+                <p class="text-[10px] text-[#5c4a1a] mt-0.5 font-medium">Sab, 5 Okt &middot; 2,4 km</p>
+              </div>
+
+              <!-- "Kamu di sini" Pin -->
+              <div class="absolute -bottom-8 left-12 flex items-center gap-1.5 bg-[#121212] text-white border border-[#121212] px-2 py-0.5 text-[10px] font-bold whitespace-nowrap shadow-[2px_2px_0_rgba(0,0,0,0.2)]">
+                <span class="w-2 h-2 rounded-full border border-white bg-transparent inline-block"></span>
+                <span>Kamu di sini</span>
+              </div>
+            </div>
+
+            <!-- Pin Top Right -->
+            <div class="absolute top-[35%] right-[32%] w-6 h-6 rounded-full bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex items-center justify-center text-white text-[11px] font-extrabold pointer-events-auto">
+              3
+            </div>
+
+            <!-- Pin Center-Bottom -->
+            <div class="absolute bottom-[30%] right-[42%] w-6 h-6 rounded-full bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex items-center justify-center text-white text-[11px] font-extrabold pointer-events-auto">
+              2
+            </div>
+
+            <!-- Pin Bottom Left -->
+            <div class="absolute bottom-[18%] left-[26%] w-6 h-6 rounded-full bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex items-center justify-center text-white text-[11px] font-extrabold pointer-events-auto">
+              4
+            </div>
+
+          </div>
+
+          <!-- Bottom spacer for height balance -->
+          <div class="h-4"></div>
+
+        </div>
+
+        <!-- Right: Event List (~40% / 5 cols) -->
+        <div class="lg:col-span-5 bg-[#fbf1d5] border-2 border-[#121212] shadow-[4px_4px_0_#121212] p-4 sm:p-5 flex flex-col justify-between gap-4">
+          
+          <!-- Header -->
+          <div class="flex items-center justify-between border-b-2 border-[#121212]/10 pb-3">
+            <div>
+              <h3 class="font-bold text-xs sm:text-sm text-[#121212]">Event bulan ini</h3>
+              <p class="text-[10px] sm:text-xs text-[#5c4a1a] mt-0.5">Oktober 2024 &middot; Terdekat</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" class="w-6 h-6 flex items-center justify-center bg-[#E2652B] text-white border-2 border-[#121212] shadow-[1px_1px_0_#121212] text-xs font-bold" aria-label="Prev event">&lt;</button>
+              <button type="button" class="w-6 h-6 flex items-center justify-center bg-[#E2652B] text-white border-2 border-[#121212] shadow-[1px_1px_0_#121212] text-xs font-bold" aria-label="Next event">&gt;</button>
+            </div>
+          </div>
+
+          <!-- Event Rows -->
+          <div class="flex flex-col gap-3">
+            
+            <!-- Event 1 -->
+            <div class="flex items-center justify-between gap-3 pb-2.5 border-b border-[#121212]/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex flex-col items-center justify-center text-white shrink-0">
+                  <span class="text-sm font-extrabold leading-none">3</span>
+                  <span class="text-[8px] font-bold tracking-wider uppercase">OKT</span>
+                </div>
+                <div>
+                  <h4 class="text-xs sm:text-sm font-bold text-[#121212]">Bazar Preloved Depok</h4>
+                  <p class="text-[10px] text-[#5c4a1a]">Depok, Jawa Barat</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="border border-[#121212] px-1.5 py-0.2 text-[9px] font-bold text-[#121212] bg-[#fbf1d5]">Bazar</span>
+                    <span class="text-[9px] text-[#5c4a1a] font-medium">2,4 km</span>
+                  </div>
+                </div>
+              </div>
+              <div class="w-6 h-6 rounded-full bg-[#1f4a3a] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">
+                1
+              </div>
+            </div>
+
+            <!-- Event 2 -->
+            <div class="flex items-center justify-between gap-3 pb-2.5 border-b border-[#121212]/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex flex-col items-center justify-center text-white shrink-0">
+                  <span class="text-sm font-extrabold leading-none">10</span>
+                  <span class="text-[8px] font-bold tracking-wider uppercase">OKT</span>
+                </div>
+                <div>
+                  <h4 class="text-xs sm:text-sm font-bold text-[#121212]">Swap Meet Pakaian Bekas</h4>
+                  <p class="text-[10px] text-[#5c4a1a]">Jakarta Selatan</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="border border-[#121212] px-1.5 py-0.2 text-[9px] font-bold text-[#121212] bg-[#fbf1d5]">Swap meet</span>
+                    <span class="text-[9px] text-[#5c4a1a] font-medium">15 km</span>
+                  </div>
+                </div>
+              </div>
+              <div class="w-6 h-6 rounded-full bg-[#1f4a3a] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">
+                2
+              </div>
+            </div>
+
+            <!-- Event 3 -->
+            <div class="flex items-center justify-between gap-3 pb-2.5 border-b border-[#121212]/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex flex-col items-center justify-center text-white shrink-0">
+                  <span class="text-sm font-extrabold leading-none">17</span>
+                  <span class="text-[8px] font-bold tracking-wider uppercase">OKT</span>
+                </div>
+                <div>
+                  <h4 class="text-xs sm:text-sm font-bold text-[#121212]">Pameran Slow Fashion</h4>
+                  <p class="text-[10px] text-[#5c4a1a]">Bogor, Jawa Barat</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="border border-[#121212] px-1.5 py-0.2 text-[9px] font-bold text-[#121212] bg-[#fbf1d5]">Pameran</span>
+                    <span class="text-[9px] text-[#5c4a1a] font-medium">32 km</span>
+                  </div>
+                </div>
+              </div>
+              <div class="w-6 h-6 rounded-full bg-[#1f4a3a] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">
+                3
+              </div>
+            </div>
+
+            <!-- Event 4 -->
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 bg-[#E2652B] border-2 border-[#121212] shadow-[1px_1px_0_#121212] flex flex-col items-center justify-center text-white shrink-0">
+                  <span class="text-sm font-extrabold leading-none">24</span>
+                  <span class="text-[8px] font-bold tracking-wider uppercase">OKT</span>
+                </div>
+                <div>
+                  <h4 class="text-xs sm:text-sm font-bold text-[#121212]">Flea Market Akhir Pekan</h4>
+                  <p class="text-[10px] text-[#5c4a1a]">Jakarta Pusat</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="border border-[#121212] px-1.5 py-0.2 text-[9px] font-bold text-[#121212] bg-[#fbf1d5]">Bazar</span>
+                    <span class="text-[9px] text-[#5c4a1a] font-medium">7,8 km</span>
+                  </div>
+                </div>
+              </div>
+              <div class="w-6 h-6 rounded-full bg-[#1f4a3a] text-white text-[10px] font-extrabold flex items-center justify-center shrink-0">
+                4
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Button -->
+          <a href="#" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 bg-[#E2652B] text-white font-bold text-xs sm:text-sm border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:opacity-95 transition-all text-center">
+            <span>Lihat semua event</span>
+            <span>&rarr;</span>
+          </a>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================== -->
+  <!-- SECTION 03: JELAJAHI LEBIH BANYAK         -->
+  <!-- ========================================== -->
+  <section class="w-full px-4 sm:px-6 lg:px-12 py-10 sm:py-14">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Eyebrow & Header -->
+      <p class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#5c4a1a] mb-1">
+        03 / Jelajahi lebih banyak
+      </p>
+
+      <h2 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#121212] tracking-tight mb-6">
+        Lengkapi pengalaman thrift-mu
+      </h2>
+
+      <!-- 3 Cards Layout -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+        
+        <!-- Card 1: Berita / News (5 cols) -->
+        <div class="md:col-span-5 bg-[#fbf1d5] border-2 border-[#121212] shadow-[4px_4px_0_#121212] p-4 flex flex-col justify-between">
+          <div class="flex flex-col sm:flex-row gap-4 items-start">
+            <!-- Image Box -->
+            <div class="w-full sm:w-36 aspect-video sm:aspect-square bg-[#a3c49e] border-2 border-[#121212] flex items-center justify-center shrink-0">
+              <svg class="w-8 h-8 text-[#121212] stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                <circle cx="9" cy="9" r="2"/>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+              </svg>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <span class="bg-[#E2652B] text-white border border-[#121212] px-2 py-0.5 text-[10px] font-bold">
+                  Berita
+                </span>
+                <span class="text-[10px] font-bold text-[#5c4a1a]">1/5</span>
+              </div>
+              <h3 class="text-xs sm:text-sm font-bold text-[#121212] leading-snug">
+                5 cara merawat pakaian thrift agar awet bertahun-tahun
+              </h3>
+              <p class="text-[10px] text-[#5c4a1a] mt-2">
+                Slow fashion &middot; 4 menit baca
+              </p>
+            </div>
+          </div>
+
+          <!-- Pagination & Arrows -->
+          <div class="flex items-center justify-between pt-4 mt-3 border-t border-[#121212]/10">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-[#121212]"></span>
+              <span class="w-2 h-2 rounded-full border border-[#121212] bg-[#fbf1d5]"></span>
+              <span class="w-2 h-2 rounded-full border border-[#121212] bg-[#fbf1d5]"></span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" class="w-6 h-6 flex items-center justify-center bg-[#E2652B] text-white border-2 border-[#121212] shadow-[1px_1px_0_#121212] text-xs font-bold">&lt;</button>
+              <button type="button" class="w-6 h-6 flex items-center justify-center bg-[#E2652B] text-white border-2 border-[#121212] shadow-[1px_1px_0_#121212] text-xs font-bold">&gt;</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Forum (3 or 4 cols) -->
+        <div class="md:col-span-3 bg-[#fbf1d5] border-2 border-[#121212] shadow-[4px_4px_0_#121212] p-4 flex flex-col justify-between">
+          <div>
+            <span class="bg-[#86A981] text-[#121212] border border-[#121212] px-2 py-0.5 text-[10px] font-bold inline-block">
+              Forum
+            </span>
+            <h3 class="text-xs sm:text-sm font-bold text-[#121212] leading-snug mt-3">
+              Cara merawat jaket denim vintage agar tidak pudar?
+            </h3>
+            <p class="text-[10px] text-[#5c4a1a] mt-2">
+              24 balasan &middot; Perawatan
+            </p>
+          </div>
+
+          <div class="pt-4 mt-4 border-t border-[#121212]/10">
+            <a href="#" class="inline-flex items-center gap-1 font-bold text-xs text-[#121212] hover:underline">
+              <span>Buka forum</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 3: Outfit Builder (4 cols) -->
+        <div class="md:col-span-4 bg-[#a3c49e] border-2 border-[#121212] shadow-[4px_4px_0_#121212] p-5 flex flex-col justify-between relative overflow-hidden">
+          
+          <!-- Decorative Top Right Stamp -->
+          <div class="absolute -top-1 -right-2 rotate-12 border border-[#121212]/60 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-[#121212]/60 select-none">
+            Preloved
+          </div>
+
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-wider text-[#121212]">
+              OUTFIT BUILDER
+            </p>
+            <h3 class="font-heading text-lg sm:text-xl font-extrabold text-[#121212] leading-tight mt-2">
+              Padukan pakaianmu dari foto.
+            </h3>
+          </div>
+
+          <div class="mt-6">
+            <a href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-[#121212] text-white border-2 border-[#121212] shadow-[2px_2px_0_#ffffff] text-xs font-bold hover:bg-[#252525] transition-all">
+              <span>Coba sekarang</span>
+              <span>&rarr;</span>
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+</main>
+{% endblock %}
