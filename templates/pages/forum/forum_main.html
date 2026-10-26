@@ -1,0 +1,860 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Forum - Thrift.Io</title>
+{% endblock meta %}
+
+{% block content %}
+<main id="main-content" class="forum-page w-full bg-background font-main text-foreground">
+  <section class="forum-intro bg-background px-4 pt-5 pb-2 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-2">
+      <p class="forum-intro__label text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Forum komunitas</p>
+
+      <form class="forum-search flex flex-col gap-2 sm:flex-row" role="search" action="#" method="get">
+        <div
+          class="forum-search__field flex min-w-0 flex-1 items-center gap-2.5 border-2 border-line bg-surface px-3 shadow-[3px_3px_0_var(--shadow-color)] sm:px-3.5">
+          <svg class="size-4 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-4-4" />
+          </svg>
+          <label class="sr-only" for="forum-search-input">Cari forum</label>
+          <input
+            class="forum-search__input min-w-0 flex-1 bg-transparent py-2.5 text-xs text-foreground outline-none placeholder:text-muted sm:text-[0.8125rem]"
+            id="forum-search-input" type="search" name="q" placeholder="Cari topik, judul post, atau nama pengguna">
+        </div>
+        <button
+          id="forum-search-button"
+          class="forum-search__button inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:text-[0.8125rem] cursor-pointer"
+          type="submit">
+          <svg class="search-spinner size-3.5 shrink-0 hidden animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+          <span class="search-button-text">Cari forum</span>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="community-feed bg-background px-4 pb-10 pt-2 sm:px-6 lg:px-8"
+    aria-labelledby="feed-title">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-4">
+      <header
+        class="community-feed__header flex flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+        <div class="community-feed__heading flex flex-col gap-1">
+          <h2
+            class="community-feed__title font-heading text-xl font-bold leading-tight text-foreground sm:text-2xl"
+            id="feed-title">Feed komunitas</h2>
+          <p class="community-feed__description text-xs text-muted">Percakapan terbaru dari 8.421 anggota</p>
+        </div>
+        <button
+          class="community-feed__create inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto sm:text-[0.8125rem] cursor-pointer"
+          type="button" popovertarget="forum-create-modal" popovertargetaction="show">
+          <svg class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <span>Buat post</span>
+          <span class="hidden font-normal sm:inline">· Pengguna terdaftar</span>
+        </button>
+      </header>
+
+      <div class="community-feed__layout grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div class="community-feed__main flex min-w-0 flex-col gap-3">
+          <div
+            class="feed-controls flex min-h-10 flex-wrap items-center gap-2 border-2 border-line bg-surface px-2.5 py-1.5 shadow-[3px_3px_0_var(--shadow-color)] sm:flex-nowrap sm:px-3">
+            <div class="feed-controls__sort flex min-w-0 flex-1 items-center gap-1 sm:flex-initial sm:gap-1.5"
+              role="group" aria-label="Urutkan post">
+              <button
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
+                type="button" aria-pressed="true">
+                <svg class="size-3 shrink-0 sm:size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.8" aria-hidden="true">
+                  <path d="m3 17 6-6 4 4 8-8" />
+                  <path d="M15 7h6v6" />
+                </svg>
+                Trending
+              </button>
+              <button
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
+                type="button" aria-pressed="false">Terbaru</button>
+              <button
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
+                type="button" aria-pressed="false">Diikuti</button>
+            </div>
+            <p class="feed-controls__count w-full text-right text-[0.625rem] text-muted sm:ml-auto sm:w-auto">128 post
+              minggu ini</p>
+          </div>
+
+          <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}"
+            data-current-user="{{ request.user.username|default:'' }}">
+            <li class="w-full py-6 text-center text-xs text-muted" data-posts-loading role="status">
+              Memuat post forum...
+            </li>
+          </ul>
+
+        </div>
+
+        <aside class="forum-sidebar flex w-full flex-col gap-3 lg:sticky lg:top-24 lg:w-auto"
+          aria-label="Informasi forum">
+          <section
+            class="popular-topics flex flex-col gap-3 border-2 border-line bg-surface p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4"
+            aria-labelledby="popular-topics-title">
+            <header class="popular-topics__header flex items-center justify-between border-b border-line pb-2.5">
+              <h2 class="popular-topics__title font-heading text-sm font-bold text-foreground sm:text-base"
+                id="popular-topics-title">Topik populer</h2>
+              <a class="icon-button grid size-7 place-items-center text-muted" href="#"
+                aria-label="Lihat semua topik"><svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.8" aria-hidden="true">
+                  <path d="M7 17 17 7M8 7h9v9" />
+                </svg></a>
+            </header>
+            <ol class="popular-topics__list flex flex-col gap-2.5">
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">01</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Perawatan
+                      pakaian</span><span class="topic-row__count text-[0.625rem] text-muted">2,4 rb
+                      post</span></span><span class="topic-row__arrow text-[0.625rem] text-muted"
+                    aria-hidden="true">→</span></a></li>
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">02</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Styling ulang</span><span
+                      class="topic-row__count text-[0.625rem] text-muted">1,8 rb post</span></span><span
+                    class="topic-row__arrow text-[0.625rem] text-muted" aria-hidden="true">→</span></a></li>
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">03</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Thrifting cerdas</span><span
+                      class="topic-row__count text-[0.625rem] text-muted">1,6 rb post</span></span><span
+                    class="topic-row__arrow text-[0.625rem] text-muted" aria-hidden="true">→</span></a></li>
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">04</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Reparasi &amp;
+                      upcycle</span><span class="topic-row__count text-[0.625rem] text-muted">1,2 rb
+                      post</span></span><span class="topic-row__arrow text-[0.625rem] text-muted"
+                    aria-hidden="true">→</span></a></li>
+              <li><a class="topic-row flex min-h-7 items-center gap-2" href="#"><span
+                    class="topic-row__rank w-4 shrink-0 text-[0.625rem] font-bold text-muted">05</span><span
+                    class="topic-row__details flex min-w-0 flex-1 flex-col"><span
+                      class="topic-row__name text-xs font-semibold text-foreground">Sustainable
+                      fashion</span><span class="topic-row__count text-[0.625rem] text-muted">984
+                      post</span></span><span class="topic-row__arrow text-[0.625rem] text-muted"
+                    aria-hidden="true">→</span></a></li>
+            </ol>
+          </section>
+
+          <section
+            class="community-guide flex flex-col gap-3 border-2 border-line bg-surface p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4"
+            aria-labelledby="guide-title">
+            <h2 class="community-guide__title font-heading text-sm font-bold text-foreground sm:text-base" id="guide-title">Panduan
+              komunitas</h2>
+            <p class="community-guide__description text-[0.625rem] leading-relaxed text-muted">Ruang aman untuk berbagi
+              pengetahuan slow fashion yang praktis, jujur, dan saling menghargai.</p>
+            <ol class="community-guide__list flex flex-col gap-2.5">
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
+                  aria-hidden="true">1</span><span
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Bagikan pengalaman, bukan
+                  menghakimi.</span></li>
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
+                  aria-hidden="true">2</span><span
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Cantumkan sumber untuk klaim
+                  data.</span></li>
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
+                  aria-hidden="true">3</span><span
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Hindari promosi tanpa
+                  konteks.</span></li>
+              <li class="guide-item flex items-start gap-2"><span
+                  class="guide-item__number grid size-5 shrink-0 place-items-center bg-foreground text-[0.5625rem] font-bold text-surface"
+                  aria-hidden="true">4</span><span
+                  class="guide-item__rule text-[0.625rem] leading-relaxed text-muted">Laporkan konten yang
+                  merugikan.</span></li>
+            </ol>
+            <a class="community-guide__link text-[0.625rem] font-bold text-accent" href="#">Baca panduan lengkap</a>
+          </section>
+
+          <section
+            class="member-access flex flex-col gap-2.5 border-2 border-line bg-hero p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4"
+            aria-labelledby="member-title">
+            <svg class="member-access__icon size-6 text-hero-accent" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="9" cy="8" r="3.5" />
+              <path
+                d="M2.5 20v-1.5A4.5 4.5 0 0 1 7 14h4a4.5 4.5 0 0 1 4.5 4.5V20M16 4.8a3.5 3.5 0 0 1 0 6.4m2 3.1a4.5 4.5 0 0 1 3.5 4.4V20" />
+            </svg>
+            <h2 class="member-access__title font-heading text-sm font-bold text-hero-accent sm:text-base" id="member-title">Ikut
+              dalam percakapan</h2>
+            <p class="member-access__description text-[0.625rem] leading-relaxed text-hero-foreground">Pengguna
+              terdaftar dapat menyukai post, membuat post baru, dan menulis komentar.</p>
+            <a class="member-access__action grid min-h-8.5 place-items-center border-2 border-line bg-highlight px-3 py-1.5 text-xs font-bold text-foreground"
+              href="#">Daftar gratis</a>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+{% include 'pages/forum/components/forum_create.html' %}
+<script>
+  (() => {
+    const modal = document.getElementById("forum-create-modal");
+    const postList = document.querySelector("[data-posts-url]");
+    const postForm = modal?.querySelector("form");
+    const apiError = document.getElementById("forum-create-api-error");
+    if (!(modal instanceof HTMLElement) || !postList || !(postForm instanceof HTMLFormElement)) return;
+
+    function makeElement(tag, className, text) {
+      const element = document.createElement(tag);
+      element.className = className;
+      if (text !== undefined) element.textContent = text;
+      return element;
+    }
+
+    function createIcon(pathData, className) {
+      const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      icon.setAttribute("class", className);
+      icon.setAttribute("viewBox", "0 0 24 24");
+      icon.setAttribute("fill", "none");
+      icon.setAttribute("stroke", "currentColor");
+      icon.setAttribute("stroke-width", "1.8");
+      icon.setAttribute("aria-hidden", "true");
+      pathData.forEach((data) => {
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", data);
+        icon.appendChild(path);
+      });
+      return icon;
+    }
+
+    function formatPostDateTime(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      if (Number.isNaN(date.getTime())) return dateString;
+
+      const day = String(date.getDate()).padStart(2, "0");
+      const months = [
+        "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+        "Jul", "Agu", "Sep", "Okt", "Nov", "Des"
+      ];
+      const month = months[date.getMonth()];
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+
+      return `${day} ${month} ${year}, ${hours}:${minutes}`;
+    }
+
+    function createPostCard(post) {
+      const detailUrl = post.detail_url || `/forum/${post.id}/`;
+      const item = makeElement("li", "");
+      const article = makeElement("article", "forum-post flex min-w-0 flex-col gap-3.5 border-2 border-line bg-surface p-3.5 shadow-[3px_3px_0_var(--shadow-color)] sm:p-4.5 transition-colors cursor-pointer");
+
+      const header = makeElement("header", "forum-post__author flex min-w-0 items-center justify-between gap-2.5");
+      const authorGroup = makeElement("div", "flex min-w-0 items-center gap-2.5");
+      const avatar = makeElement("div", "avatar flex size-8.5 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs sm:text-sm font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]", post.author_username.charAt(0).toUpperCase());
+      avatar.setAttribute("aria-hidden", "true");
+
+      const details = makeElement("div", "flex min-w-0 flex-col gap-0.5");
+      const userAndTag = makeElement("div", "flex min-w-0 flex-wrap items-center gap-1.5");
+      const author = makeElement("span", "forum-post__username truncate text-xs sm:text-[0.8125rem] font-bold text-foreground leading-[18px]", `@${post.author_username.replace(/^@/, '')}`);
+      const category = makeElement("span", "inline-flex h-[18px] items-center justify-center border-2 border-line bg-category px-1 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none", post.category);
+      userAndTag.append(author, category);
+
+      const time = makeElement("time", "forum-post__time text-[0.6875rem] text-muted", formatPostDateTime(post.created_at));
+      time.dateTime = post.created_at;
+      time.title = !Number.isNaN(new Date(post.created_at).getTime()) ? new Date(post.created_at).toLocaleString("id-ID") : post.created_at;
+
+      details.append(userAndTag, time);
+      authorGroup.append(avatar, details);
+
+      const optionsContainer = makeElement("div", "relative");
+      const optionsBtn = makeElement("button", "grid size-7 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer shrink-0");
+      optionsBtn.type = "button";
+      optionsBtn.setAttribute("aria-label", "Menu opsi post");
+      optionsBtn.innerHTML = `
+        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
+        </svg>
+      `;
+
+      const optionsMenu = makeElement("div", "absolute right-0 top-full z-20 mt-1 hidden min-w-40 border-2 border-line bg-surface py-1 shadow-[3px_3px_0_var(--shadow-color)]");
+      const copyLinkBtn = makeElement("button", "flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-foreground hover:bg-background cursor-pointer");
+      copyLinkBtn.type = "button";
+      copyLinkBtn.innerHTML = `
+        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+        <span>Salin tautan post</span>
+      `;
+      copyLinkBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        optionsMenu.classList.add("hidden");
+        try {
+          await navigator.clipboard.writeText(new URL(detailUrl, window.location.origin).href);
+          const span = copyLinkBtn.querySelector("span");
+          if (span) span.textContent = "Tautan tersalin!";
+          setTimeout(() => {
+            if (span) span.textContent = "Salin tautan post";
+          }, 2000);
+        } catch (err) {
+          console.error("Gagal menyalin tautan:", err);
+        }
+      });
+
+      const reportBtn = makeElement("button", "flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-muted hover:bg-background cursor-pointer");
+      reportBtn.type = "button";
+      reportBtn.innerHTML = `
+        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
+        <span>Laporkan post</span>
+      `;
+      reportBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        optionsMenu.classList.add("hidden");
+      });
+
+      optionsMenu.append(copyLinkBtn, reportBtn);
+
+      optionsBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        document.querySelectorAll(".forum-post header .relative > div:not(.hidden)").forEach((m) => {
+          if (m !== optionsMenu) m.classList.add("hidden");
+        });
+        optionsMenu.classList.toggle("hidden");
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!optionsContainer.contains(e.target)) {
+          optionsMenu.classList.add("hidden");
+        }
+      });
+
+      optionsContainer.append(optionsBtn, optionsMenu);
+      header.append(authorGroup, optionsContainer);
+
+      const content = makeElement("div", "forum-post__content flex flex-col gap-1.5");
+      const title = makeElement("h3", "forum-post__title font-heading text-base font-bold leading-snug tracking-tight text-foreground sm:text-lg");
+      const titleLink = makeElement("a", "hover:underline focus:outline-none", post.title);
+      titleLink.href = detailUrl;
+      title.append(titleLink);
+      const body = makeElement("p", "forum-post__body text-xs sm:text-[0.8125rem] leading-relaxed text-muted", post.content);
+      content.append(title, body);
+
+      article.append(header, content);
+
+      if (post.image_url) {
+        const figure = makeElement("figure", "forum-post__media group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]");
+        const imageContainer = makeElement("div", "relative flex max-h-72 w-full items-center justify-center overflow-hidden bg-background sm:max-h-84");
+        const image = makeElement("img", "relative z-1 max-h-72 w-auto max-w-full object-contain sm:max-h-84");
+        image.src = post.image_url;
+        image.alt = post.title;
+        image.loading = "lazy";
+        imageContainer.append(image);
+
+        const caption = makeElement("figcaption", "absolute bottom-2.5 right-2.5 z-2 flex items-center gap-1.5 border-2 border-line bg-surface/95 px-2 py-0.5 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shadow-[2px_2px_0_var(--shadow-color)] backdrop-blur-xs");
+        caption.append(createIcon(["M3 3h18v18H3z", "M8 8h.01", "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"], "size-3 shrink-0 text-muted sm:size-3.5"));
+        caption.append(makeElement("span", "", post.image_caption || "Dokumentasi foto"));
+        if (post.image_count) {
+          caption.append(makeElement("span", "", "·"));
+          caption.append(makeElement("span", "", `${post.image_count} foto`));
+        }
+        figure.append(imageContainer, caption);
+        article.append(figure);
+      }
+
+      const footer = makeElement("footer", "forum-post__actions flex flex-wrap items-center gap-2 border-t-2 border-line pt-3");
+      const likes = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      likes.type = "button";
+      likes.append(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
+      likes.append(makeElement("span", "", `${post.total_likes ?? 0} suka`));
+      likes.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+
+      const comments = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      comments.type = "button";
+      comments.append(createIcon(["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
+      comments.append(makeElement("span", "", `${post.total_comments ?? 0} komentar`));
+      comments.addEventListener("click", (e) => {
+        e.stopPropagation();
+        window.location.href = `${detailUrl}#comments-heading`;
+      });
+
+      footer.append(likes, comments);
+      article.append(footer);
+
+      article.addEventListener("click", (e) => {
+        if (e.target.closest("a, button, input, textarea, select")) {
+          return;
+        }
+        if (e.ctrlKey || e.metaKey) {
+          window.open(detailUrl, "_blank");
+          return;
+        }
+        window.location.href = detailUrl;
+      });
+
+      article.addEventListener("auxclick", (e) => {
+        if (e.button === 1) {
+          if (e.target.closest("a, button, input, textarea, select")) {
+            return;
+          }
+          window.open(detailUrl, "_blank");
+        }
+      });
+
+      item.append(article);
+      return item;
+    }
+
+    let currentTitleFilter = "";
+    let searchDebounceTimer = null;
+
+    function createEmptyState(query = "") {
+      const item = makeElement("li", "w-full");
+      const state = makeElement("div", "empty-state flex min-w-0 flex-col items-center justify-center gap-3.5 border-2 border-line bg-surface p-6 text-center shadow-[3px_3px_0_var(--shadow-color)] sm:p-8");
+      
+      if (query) {
+        const title = makeElement("h3", "font-heading text-base font-bold text-foreground sm:text-lg", `Tidak ada hasil untuk "${query}"`);
+        const description = makeElement("p", "text-xs leading-relaxed text-muted", "Coba gunakan kata kunci lain untuk menemukan judul post yang kamu cari.");
+        const resetButton = makeElement("button", "inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer", "Hapus pencarian");
+        resetButton.type = "button";
+        resetButton.addEventListener("click", () => {
+          const searchInput = document.getElementById("forum-search-input");
+          if (searchInput) searchInput.value = "";
+          fetchPostsByFilter("");
+        });
+        state.append(title, description, resetButton);
+      } else {
+        const title = makeElement("h3", "font-heading text-base font-bold text-foreground sm:text-lg", "Belum ada percakapan");
+        const description = makeElement("p", "text-xs leading-relaxed text-muted", "Jadilah yang pertama memulai diskusi seputar reparasi pakaian, gaya vintage, atau tips berburu thrifting!");
+        const createButton = makeElement("button", "inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer", "Mulai buat post pertama");
+        createButton.type = "button";
+        createButton.setAttribute("popovertarget", "forum-create-modal");
+        createButton.setAttribute("popovertargetaction", "show");
+        attachDebouncedClick(createButton);
+        state.append(title, description, createButton);
+      }
+      item.append(state);
+      return item;
+    }
+
+    async function fetchPostsByFilter(title = "") {
+      currentTitleFilter = title;
+      const searchButton = document.getElementById("forum-search-button") || document.querySelector(".forum-search__button");
+      const searchSpinner = searchButton?.querySelector(".search-spinner");
+
+      try {
+        if (searchSpinner) searchSpinner.classList.remove("hidden");
+        if (searchButton) searchButton.disabled = true;
+
+        const url = new URL(postList.dataset.postsUrl, window.location.origin);
+        if (title.trim()) {
+          url.searchParams.set("title", title.trim());
+        }
+
+        // Tampilkan feedback memuat saat mencari
+        postList.replaceChildren();
+        const loadingItem = makeElement(
+          "li",
+          "w-full py-8 text-center text-xs text-muted",
+          title.trim() ? `Mencari post "${title.trim()}"...` : "Memuat post forum..."
+        );
+        loadingItem.setAttribute("role", "status");
+        postList.appendChild(loadingItem);
+
+        const response = await fetch(url.toString(), {
+          headers: { Accept: "application/json" },
+        });
+        if (!response.ok) throw new Error(`Gagal mengambil post (${response.status}).`);
+        const posts = await response.json();
+        if (!Array.isArray(posts)) throw new Error("Format data post dari server tidak valid.");
+
+        postList.replaceChildren();
+        if (!posts.length) {
+          postList.appendChild(createEmptyState(title.trim()));
+          return;
+        }
+        posts.forEach((post) => postList.appendChild(createPostCard(post)));
+      } catch (error) {
+        console.error("Tidak dapat memuat post forum:", error);
+        const errorItem = makeElement("li", "w-full py-8 text-center text-sm text-red-700", "Post forum gagal dimuat. Muat ulang halaman untuk mencoba lagi.");
+        errorItem.setAttribute("role", "alert");
+        postList.replaceChildren(errorItem);
+      } finally {
+        if (searchSpinner) searchSpinner.classList.add("hidden");
+        if (searchButton) searchButton.disabled = false;
+      }
+    }
+
+    function debounce(callback, delay = 350) {
+      return function (...args) {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+          callback.apply(this, args);
+        }, delay);
+      };
+    }
+
+    const debouncedFetchPosts = debounce((title) => {
+      fetchPostsByFilter(title);
+    }, 350);
+
+    function loadPosts() {
+      return fetchPostsByFilter(currentTitleFilter);
+    }
+
+    function closePopoverWithAnimation() {
+      if (!modal.matches(":popover-open")) return;
+      modal.classList.add("translate-y-3", "opacity-0");
+      setTimeout(() => {
+        if (modal.matches(":popover-open")) modal.hidePopover();
+        modal.classList.remove("translate-y-3", "opacity-0");
+      }, 180);
+    }
+
+    modal.querySelectorAll('[popovertargetaction="hide"]').forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        closePopoverWithAnimation();
+      });
+    });
+
+    modal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closePopoverWithAnimation();
+      }
+    });
+
+    // Elements for form interactivity
+    const titleInput = document.getElementById("id_title");
+    const titleCharCounter = document.getElementById("title-char-counter");
+    const previewPostTitle = document.getElementById("preview-post-title");
+
+    const contentInput = document.getElementById("id_content");
+    const contentCharCounter = document.getElementById("content-char-counter");
+    const previewPostContent = document.getElementById("preview-post-content");
+
+    const categoryInput = document.getElementById("id_category");
+    const previewCategoryBadge = document.getElementById("preview-category-badge");
+
+    const imageUrlInput = document.getElementById("id_image_url");
+    const imageCaptionInput = document.getElementById("id_image_caption");
+    const captionCharCounter = document.getElementById("caption-char-counter");
+
+    const formImagePlaceholder = document.getElementById("form-image-placeholder");
+    const formImageLoading = document.getElementById("form-image-loading");
+    const formImageError = document.getElementById("form-image-error");
+    const formImageElement = document.getElementById("form-image-element");
+
+    const sidebarImagePlaceholder = document.getElementById("sidebar-image-placeholder");
+    const sidebarImageLoading = document.getElementById("sidebar-image-loading");
+    const sidebarImageElement = document.getElementById("sidebar-image-element");
+
+    const submitButton = postForm.querySelector('[type="submit"]');
+    const submitButtonText = document.getElementById("submit-button-text");
+
+    // Debounce timer for image preview (0.5 detik)
+    let imageDebounceTimer = null;
+    const IMAGE_DEBOUNCE_DELAY = 500;
+
+    // Button click debouncer with micro-animation
+    function attachDebouncedClick(button, callback, delay = 500) {
+      if (!button) return;
+      let isThrottled = false;
+      button.addEventListener("click", (event) => {
+        if (isThrottled) {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          return;
+        }
+        isThrottled = true;
+
+        // Button press animation
+        button.classList.add("scale-95");
+        setTimeout(() => button.classList.remove("scale-95"), 150);
+
+        if (callback) callback(event);
+
+        setTimeout(() => {
+          isThrottled = false;
+        }, delay);
+      });
+    }
+
+    // Interactive Character Counting
+    function updateTitleCounter() {
+      if (!titleInput || !titleCharCounter) return;
+      const len = titleInput.value.length;
+      titleCharCounter.textContent = `${len} / 120`;
+      if (len >= 120) {
+        titleCharCounter.classList.add("text-accent", "font-bold");
+      } else {
+        titleCharCounter.classList.remove("text-accent", "font-bold");
+      }
+      if (previewPostTitle) {
+        previewPostTitle.textContent = titleInput.value.trim() || "Judul post akan tampil di sini";
+      }
+    }
+
+    function updateContentCounter() {
+      if (!contentInput || !contentCharCounter) return;
+      const len = contentInput.value.length;
+      const formatted = len.toLocaleString("id-ID");
+      contentCharCounter.textContent = `${formatted} / 2.000`;
+      if (len >= 2000) {
+        contentCharCounter.classList.add("text-accent", "font-bold");
+      } else {
+        contentCharCounter.classList.remove("text-accent", "font-bold");
+      }
+      if (previewPostContent) {
+        previewPostContent.textContent = contentInput.value.trim() || "Isi post akan tampil di sini setelah kamu mulai menulis...";
+      }
+    }
+
+    function updateCategoryPreview() {
+      if (!categoryInput || !previewCategoryBadge) return;
+      const selectedOption = categoryInput.options[categoryInput.selectedIndex];
+      previewCategoryBadge.textContent = selectedOption ? selectedOption.text : "Tag";
+    }
+
+    function updateCaptionCounter() {
+      if (!imageCaptionInput || !captionCharCounter) return;
+      const len = imageCaptionInput.value.length;
+      captionCharCounter.textContent = `${len} / 200`;
+      if (len >= 200) {
+        captionCharCounter.classList.add("text-accent", "font-bold");
+      } else {
+        captionCharCounter.classList.remove("text-accent", "font-bold");
+      }
+    }
+
+    // Image preview debouncer (0.5 detik)
+    function resetImagePreview() {
+      if (imageDebounceTimer) {
+        clearTimeout(imageDebounceTimer);
+        imageDebounceTimer = null;
+      }
+
+      formImageLoading?.classList.add("hidden");
+      formImageError?.classList.add("hidden");
+      if (formImageElement) {
+        formImageElement.src = "";
+        formImageElement.classList.add("hidden", "opacity-0");
+      }
+      formImagePlaceholder?.classList.remove("hidden");
+
+      sidebarImageLoading?.classList.add("hidden");
+      if (sidebarImageElement) {
+        sidebarImageElement.src = "";
+        sidebarImageElement.classList.add("hidden", "opacity-0");
+      }
+      sidebarImagePlaceholder?.classList.remove("hidden");
+    }
+
+    function handleImageDebounce() {
+      if (imageDebounceTimer) {
+        clearTimeout(imageDebounceTimer);
+        imageDebounceTimer = null;
+      }
+
+      if (!imageUrlInput) return;
+      const url = imageUrlInput.value.trim();
+
+      if (!url) {
+        resetImagePreview();
+        return;
+      }
+
+      imageDebounceTimer = setTimeout(() => {
+        applyImagePreview(url);
+      }, IMAGE_DEBOUNCE_DELAY);
+    }
+
+    function applyImagePreview(url) {
+      // Loading state
+      formImagePlaceholder?.classList.add("hidden");
+      formImageError?.classList.add("hidden");
+      if (formImageElement) {
+        formImageElement.classList.add("hidden", "opacity-0");
+      }
+      formImageLoading?.classList.remove("hidden");
+
+      sidebarImagePlaceholder?.classList.add("hidden");
+      if (sidebarImageElement) {
+        sidebarImageElement.classList.add("hidden", "opacity-0");
+      }
+      sidebarImageLoading?.classList.remove("hidden");
+
+      const tester = new Image();
+      tester.src = url;
+
+      tester.onload = () => {
+        // Discard if input changed in between
+        if (imageUrlInput.value.trim() !== url) return;
+
+        formImageLoading?.classList.add("hidden");
+        if (formImageElement) {
+          formImageElement.src = url;
+          formImageElement.classList.remove("hidden");
+          setTimeout(() => formImageElement.classList.remove("opacity-0"), 30);
+        }
+
+        sidebarImageLoading?.classList.add("hidden");
+        if (sidebarImageElement) {
+          sidebarImageElement.src = url;
+          sidebarImageElement.classList.remove("hidden");
+          setTimeout(() => sidebarImageElement.classList.remove("opacity-0"), 30);
+        }
+      };
+
+      tester.onerror = () => {
+        if (imageUrlInput.value.trim() !== url) return;
+
+        formImageLoading?.classList.add("hidden");
+        formImageError?.classList.remove("hidden");
+
+        sidebarImageLoading?.classList.add("hidden");
+        sidebarImagePlaceholder?.classList.remove("hidden");
+      };
+    }
+
+    function syncFormInteractiveState() {
+      updateTitleCounter();
+      updateContentCounter();
+      updateCaptionCounter();
+      updateCategoryPreview();
+      if (imageUrlInput?.value.trim()) {
+        applyImagePreview(imageUrlInput.value.trim());
+      } else {
+        resetImagePreview();
+      }
+    }
+
+    // Attach listeners for interactive form
+    titleInput?.addEventListener("input", updateTitleCounter);
+    contentInput?.addEventListener("input", updateContentCounter);
+    categoryInput?.addEventListener("change", updateCategoryPreview);
+    imageCaptionInput?.addEventListener("input", updateCaptionCounter);
+    imageUrlInput?.addEventListener("input", handleImageDebounce);
+
+    postForm.addEventListener("reset", () => {
+      setTimeout(() => {
+        syncFormInteractiveState();
+        if (apiError) apiError.hidden = true;
+      }, 0);
+    });
+
+    // Attach button click debouncer and animation to main "Buat post" button
+    document.querySelectorAll(".community-feed__create").forEach((btn) => {
+      attachDebouncedClick(btn);
+    });
+
+    modal.addEventListener("toggle", (event) => {
+      if (event.newState === "open") {
+        modal.classList.add("translate-y-3", "opacity-0");
+        setTimeout(() => modal.classList.remove("translate-y-3", "opacity-0"), 10);
+        syncFormInteractiveState();
+      }
+    });
+
+    postForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      apiError.hidden = true;
+      if (submitButton) {
+        submitButton.disabled = true;
+        if (submitButtonText) submitButtonText.textContent = "Memublikasikan...";
+      }
+      const formData = new FormData(postForm);
+      const csrfToken = formData.get("csrfmiddlewaretoken");
+
+      try {
+        const response = await fetch("{% url 'forum:create_post_api' %}", {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          const errors = Object.values(result.errors || {})
+            .flat()
+            .map((error) => error.message)
+            .join(" ");
+          throw new Error(errors || "Post gagal dikirim. Silakan coba lagi.");
+        }
+
+        postForm.reset();
+        syncFormInteractiveState();
+        closePopoverWithAnimation();
+        await loadPosts();
+      } catch (error) {
+        apiError.textContent = error.message;
+        apiError.hidden = false;
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          if (submitButtonText) submitButtonText.textContent = "Publikasikan post";
+        }
+      }
+    });
+
+    const searchForm = document.querySelector(".forum-search");
+    const searchInput = document.getElementById("forum-search-input");
+    const searchButton = document.getElementById("forum-search-button") || document.querySelector(".forum-search__button");
+
+    function executeSearch() {
+      if (searchDebounceTimer) {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = null;
+      }
+      const query = searchInput ? searchInput.value.trim() : "";
+      fetchPostsByFilter(query);
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener("input", (event) => {
+        debouncedFetchPosts(event.target.value);
+      });
+      searchInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          executeSearch();
+        }
+      });
+    }
+
+    if (searchButton) {
+      searchButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        executeSearch();
+      });
+    }
+
+    if (searchForm) {
+      searchForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        executeSearch();
+      });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialQuery = urlParams.get("title") || urlParams.get("q") || "";
+    if (initialQuery && searchInput) {
+      searchInput.value = initialQuery;
+      fetchPostsByFilter(initialQuery);
+    } else {
+      loadPosts();
+    }
+
+    {% if show_create_modal %}
+    modal.showPopover();
+    {% endif %}
+  })();
+</script>
+{% endblock %}
