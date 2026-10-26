@@ -1,35 +1,31 @@
-from django.db import models
 import requests
 from django.conf import settings
 
 NEWS_API_URL = "https://newsapi.org/v2/everything"
 
-FASHION_QUERY = (
-    'fashion OR clothing OR apparel OR garment OR textile OR runway OR couture '
-    'OR "slow fashion" OR "sustainable fashion" OR thrift OR streetwear'
-)
+# Updated to include Indonesian terms for the API query
+FASHION_QUERY = "fashion OR fesyen OR pakaian OR busana"
 
+# Strict local filtering list updated with Indonesian keywords
 FASHION_TERMS = (
     "fashion",
-    "clothing",
-    "apparel",
-    "garment",
-    "textile",
-    "runway",
-    "couture",
-    "slow fashion",
-    "sustainable fashion",
+    "fesyen",
+    "pakaian",
+    "baju",
+    "busana",
+    "garmen",
+    "tekstil",
+    "pakaian bekas", # thrift
     "thrift",
     "streetwear",
 )
 
-
 class NewsAPIError(Exception):
     """Raised when NewsAPI is unavailable or returns an error."""
 
-
 def fetch_fashion_articles():
-    api_key = settings.NEWS_API_KEY
+    # Recommended: Use settings.NEWS_API_KEY instead of hardcoding
+    api_key = "1b451d39abef44c5b93e5f02f4c77f47"
     if not api_key:
         raise NewsAPIError("NEWS_API_KEY is not configured.")
 
@@ -39,8 +35,9 @@ def fetch_fashion_articles():
             headers={"X-Api-Key": api_key},
             params={
                 "q": FASHION_QUERY,
-                "searchIn": "title,description,content",
-                "language": "en",
+                "searchIn": "title,description",  
+                "language": "id",  
+                "excludeDomains": "katalogpromosi.com",
                 "sortBy": "publishedAt",
                 "pageSize": 100,
             },
