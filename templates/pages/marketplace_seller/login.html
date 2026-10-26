@@ -1,0 +1,42 @@
+{% extends 'pages/marketplace_seller/base.html' %}
+
+{% block title %}Masuk Penjual — Thrift.io{% endblock %}
+
+{% block content %}
+<div class="bg-[#fef4e0] min-h-screen flex items-center justify-center p-6 font-sans text-black">
+    <div class="w-full max-w-md border-3 border-black bg-[#fdf8eb] p-6 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
+        
+        <!-- Header Form -->
+        <div class="bg-[#f8d775] border-2 border-black p-4 mb-6 shadow-[4px_4px_0px_rgba(0,0,0,1)] text-center">
+            <h1 class="text-2xl font-black uppercase tracking-wide">Masuk Penjual</h1>
+            <p class="text-xs font-semibold mt-1">Kelola barang dagangan milikmu di Thrift.io</p>
+        </div>
+
+        {% if form.errors %}
+        <div class="bg-red-400 text-black border-2 border-black p-3 mb-4 text-xs font-bold shadow-[3px_3px_0px_rgba(0,0,0,1)]">
+            Username atau password salah. Coba lagi!
+        </div>
+        {% endif %}
+
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label class="block font-black text-xs uppercase mb-1">Username</label>
+                {{ form.username }}
+            </div>
+
+            <div>
+                <label class="block font-black text-xs uppercase mb-1">Password</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit" 
+                    class="w-full bg-[#e05628] text-white border-2 border-black font-black py-3 text-sm uppercase tracking-wider shadow-[4px_4px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_rgba(0,0,0,1)] transition-all mt-4">
+                Masuk Sekarang
+            </button>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
