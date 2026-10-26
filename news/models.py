@@ -29,7 +29,7 @@ class NewsAPIError(Exception):
 
 
 def fetch_fashion_articles():
-    api_key = '1b451d39abef44c5b93e5f02f4c77f47'
+    api_key = settings.NEWS_API_KEY
     if not api_key:
         raise NewsAPIError("NEWS_API_KEY is not configured.")
 
