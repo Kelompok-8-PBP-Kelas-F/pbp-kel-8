@@ -23,7 +23,7 @@ urlpatterns = [
     path('', include("core.urls")),
     path('', include('forum.urls')),
     path('', include("news.urls")),
-    path('', include("user.urls"))
+    path('', include("user.urls")),
     path('', include('marketplace.urls')),
 ]
 

@@ -8,9 +8,7 @@
         <div class="lg:col-span-5 flex flex-col">
           <a href="{% url 'core:landing_page' %}" class="inline-flex items-center gap-2 w-fit hover:opacity-90 transition-opacity">
             <!-- Logo Icon -->
-            <div class="w-7 h-7 bg-[#fbf1d5] border-2 border-[#121212] flex items-center justify-center font-black text-xs text-[#121212]">
-              O8
-            </div>
+            {% include 'components/icons/logo.html' %}
             <h2 class="text-base sm:text-lg font-bold font-heading text-[#fbf1d5]">Thrift.io</h2>
           </a>
           <p class="text-xs sm:text-[13px] text-[#fbf1d5]/80 mt-3 max-w-sm leading-relaxed">
