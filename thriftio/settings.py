@@ -38,8 +38,6 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "luthfi.ahmad51-thriftio.pws.cs.ui.ac
 
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
-LOGIN_URL = 'login'
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -51,7 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'tailwind',
-    'theme'
+    'theme',
+    'forum'
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -73,6 +72,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [ BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,7 +84,6 @@ TEMPLATES = [
     },
 ]
 
-NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 WSGI_APPLICATION = 'thriftio.wsgi.application'
 
@@ -166,6 +165,3 @@ if DEBUG:
     MIDDLEWARE += [
         "django_browser_reload.middleware.BrowserReloadMiddleware",
     ]
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
