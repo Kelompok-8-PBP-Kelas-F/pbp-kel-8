@@ -38,11 +38,16 @@ def forum_main(request):
 
 def forum_detail(request, id):
     post = get_object_or_404(Forum, pk=id)
+    can_manage = (
+        request.user.is_authenticated
+        and (request.user.username == post.author_username or request.user.is_superuser)
+    )
     return render(
         request,
         'pages/forum/forum_detail.html',
         {
             'post': post,
+            'can_manage': can_manage,
         },
     )
 
@@ -66,11 +71,13 @@ def get_posts_api(request):
 
 def create_post_api(request):
     if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required. Silakan masuk terlebih dahulu.'}, status=401)
+
         form = ForumForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
-            author = request.user.username if getattr(request.user, "is_authenticated", False) and request.user.username else "anindita"
-            post.author_username = author
+            post.author_username = request.user.username
             post.save()
             return JsonResponse(
                 {
@@ -85,7 +92,16 @@ def create_post_api(request):
 
 def edit_post_api(request, id):
     if request.method == "PUT":
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required. Silakan masuk terlebih dahulu.'}, status=401)
+
         post = get_object_or_404(Forum, pk=id)
+        if post.author_username != request.user.username and not request.user.is_superuser:
+            return JsonResponse(
+                {'error': 'Permission denied. Hanya pemilik post atau superuser yang dapat mengedit post ini.'},
+                status=403,
+            )
+
         if hasattr(request, 'PUT'):
             data = request.PUT
         elif request.content_type == 'application/json':
@@ -112,7 +128,16 @@ def edit_post_api(request, id):
 
 def delete_post_api(request, id):
     if request.method == "DELETE":
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required. Silakan masuk terlebih dahulu.'}, status=401)
+
         post = get_object_or_404(Forum, pk=id)
+        if post.author_username != request.user.username and not request.user.is_superuser:
+            return JsonResponse(
+                {'error': 'Permission denied. Hanya pemilik post atau superuser yang dapat menghapus post ini.'},
+                status=403,
+            )
+
         post.delete()
         return JsonResponse(
             {

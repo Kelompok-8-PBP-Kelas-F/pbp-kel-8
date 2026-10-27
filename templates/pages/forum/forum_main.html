@@ -47,6 +47,7 @@
             id="feed-title">Feed komunitas</h2>
           <p class="community-feed__description text-xs text-muted">Percakapan terbaru dari 8.421 anggota</p>
         </div>
+        {% if request.user.is_authenticated %}
         <button
           class="community-feed__create inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto sm:text-[0.8125rem] cursor-pointer"
           type="button" popovertarget="forum-create-modal" popovertargetaction="show">
@@ -57,6 +58,18 @@
           <span>Buat post</span>
           <span class="hidden font-normal sm:inline">· Pengguna terdaftar</span>
         </button>
+        {% else %}
+        <a
+          href="{% url 'user:login' %}?next={% url 'forum:forum_main' %}"
+          class="community-feed__create inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto sm:text-[0.8125rem] cursor-pointer">
+          <svg class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <span>Buat post</span>
+          <span class="hidden font-normal sm:inline">· Masuk terlebih dahulu</span>
+        </a>
+        {% endif %}
       </header>
 
       <div class="community-feed__layout grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
@@ -191,8 +204,14 @@
               dalam percakapan</h2>
             <p class="member-access__description text-[0.625rem] leading-relaxed text-hero-foreground">Pengguna
               terdaftar dapat menyukai post, membuat post baru, dan menulis komentar.</p>
+            {% if request.user.is_authenticated %}
+            <button
+              class="member-access__action grid min-h-8.5 place-items-center border-2 border-line bg-highlight px-3 py-1.5 text-xs font-bold text-foreground cursor-pointer"
+              type="button" popovertarget="forum-create-modal" popovertargetaction="show">Buat post sekarang</button>
+            {% else %}
             <a class="member-access__action grid min-h-8.5 place-items-center border-2 border-line bg-highlight px-3 py-1.5 text-xs font-bold text-foreground"
-              href="#">Daftar gratis</a>
+              href="{% url 'user:register' %}">Daftar gratis</a>
+            {% endif %}
           </section>
         </aside>
       </div>

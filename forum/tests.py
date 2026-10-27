@@ -97,6 +97,19 @@ class ForumCreateModalTests(TestCase):
         self.assertIn("errors", response.json())
         self.assertEqual(Forum.objects.count(), 0)
 
+    def test_create_api_requires_authentication(self):
+        self.client.logout()
+        response = self.client.post(
+            reverse("forum:create_post_api"),
+            {
+                "title": "Post by Guest",
+                "content": "Should be rejected.",
+                "category": "QUESTION",
+            },
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(Forum.objects.count(), 0)
+
     def test_forum_detail_view(self):
         post = Forum.objects.create(
             author_username=self.user.username,
@@ -106,6 +119,7 @@ class ForumCreateModalTests(TestCase):
         response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["post"], post)
+        self.assertTrue(response.context["can_manage"])
         self.assertContains(response, "Post Detail")
         self.assertContains(response, "Konten Detail")
         self.assertContains(response, "Kembali ke Forum")
@@ -115,30 +129,142 @@ class ForumCreateModalTests(TestCase):
         self.assertContains(response, 'id="menu-delete-post-btn"')
         self.assertContains(response, 'id="forum-edit-modal"')
 
-    def test_edit_post_api_put(self):
-        from urllib.parse import urlencode
+    def test_forum_detail_view_non_owner_and_guest(self):
         post = Forum.objects.create(
-            author_username="someone",
+            author_username="another-author",
+            title="Post By Other",
+            content="Konten Lain",
+        )
+        # Logged in as non-owner (self.user)
+        response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context["can_manage"])
+        self.assertNotContains(response, 'id="menu-edit-post-btn"')
+        self.assertNotContains(response, 'id="menu-delete-post-btn"')
+        self.assertNotContains(response, 'id="forum-edit-modal"')
+
+        # Guest (unauthenticated)
+        self.client.logout()
+        res_guest = self.client.get(reverse("forum:forum_detail", args=[post.id]))
+        self.assertEqual(res_guest.status_code, 200)
+        self.assertFalse(res_guest.context["can_manage"])
+        self.assertNotContains(res_guest, 'id="menu-edit-post-btn"')
+        self.assertNotContains(res_guest, 'id="menu-delete-post-btn"')
+
+    def test_forum_detail_view_superuser(self):
+        admin_user = get_user_model().objects.create_superuser(
+            username="admin-user",
+            password="admin-password",
+        )
+        self.client.force_login(admin_user)
+        post = Forum.objects.create(
+            author_username="some-user",
+            title="Admin Viewing",
+            content="Content",
+        )
+        response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["can_manage"])
+        self.assertContains(response, 'id="menu-edit-post-btn"')
+        self.assertContains(response, 'id="menu-delete-post-btn"')
+
+    def test_edit_post_api_authorization(self):
+        from urllib.parse import urlencode
+
+        post = Forum.objects.create(
+            author_username="original-owner",
             title="Old Title",
             content="Old Content",
         )
-        self.client.logout()  # Unauthenticated to verify no auth check
-        response = self.client.put(
+
+        # 1. Unauthenticated -> 401
+        self.client.logout()
+        res_unauth = self.client.put(
             reverse("forum:edit_post_api", args=[post.id]),
-            data=urlencode({"title": "Updated Title", "content": "Updated Content", "category": "DISCUSSION"}),
+            data=urlencode({"title": "Hack Title", "content": "Hack Content", "category": "DISCUSSION"}),
             content_type="application/x-www-form-urlencoded",
         )
-        self.assertEqual(response.status_code, 200)
-        post.refresh_from_db()
-        self.assertEqual(post.title, "Updated Title")
+        self.assertEqual(res_unauth.status_code, 401)
 
-    def test_delete_post_api_delete(self):
+        # 2. Authenticated as non-owner (self.user) -> 403
+        self.client.force_login(self.user)
+        res_forbidden = self.client.put(
+            reverse("forum:edit_post_api", args=[post.id]),
+            data=urlencode({"title": "Other User Title", "content": "Other User Content", "category": "DISCUSSION"}),
+            content_type="application/x-www-form-urlencoded",
+        )
+        self.assertEqual(res_forbidden.status_code, 403)
+
+        # 3. Authenticated as owner -> 200
+        owner_user = get_user_model().objects.create_user(
+            username="original-owner",
+            password="owner-password",
+        )
+        self.client.force_login(owner_user)
+        res_owner = self.client.put(
+            reverse("forum:edit_post_api", args=[post.id]),
+            data=urlencode({"title": "Owner Updated Title", "content": "Updated Content", "category": "DISCUSSION"}),
+            content_type="application/x-www-form-urlencoded",
+        )
+        self.assertEqual(res_owner.status_code, 200)
+        post.refresh_from_db()
+        self.assertEqual(post.title, "Owner Updated Title")
+
+        # 4. Superuser -> 200 (can edit any post)
+        admin_user = get_user_model().objects.create_superuser(
+            username="super-admin",
+            password="admin-password",
+        )
+        self.client.force_login(admin_user)
+        res_admin = self.client.put(
+            reverse("forum:edit_post_api", args=[post.id]),
+            data=urlencode({"title": "Superuser Overwrite", "content": "Admin Content", "category": "DISCUSSION"}),
+            content_type="application/x-www-form-urlencoded",
+        )
+        self.assertEqual(res_admin.status_code, 200)
+        post.refresh_from_db()
+        self.assertEqual(post.title, "Superuser Overwrite")
+
+    def test_delete_post_api_authorization(self):
         post = Forum.objects.create(
-            author_username="someone",
+            author_username="post-owner",
             title="To Delete",
             content="Content",
         )
-        self.client.logout()  # Unauthenticated to verify no auth check
-        response = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
-        self.assertEqual(response.status_code, 200)
+
+        # 1. Unauthenticated -> 401
+        self.client.logout()
+        res_unauth = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
+        self.assertEqual(res_unauth.status_code, 401)
+        self.assertTrue(Forum.objects.filter(pk=post.id).exists())
+
+        # 2. Authenticated as non-owner (self.user) -> 403
+        self.client.force_login(self.user)
+        res_forbidden = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
+        self.assertEqual(res_forbidden.status_code, 403)
+        self.assertTrue(Forum.objects.filter(pk=post.id).exists())
+
+        # 3. Authenticated as owner -> 200
+        owner_user = get_user_model().objects.create_user(
+            username="post-owner",
+            password="owner-password",
+        )
+        self.client.force_login(owner_user)
+        res_owner = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
+        self.assertEqual(res_owner.status_code, 200)
         self.assertFalse(Forum.objects.filter(pk=post.id).exists())
+
+        # 4. Superuser can delete any post -> 200
+        another_post = Forum.objects.create(
+            author_username="someone-else",
+            title="Post for Superuser to Delete",
+            content="Content",
+        )
+        admin_user = get_user_model().objects.create_superuser(
+            username="super-admin-deleter",
+            password="admin-password",
+        )
+        self.client.force_login(admin_user)
+        res_admin = self.client.delete(reverse("forum:delete_post_api", args=[another_post.id]))
+        self.assertEqual(res_admin.status_code, 200)
+        self.assertFalse(Forum.objects.filter(pk=another_post.id).exists())
