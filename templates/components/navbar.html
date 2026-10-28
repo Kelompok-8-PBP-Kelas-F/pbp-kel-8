@@ -1,33 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-</head>
-<body>
-    <nav class="sticky top-0 z-50 flex h-auto min-h-16 flex-wrap items-center justify-between gap-y-3 self-stretch border-b border-solid border-line bg-background px-4 py-3 font-main sm:px-6 lg:h-18 lg:flex-nowrap lg:px-6 lg:py-4">
-        <a href="{% url 'core:landing_page' %}" class="ml-0 flex items-center gap-2 lg:ml-3 hover:opacity-90 transition-opacity">
-            <div>
-                {% include 'components/icons/logo.html' %}
-            </div>
-            <h2 class="text-[1rem] font-bold font-main text-foreground">Thrift.io</h2>
-        </a>
-        <ul class="order-last flex w-full items-center justify-start gap-5 overflow-x-auto whitespace-nowrap text-xs text-foreground lg:order-0 lg:w-auto lg:gap-6 lg:text-base">
-            <li><a href="{% url 'marketplace:marketplace_list' %}">Marketplace</a></li>
-            <li><a href="">Event</a></li>
-            <li><a href="{% url 'news:news_page' %}">News</a></li>
-            <li><a href="{% url 'forum:forum_main' %}">Forum</a></li>
-            <li><a href="">Outfit Builder</a></li>
-        </ul>
-        <div class="mr-0 flex justify-end gap-2 font-main lg:mr-5 lg:gap-3">
-            {% if user.is_authenticated %}
-                <span class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-surface px-3 text-xs text-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">{{ user.username }}</span>
-                <a href="{% url 'user:logout' %}" class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-accent px-3 text-xs text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Logout</a>
-            {% else %}
-                <a href="{% url 'user:login' %}" class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-surface px-3 text-xs text-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Login</a>
-                <a href="{% url 'user:register' %}" class="inline-flex h-9 font-medium items-center justify-center gap-2 overflow-hidden bg-accent px-3 text-xs text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">Register</a>
-            {% endif %}
+{% with app=request.resolver_match.app_name url=request.resolver_match.url_name path=request.path %}
+<nav class="sticky top-0 z-50 flex h-auto min-h-16 flex-wrap items-center justify-between gap-y-3 border-b border-solid border-line bg-background px-4 py-3 font-main sm:px-6 lg:h-18 lg:flex-nowrap lg:px-8">
+    <!-- Brand / Logo -->
+    <a href="{% url 'core:landing_page' %}" class="flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <div>
+            {% include 'components/icons/logo.html' %}
         </div>
-    </nav>
-</body>
-</html>
+        <h2 class="text-base font-bold font-main text-foreground sm:text-lg">Thrift.io</h2>
+    </a>
 
-</html>
+    <!-- Navigation Links -->
+    <ul class="order-last flex w-full items-center justify-start gap-6 overflow-x-auto whitespace-nowrap py-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden text-xs text-foreground lg:order-0 lg:w-auto lg:gap-8 lg:text-base">
+        <!-- Marketplace -->
+        <li>
+            {% if app == 'marketplace' or '/marketplace' in path %}
+                <a href="{% url 'marketplace:marketplace_list' %}"
+                   aria-current="page"
+                   class="group relative inline-flex items-center py-1 font-bold text-foreground">
+                    <span>Marketplace</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-full bg-foreground rounded-full transition-all duration-200" aria-hidden="true"></span>
+                </a>
+            {% else %}
+                <a href="{% url 'marketplace:marketplace_list' %}"
+                   class="group relative inline-flex items-center py-1 font-medium text-foreground/60 transition-colors duration-150 hover:text-foreground">
+                    <span>Marketplace</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-0 bg-foreground rounded-full transition-all duration-200 ease-out group-hover:w-full" aria-hidden="true"></span>
+                </a>
+            {% endif %}
+        </li>
+
+        <!-- Event -->
+        <li>
+            {% if app == 'event' or '/event' in path %}
+                <a href="#"
+                   aria-current="page"
+                   class="group relative inline-flex items-center py-1 font-bold text-foreground">
+                    <span>Event</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-full bg-foreground rounded-full transition-all duration-200" aria-hidden="true"></span>
+                </a>
+            {% else %}
+                <a href="#"
+                   class="group relative inline-flex items-center py-1 font-medium text-foreground/60 transition-colors duration-150 hover:text-foreground">
+                    <span>Event</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-0 bg-foreground rounded-full transition-all duration-200 ease-out group-hover:w-full" aria-hidden="true"></span>
+                </a>
+            {% endif %}
+        </li>
+
+        <!-- News -->
+        <li>
+            {% if app == 'news' or '/news' in path %}
+                <a href="{% url 'news:news_page' %}"
+                   aria-current="page"
+                   class="group relative inline-flex items-center py-1 font-bold text-foreground">
+                    <span>News</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-full bg-foreground rounded-full transition-all duration-200" aria-hidden="true"></span>
+                </a>
+            {% else %}
+                <a href="{% url 'news:news_page' %}"
+                   class="group relative inline-flex items-center py-1 font-medium text-foreground/60 transition-colors duration-150 hover:text-foreground">
+                    <span>News</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-0 bg-foreground rounded-full transition-all duration-200 ease-out group-hover:w-full" aria-hidden="true"></span>
+                </a>
+            {% endif %}
+        </li>
+
+        <!-- Forum -->
+        <li>
+            {% if app == 'forum' or '/forum' in path %}
+                <a href="{% url 'forum:forum_main' %}"
+                   aria-current="page"
+                   class="group relative inline-flex items-center py-1 font-bold text-foreground">
+                    <span>Forum</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-full bg-foreground rounded-full transition-all duration-200" aria-hidden="true"></span>
+                </a>
+            {% else %}
+                <a href="{% url 'forum:forum_main' %}"
+                   class="group relative inline-flex items-center py-1 font-medium text-foreground/60 transition-colors duration-150 hover:text-foreground">
+                    <span>Forum</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-0 bg-foreground rounded-full transition-all duration-200 ease-out group-hover:w-full" aria-hidden="true"></span>
+                </a>
+            {% endif %}
+        </li>
+
+        <!-- Outfit Builder -->
+        <li>
+            {% if app == 'outfit' or '/outfit' in path %}
+                <a href="#"
+                   aria-current="page"
+                   class="group relative inline-flex items-center py-1 font-bold text-foreground">
+                    <span>Outfit Builder</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-full bg-foreground rounded-full transition-all duration-200" aria-hidden="true"></span>
+                </a>
+            {% else %}
+                <a href="#"
+                   class="group relative inline-flex items-center py-1 font-medium text-foreground/60 transition-colors duration-150 hover:text-foreground">
+                    <span>Outfit Builder</span>
+                    <span class="absolute -bottom-1 left-0 h-[2.5px] w-0 bg-foreground rounded-full transition-all duration-200 ease-out group-hover:w-full" aria-hidden="true"></span>
+                </a>
+            {% endif %}
+        </li>
+    </ul>
+
+    <!-- Auth Buttons -->
+    <div class="mr-0 flex justify-end gap-2 font-main lg:mr-2 lg:gap-3">
+        {% if user.is_authenticated %}
+            <span class="inline-flex h-9 items-center justify-center gap-2 overflow-hidden bg-surface px-3 text-xs font-semibold text-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line lg:h-10 lg:px-4 lg:text-base">{{ user.username }}</span>
+            <a href="{% url 'user:logout' %}" class="inline-flex h-9 items-center justify-center gap-2 overflow-hidden bg-accent px-3 text-xs font-semibold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] lg:h-10 lg:px-4 lg:text-base">Logout</a>
+        {% else %}
+            <a href="{% url 'user:login' %}" class="inline-flex h-9 items-center justify-center gap-2 overflow-hidden bg-surface px-3 text-xs font-semibold text-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] lg:h-10 lg:px-4 lg:text-base">Login</a>
+            <a href="{% url 'user:register' %}" class="inline-flex h-9 items-center justify-center gap-2 overflow-hidden bg-accent px-3 text-xs font-semibold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] outline-2 -outline-offset-2 outline-line transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] lg:h-10 lg:px-4 lg:text-base">Register</a>
+        {% endif %}
+    </div>
+</nav>
+{% endwith %}
