@@ -1,0 +1,57 @@
+{% extends 'pages/marketplace_seller/base.html' %}
+
+{% block title %}Hapus Barang — Thrift.io{% endblock %}
+
+{% block content %}
+<div class="bg-[#fef4e0] min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-lg border-3 border-black bg-[#fdf8eb] p-6 shadow-[8px_8px_0px_rgba(0,0,0,1)]">
+        
+        <!-- Warning Banner -->
+        <div class="bg-[#e05628] text-white border-2 border-black p-4 mb-6 shadow-[4px_4px_0px_rgba(0,0,0,1)] flex items-center gap-3">
+            <span class="text-2xl">⚠️</span>
+            <div>
+                <h1 class="text-xl font-black uppercase tracking-wide">Konfirmasi Hapus</h1>
+                <p class="text-xs font-semibold">Tindakan ini tidak dapat dibatalkan!</p>
+            </div>
+        </div>
+
+        <!-- Preview Card Barang -->
+        <div class="border-2 border-black bg-white p-4 mb-6 shadow-[4px_4px_0px_rgba(0,0,0,1)] flex gap-4 items-center">
+            <div class="w-20 h-20 border-2 border-black bg-gray-100 shrink-0 overflow-hidden flex items-center justify-center">
+                {% if item.gambar %}
+                    <img src="{{ item.gambar.url }}" alt="{{ item.nama }}" class="w-full h-full object-cover">
+                {% else %}
+                    <span class="text-[10px] font-bold text-gray-400">No Image</span>
+                {% endif %}
+            </div>
+            <div class="overflow-hidden">
+                <h3 class="font-black text-base truncate mb-1">{{ item.nama }}</h3>
+                <p class="font-extrabold text-sm text-[#e05628] mb-1">Rp{{ item.harga|floatformat:0 }}</p>
+                <span class="inline-block text-[10px] font-extrabold px-2 py-0.5 border border-black shadow-[1px_1px_0px_rgba(0,0,0,1)] {% if item.status == 'Tersedia' %} bg-green-300 {% else %} bg-red-300 {% endif %}">
+                    {{ item.status }}
+                </span>
+            </div>
+        </div>
+
+        <p class="text-sm font-bold text-gray-800 mb-6 text-center">
+            Apakah kamu yakin ingin menghapus barang ini dari etalase toko?
+        </p>
+
+        <!-- Tombol Aksi -->
+        <form method="POST" class="flex gap-4">
+            {% csrf_token %}
+            
+            <a href="{% url 'dashboard_penjual' %}" 
+               class="flex-1 text-center bg-white border-2 border-black font-bold py-3 text-sm shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-gray-100 active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_rgba(0,0,0,1)] transition-all">
+                Batal
+            </a>
+            
+            <button type="submit" 
+                    class="flex-1 bg-[#e05628] text-white border-2 border-black font-bold py-3 text-sm shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_rgba(0,0,0,1)] transition-all">
+                Ya, Hapus
+            </button>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
