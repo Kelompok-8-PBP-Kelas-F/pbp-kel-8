@@ -57,6 +57,7 @@ atlassian-ide-plugin.xml
 build/
 develop-eggs/
 dist/
+!theme/static/css/dist/
 downloads/
 eggs/
 .eggs/
