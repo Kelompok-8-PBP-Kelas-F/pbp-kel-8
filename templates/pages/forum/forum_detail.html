@@ -7,7 +7,7 @@
 {% block content %}
 <main id="main-content" class="forum-detail-page w-full bg-background font-main text-foreground min-h-screen">
   <!-- Top Navigation / Breadcrumbs -->
-  <section class="border-b-2 border-line bg-background px-4 py-3 sm:px-6 lg:px-8">
+  <section class="bg-background px-4 pt-4 pb-1 sm:px-6 lg:px-8">
     <div class="mx-auto flex w-full max-w-6xl items-center">
       <nav aria-label="Breadcrumb" class="flex min-w-0 items-center gap-2 text-xs">
         <a href="{% url 'forum:forum_main' %}" class="inline-flex shrink-0 items-center gap-1.5 font-bold text-foreground transition-colors hover:text-accent">
@@ -21,7 +21,7 @@
   </section>
 
   <!-- Content Layout -->
-  <section class="px-4 py-6 sm:px-6 lg:px-8">
+  <section class="px-4 pt-3 pb-10 sm:px-6 lg:px-8">
     <div class="mx-auto grid w-full max-w-6xl min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
       
       <!-- Left Column: Post and Comments -->
@@ -351,68 +351,7 @@
     </div>
   </section>
 
-  <!-- Community Footer (matching mockup exactly with Thrift.io palette) -->
-  <footer class="mt-10 border-t-2 border-line bg-hero text-hero-foreground px-4 py-8 sm:px-6 lg:px-8">
-    <div class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
-        <div class="flex flex-col gap-4 lg:col-span-2">
-          <div class="flex items-center gap-2">
-            <div class="size-8 bg-surface text-foreground font-heading font-bold text-sm grid place-items-center border border-line">
-              T
-            </div>
-            <span class="font-heading text-lg font-bold text-hero-foreground">Thrift.io</span>
-          </div>
-          <p class="max-w-sm text-xs leading-relaxed text-hero-foreground/80">
-            Memperpanjang usia pakaian lewat pilihan yang lebih sadar, keterampilan praktis, dan komunitas yang saling berbagi.
-          </p>
-          <p class="text-xs font-semibold text-hero-accent">
-            8.421 anggota &middot; 12.608 percakapan
-          </p>
-        </div>
 
-        <div class="flex flex-col gap-3">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-hero-accent">Jelajahi</h4>
-          <ul class="flex flex-col gap-2 text-xs text-hero-foreground/80">
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Marketplace</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Event lokal</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Berita fashion</a></li>
-            <li><a href="{% url 'forum:forum_main' %}" class="hover:text-hero-accent transition-colors">Forum komunitas</a></li>
-          </ul>
-        </div>
-
-        <div class="flex flex-col gap-3">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-hero-accent">Sumber Daya</h4>
-          <ul class="flex flex-col gap-2 text-xs text-hero-foreground/80">
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Panduan perawatan</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Panduan thrifting</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Reparasi dasar</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Dampak fashion</a></li>
-          </ul>
-        </div>
-
-        <div class="flex flex-col gap-3">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-hero-accent">Bantuan</h4>
-          <ul class="flex flex-col gap-2 text-xs text-hero-foreground/80">
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Tentang Thrift.io</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Panduan komunitas</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Hubungi kami</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Privasi</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-hero-foreground/20 pt-6 text-xs text-hero-foreground/70">
-        <p>&copy; 2026 Thrift.io. Dibuat untuk lemari yang bertahan lebih lama.</p>
-        <div class="flex flex-wrap items-center gap-4">
-          <a href="#" class="hover:text-hero-accent transition-colors">Syarat penggunaan</a>
-          <span>&middot;</span>
-          <a href="#" class="hover:text-hero-accent transition-colors">Kebijakan privasi</a>
-          <span>&middot;</span>
-          <span>Versi 1.0</span>
-        </div>
-      </div>
-    </div>
-  </footer>
 </main>
 
 {% if can_manage %}
