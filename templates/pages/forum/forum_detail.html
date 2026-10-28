@@ -357,6 +357,7 @@
 {% if can_manage %}
 {% include 'pages/forum/components/forum_edit.html' %}
 {% endif %}
+{% include 'pages/forum/components/forum_delete_modal.html' %}
 
 <!-- Interactive Script for Detail Page -->
 <script>
@@ -375,6 +376,99 @@
         }
       });
     }
+
+    // Delete Confirmation Modal Management
+    const deleteModal = document.getElementById("delete-confirm-modal");
+    const deleteModalTitle = document.getElementById("delete-modal-title");
+    const deleteModalDescription = document.getElementById("delete-modal-description");
+    const deleteModalError = document.getElementById("delete-modal-error");
+    const deleteModalCancelBtn = document.getElementById("delete-modal-cancel-btn");
+    const deleteModalConfirmBtn = document.getElementById("delete-modal-confirm-btn");
+    const deleteSpinner = deleteModalConfirmBtn?.querySelector(".delete-spinner");
+    const deleteBtnText = deleteModalConfirmBtn?.querySelector(".delete-btn-text");
+
+    let currentDeleteAction = null;
+
+    function openDeleteModal({ title, description, confirmText = "Hapus", onConfirm }) {
+      if (!deleteModal) return;
+
+      if (deleteModalTitle) deleteModalTitle.textContent = title;
+      if (deleteModalDescription) deleteModalDescription.textContent = description;
+      if (deleteBtnText) deleteBtnText.textContent = confirmText;
+
+      if (deleteModalError) {
+        deleteModalError.classList.add("hidden");
+        deleteModalError.textContent = "";
+      }
+
+      setDeleteLoading(false);
+      currentDeleteAction = onConfirm;
+
+      deleteModal.classList.remove("hidden");
+      deleteModal.classList.add("flex");
+      deleteModalCancelBtn?.focus();
+    }
+
+    function closeDeleteModal() {
+      if (!deleteModal) return;
+      deleteModal.classList.add("hidden");
+      deleteModal.classList.remove("flex");
+      currentDeleteAction = null;
+      setDeleteLoading(false);
+      if (deleteModalError) {
+        deleteModalError.classList.add("hidden");
+        deleteModalError.textContent = "";
+      }
+    }
+
+    function setDeleteLoading(isLoading) {
+      if (!deleteModalConfirmBtn) return;
+      deleteModalConfirmBtn.disabled = isLoading;
+      if (deleteModalCancelBtn) deleteModalCancelBtn.disabled = isLoading;
+      if (deleteSpinner) deleteSpinner.classList.toggle("hidden", !isLoading);
+    }
+
+    deleteModalCancelBtn?.addEventListener("click", closeDeleteModal);
+
+    deleteModal?.addEventListener("click", (e) => {
+      if (e.target === deleteModal) {
+        closeDeleteModal();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && deleteModal && !deleteModal.classList.contains("hidden")) {
+        closeDeleteModal();
+      }
+    });
+
+    deleteModalConfirmBtn?.addEventListener("click", async () => {
+      if (typeof currentDeleteAction === "function") {
+        setDeleteLoading(true);
+        if (deleteModalError) {
+          deleteModalError.classList.add("hidden");
+          deleteModalError.textContent = "";
+        }
+        try {
+          await currentDeleteAction({
+            setError: (msg) => {
+              if (deleteModalError) {
+                deleteModalError.textContent = msg;
+                deleteModalError.classList.remove("hidden");
+              }
+            },
+            close: closeDeleteModal,
+          });
+        } catch (err) {
+          if (deleteModalError) {
+            deleteModalError.textContent = err.message || "Gagal melakukan penghapusan.";
+            deleteModalError.classList.remove("hidden");
+          }
+        } finally {
+          setDeleteLoading(false);
+        }
+      }
+    });
 
     // 2. Comment character counter
     const commentInput = document.getElementById("comment-textarea");
@@ -466,48 +560,50 @@
       return li;
     }
 
-    async function handleDeleteComment(btn) {
-      const confirmed = confirm("Apakah kamu yakin ingin menghapus komentar ini?");
-      if (!confirmed) return;
-
+    function handleDeleteComment(btn) {
       const url = btn.dataset.deleteUrl;
       if (!url) return;
 
-      try {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
-        const response = await fetch(url, {
-          method: "DELETE",
-          headers: {
-            "X-CSRFToken": csrfToken,
-            "Accept": "application/json",
-          },
-        });
+      openDeleteModal({
+        title: "Hapus Komentar",
+        description: "Apakah kamu yakin ingin menghapus komentar ini? Komentar yang telah dihapus tidak dapat dipulihkan.",
+        confirmText: "Hapus Komentar",
+        onConfirm: async ({ setError, close }) => {
+          const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+          const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+              "X-CSRFToken": csrfToken,
+              "Accept": "application/json",
+            },
+          });
 
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({}));
-          throw new Error(data.error || "Gagal menghapus komentar.");
-        }
-
-        const data = await response.json();
-        const li = btn.closest(".comment-item");
-        if (li) li.remove();
-
-        updateCommentCounters(data.total_comments);
-
-        const commentsContainer = document.getElementById("comments-container");
-        if (commentsContainer && commentsContainer.querySelectorAll(".comment-item").length === 0) {
-          let emptyMsg = document.getElementById("no-comments-msg");
-          if (!emptyMsg) {
-            emptyMsg = document.createElement("li");
-            emptyMsg.id = "no-comments-msg";
-            emptyMsg.className = "py-8 text-center text-xs text-muted";
-            emptyMsg.textContent = "Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!";
-            commentsContainer.appendChild(emptyMsg);
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            setError(data.error || "Gagal menghapus komentar.");
+            return;
           }
-        }
-      } catch (err) {
-        alert(err.message);
-      }
+
+          const data = await response.json();
+          const li = btn.closest(".comment-item");
+          if (li) li.remove();
+
+          updateCommentCounters(data.total_comments);
+
+          const commentsContainer = document.getElementById("comments-container");
+          if (commentsContainer && commentsContainer.querySelectorAll(".comment-item").length === 0) {
+            let emptyMsg = document.getElementById("no-comments-msg");
+            if (!emptyMsg) {
+              emptyMsg = document.createElement("li");
+              emptyMsg.id = "no-comments-msg";
+              emptyMsg.className = "py-8 text-center text-xs text-muted";
+              emptyMsg.textContent = "Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!";
+              commentsContainer.appendChild(emptyMsg);
+            }
+          }
+          close();
+        },
+      });
     }
 
     document.querySelectorAll(".delete-comment-btn").forEach((btn) => {
@@ -582,7 +678,7 @@
           commentError.textContent = err.message;
           commentError.classList.remove("hidden");
         } else {
-          alert(err.message);
+          console.error(err.message);
         }
       } finally {
         if (submitCommentBtn) submitCommentBtn.disabled = false;
@@ -723,27 +819,28 @@
     });
 
     // 7. Delete post handler (Calls delete_post_api)
-    async function handleDeletePost() {
-      const confirmed = confirm("Apakah kamu yakin ingin menghapus thread forum ini? Tindakan ini tidak dapat dibatalkan.");
-      if (!confirmed) return;
-
-      try {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
-        const response = await fetch("{% url 'forum:delete_post_api' post.id %}", {
-          method: "DELETE",
-          headers: {
-            "X-CSRFToken": csrfToken,
-            "Accept": "application/json",
-          },
-        });
-        if (!response.ok) {
-          const result = await response.json().catch(() => ({}));
-          throw new Error(result.error || "Gagal menghapus post.");
-        }
-        window.location.href = "{% url 'forum:forum_main' %}";
-      } catch (err) {
-        alert(err.message);
-      }
+    function handleDeletePost() {
+      openDeleteModal({
+        title: "Hapus Thread Forum",
+        description: "Apakah kamu yakin ingin menghapus thread forum ini? Seluruh komentar di dalamnya juga akan terhapus dan tindakan ini tidak dapat dibatalkan.",
+        confirmText: "Hapus Thread",
+        onConfirm: async ({ setError }) => {
+          const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+          const response = await fetch("{% url 'forum:delete_post_api' post.id %}", {
+            method: "DELETE",
+            headers: {
+              "X-CSRFToken": csrfToken,
+              "Accept": "application/json",
+            },
+          });
+          if (!response.ok) {
+            const result = await response.json().catch(() => ({}));
+            setError(result.error || "Gagal menghapus thread forum.");
+            return;
+          }
+          window.location.href = "{% url 'forum:forum_main' %}";
+        },
+      });
     }
 
     document.getElementById("action-delete-btn")?.addEventListener("click", handleDeletePost);
