@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<main class="w-full bg-background font-main text-foreground">
+  <div class="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6">
+    <div class="mb-6 flex flex-col gap-1">
+      <p class="text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Akun</p>
+      <h1 class="font-heading text-[1.75rem] font-bold leading-tight text-foreground">Edit Profil</h1>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="flex flex-col gap-1.5">
+        <label for="{{ field.id_for_label }}" class="text-[0.75rem] font-bold uppercase tracking-wide text-muted">
+          {{ field.label }}
+        </label>
+        <div class="border-2 border-line bg-surface shadow-[3px_3px_0_var(--shadow-color)]
+          [&>input]:w-full [&>input]:bg-transparent [&>input]:px-3.5 [&>input]:py-3 [&>input]:text-[0.8125rem] [&>input]:outline-none
+          [&>textarea]:w-full [&>textarea]:bg-transparent [&>textarea]:px-3.5 [&>textarea]:py-3 [&>textarea]:text-[0.8125rem] [&>textarea]:outline-none">
+          {{ field }}
+        </div>
+        {% if field.errors %}
+        <p class="text-[0.6875rem] text-red-500">{{ field.errors|join:", " }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="flex gap-3 pt-2">
+        <button type="submit"
+          class="inline-flex min-h-11 flex-1 items-center justify-center border-2 border-line bg-accent px-4 text-[0.8125rem] font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)]">
+          Simpan
+        </button>
+        <a href="{% url 'core:profile' username=request.user.username %}"
+          class="inline-flex min-h-11 items-center justify-center border-2 border-line bg-surface px-4 text-[0.8125rem] font-bold text-foreground shadow-[3px_3px_0_var(--shadow-color)]">
+          Batal
+        </a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
