@@ -27,6 +27,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
+PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
+
 CSRF_TRUSTED_ORIGINS = ["http://luthfi.ahmad51-thriftio.pws.cs.ui.ac.id"]
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-32a+-=divf1k7qe(zqaawg#y)ccg9i(8$22f-aejkuz1rc-#an'
@@ -35,8 +37,6 @@ SECRET_KEY = 'django-insecure-32a+-=divf1k7qe(zqaawg#y)ccg9i(8$22f-aejkuz1rc-#an
 DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "luthfi.ahmad51-thriftio.pws.cs.ui.ac.id"]
-
-PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
 NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
 
