@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django import forms
 from .models import UserProfile
+from forum.models import Forum
 
 
 class ProfileForm(forms.ModelForm):
@@ -30,7 +31,10 @@ class ProfileForm(forms.ModelForm):
 
 
 def landing_page(request):
-    return render(request, 'pages/core/landing.html')
+    top_forum = Forum.objects.order_by('-total_likes', '-created_at').first()
+    return render(request, 'pages/core/landing.html', {
+        'top_forum': top_forum,
+    })
 
 
 def profile_view(request, username):

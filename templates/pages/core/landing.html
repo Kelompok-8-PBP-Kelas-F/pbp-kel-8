@@ -521,22 +521,51 @@
         <!-- Card 2: Forum (3 or 4 cols) -->
         <div class="md:col-span-3 bg-[#fbf1d5] border-2 border-[#121212] shadow-[4px_4px_0_#121212] p-4 flex flex-col justify-between">
           <div>
-            <span class="bg-[#86A981] text-[#121212] border border-[#121212] px-2 py-0.5 text-[10px] font-bold inline-block">
-              Forum
-            </span>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="bg-[#86A981] text-[#121212] border border-[#121212] px-2 py-0.5 text-[10px] font-bold inline-block">
+                Forum
+              </span>
+              {% if top_forum.category %}
+              <span class="border border-[#121212] bg-[#f2c14e] px-1.5 py-0.5 text-[9px] font-bold uppercase text-[#121212]">
+                {{ top_forum.get_category_display|default:top_forum.category }}
+              </span>
+              {% endif %}
+            </div>
+
+            {% if top_forum %}
+            <h3 class="text-xs sm:text-sm font-bold text-[#121212] leading-snug mt-3 line-clamp-3">
+              <a href="{% url 'forum:forum_detail' top_forum.id %}" class="hover:underline">
+                {{ top_forum.title }}
+              </a>
+            </h3>
+            <p class="text-[10px] text-[#5c4a1a] mt-2 flex items-center gap-1.5 flex-wrap">
+              <span class="inline-flex items-center gap-1 font-bold text-[#E2652B]">
+                <svg class="size-3 fill-current" viewBox="0 0 24 24"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
+                {{ top_forum.total_likes }} suka
+              </span>
+              <span>&middot;</span>
+              <span>{{ top_forum.total_comments }} balasan</span>
+            </p>
+            {% else %}
             <h3 class="text-xs sm:text-sm font-bold text-[#121212] leading-snug mt-3">
               Cara merawat jaket denim vintage agar tidak pudar?
             </h3>
             <p class="text-[10px] text-[#5c4a1a] mt-2">
               24 balasan &middot; Perawatan
             </p>
+            {% endif %}
           </div>
 
-          <div class="pt-4 mt-4 border-t border-[#121212]/10">
-            <a href="#" class="inline-flex items-center gap-1 font-bold text-xs text-[#121212] hover:underline">
+          <div class="pt-4 mt-4 border-t border-[#121212]/10 flex items-center justify-between">
+            <a href="{% url 'forum:forum_main' %}" class="inline-flex items-center gap-1 font-bold text-xs text-[#121212] hover:underline">
               <span>Buka forum</span>
               <span>&rarr;</span>
             </a>
+            {% if top_forum %}
+            <a href="{% url 'forum:forum_detail' top_forum.id %}" class="text-[10px] font-bold text-[#5c4a1a] hover:underline">
+              Detail &rarr;
+            </a>
+            {% endif %}
           </div>
         </div>
 
