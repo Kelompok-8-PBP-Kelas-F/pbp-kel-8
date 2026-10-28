@@ -67,4 +67,4 @@ class Comment(models.Model):
         ordering = ['created_at']
 
     def __str__(self):
-        return f"Komentar oleh @{self.author_username} di {self.forum.title}"
+        return f"Komentar oleh @{self.author_username} di {self.forum.title}"

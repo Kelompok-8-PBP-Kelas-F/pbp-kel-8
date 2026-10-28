@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Thrift.io – Outfit Builder</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="flex min-h-[calc(100vh-4.5rem)] flex-col bg-[#fbf1d6] font-main text-[13px] text-[#111]">
+<main class="grid min-h-0 flex-1 grid-cols-1 md:grid-cols-[1fr_172px]">
+
+  <!-- ===== STAGE ===== -->
+  <section class="flex min-w-0 flex-col gap-[8px] border-b-2 border-[#111] bg-[#fbf1d6] px-[10px] py-[12px] md:border-b-0 md:border-r-2">
+    <div class="flex flex-wrap items-center justify-between gap-[8px] text-[11px] font-bold">
+      <span id="cinfo">KANVAS OUTFIT · 900 × 1200</span>
+      <span class="flex items-center gap-[6px] font-normal">
+        <button id="zo" aria-label="Perkecil" class="cursor-pointer border-[1.5px] border-solid border-black bg-white p-[2px_8px]">-</button>
+        <span id="zv">100%</span>
+        <button id="zi" aria-label="Perbesar" class="cursor-pointer border-[1.5px] border-solid border-black bg-white p-[2px_8px]">+</button>
+        <button id="gr" aria-pressed="true" class="cursor-pointer border-[1.5px] border-solid border-black bg-white p-[2px_8px] aria-[pressed=true]:bg-[#f2be4a] aria-[pressed=true]:font-bold">Grid: aktif</button>
+        <button id="rs" class="cursor-pointer border-[1.5px] border-solid border-black bg-white p-[2px_8px]">Acak</button>
+      </span>
+    </div>
+
+    <div id="canvas" data-grid="on"
+         class="relative min-h-[560px] flex-1 overflow-auto border-[2px] border-[#111] bg-[#1f4a3a]
+                data-[grid=on]:bg-[linear-gradient(rgba(255,255,255,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.07)_1px,transparent_1px)]
+                data-[grid=on]:bg-[size:24px_24px]">
+      <span class="absolute left-[14px] top-[12px] text-[10px] text-[#f2be4a]">[ AREA MIX-AND-MATCH ]</span>
+
+      <div id="board" class="flex origin-top flex-col items-center gap-[14px] px-[20px] pb-[30px] pt-[60px] transition-transform duration-150 motion-reduce:transition-none">
+
+        <!-- TOPI -->
+        <div class="grid grid-cols-[22px_150px_22px] items-center justify-center gap-[30px] md:gap-[70px]">
+          <button data-c="topi" data-d="-1" aria-label="Topi sebelumnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">‹</button>
+          <div class="flex flex-col items-center gap-[6px]">
+            <div id="s-topi" class="flex h-[55px] w-[84px] flex-col items-center justify-center gap-[6px] overflow-hidden border border-[#555] bg-[#d6d6d6] text-[8px] font-bold uppercase transition-shadow duration-200 motion-reduce:transition-none"></div>
+            <span id="n-topi" class="text-[9px] text-[#cfe3d8]"></span>
+          </div>
+          <button data-c="topi" data-d="1" aria-label="Topi berikutnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">›</button>
+        </div>
+
+        <!-- ATASAN -->
+        <div class="grid grid-cols-[22px_150px_22px] items-center justify-center gap-[30px] md:gap-[70px]">
+          <button data-c="atasan" data-d="-1" aria-label="Atasan sebelumnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">‹</button>
+          <div class="flex flex-col items-center gap-[6px]">
+            <div id="s-atasan" class="flex h-[118px] w-[132px] flex-col items-center justify-center gap-[6px] overflow-hidden border border-[#555] bg-[#d6d6d6] text-[8px] font-bold uppercase transition-shadow duration-200 motion-reduce:transition-none"></div>
+            <span id="n-atasan" class="text-[9px] text-[#cfe3d8]"></span>
+          </div>
+          <button data-c="atasan" data-d="1" aria-label="Atasan berikutnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">›</button>
+        </div>
+
+        <!-- BAWAHAN -->
+        <div class="grid grid-cols-[22px_150px_22px] items-center justify-center gap-[30px] md:gap-[70px]">
+          <button data-c="bawahan" data-d="-1" aria-label="Bawahan sebelumnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">‹</button>
+          <div class="flex flex-col items-center gap-[6px]">
+            <div id="s-bawahan" class="flex h-[132px] w-[110px] flex-col items-center justify-center gap-[6px] overflow-hidden border border-[#555] bg-[#d6d6d6] text-[8px] font-bold uppercase transition-shadow duration-200 motion-reduce:transition-none"></div>
+            <span id="n-bawahan" class="text-[9px] text-[#cfe3d8]"></span>
+          </div>
+          <button data-c="bawahan" data-d="1" aria-label="Bawahan berikutnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">›</button>
+        </div>
+
+        <!-- SEPATU -->
+        <div class="grid grid-cols-[22px_150px_22px] items-center justify-center gap-[30px] md:gap-[70px]">
+          <button data-c="sepatu" data-d="-1" aria-label="Sepatu sebelumnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">‹</button>
+          <div class="flex flex-col items-center gap-[6px]">
+            <div id="s-sepatu" class="flex h-[55px] w-[96px] flex-col items-center justify-center gap-[6px] overflow-hidden border border-[#555] bg-[#d6d6d6] text-[8px] font-bold uppercase transition-shadow duration-200 motion-reduce:transition-none"></div>
+            <span id="n-sepatu" class="text-[9px] text-[#cfe3d8]"></span>
+          </div>
+          <button data-c="sepatu" data-d="1" aria-label="Sepatu berikutnya" class="grid h-[22px] w-[22px] cursor-pointer place-items-center border-[1.5px] border-black bg-white p-0 font-bold leading-none hover:bg-[#f2be4a] active:translate-x-px active:translate-y-px">›</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="flex flex-row flex-wrap gap-[10px] px-[11px] py-[12px] md:flex-col md:flex-nowrap md:gap-[4px]">
+    <h2 id="ctitle" class="mb-[6px] w-full text-[12px] font-bold md:w-auto">Koleksi saya (4)</h2>
+
+    <div class="flex flex-col gap-[4px]">
+      <h3 class="mt-[6px] text-[9px]">HEADWEAR</h3>
+      <button data-c="topi" data-d="1" title="Klik untuk ganti item" class="group relative flex w-auto cursor-pointer flex-col items-start gap-[5px] text-left md:w-full">
+        <span id="t-topi" class="flex h-[68px] w-[72px] flex-col items-center justify-center gap-[4px] overflow-hidden border-2 border-[#111] bg-[#f2be4a] text-[8px] font-bold shadow-[3px_3px_0_rgba(0,0,0,.25)] group-hover:-translate-x-px group-hover:-translate-y-px group-hover:shadow-[4px_4px_0_#111]"></span>
+        <span id="m-topi" class="w-[72px] text-center text-[8px]"></span>
+        <span id="k-topi" class="absolute right-0 top-[34px] hidden text-[8px] text-[#444] md:block"></span>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-[4px]">
+      <h3 class="mt-[6px] text-[9px]">TOPS</h3>
+      <button data-c="atasan" data-d="1" title="Klik untuk ganti item" class="group relative flex w-auto cursor-pointer flex-col items-start gap-[5px] text-left md:w-full">
+        <span id="t-atasan" class="flex h-[68px] w-[72px] flex-col items-center justify-center gap-[4px] overflow-hidden border-2 border-[#111] bg-[#f2be4a] text-[8px] font-bold shadow-[3px_3px_0_rgba(0,0,0,.25)] group-hover:-translate-x-px group-hover:-translate-y-px group-hover:shadow-[4px_4px_0_#111]"></span>
+        <span id="m-atasan" class="w-[72px] text-center text-[8px]"></span>
+        <span id="k-atasan" class="absolute right-0 top-[34px] hidden text-[8px] text-[#444] md:block"></span>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-[4px]">
+      <h3 class="mt-[6px] text-[9px]">BOTTOM</h3>
+      <button data-c="bawahan" data-d="1" title="Klik untuk ganti item" class="group relative flex w-auto cursor-pointer flex-col items-start gap-[5px] text-left md:w-full">
+        <span id="t-bawahan" class="flex h-[68px] w-[72px] flex-col items-center justify-center gap-[4px] overflow-hidden border-2 border-[#111] bg-[#f2be4a] text-[8px] font-bold shadow-[3px_3px_0_rgba(0,0,0,.25)] group-hover:-translate-x-px group-hover:-translate-y-px group-hover:shadow-[4px_4px_0_#111]"></span>
+        <span id="m-bawahan" class="w-[72px] text-center text-[8px]"></span>
+        <span id="k-bawahan" class="absolute right-0 top-[34px] hidden text-[8px] text-[#444] md:block"></span>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-[4px]">
+      <h3 class="mt-[6px] text-[9px]">SHOES</h3>
+      <button data-c="sepatu" data-d="1" title="Klik untuk ganti item" class="group relative flex w-auto cursor-pointer flex-col items-start gap-[5px] text-left md:w-full">
+        <span id="t-sepatu" class="flex h-[68px] w-[72px] flex-col items-center justify-center gap-[4px] overflow-hidden border-2 border-[#111] bg-[#f2be4a] text-[8px] font-bold shadow-[3px_3px_0_rgba(0,0,0,.25)] group-hover:-translate-x-px group-hover:-translate-y-px group-hover:shadow-[4px_4px_0_#111]"></span>
+        <span id="m-sepatu" class="w-[72px] text-center text-[8px]"></span>
+        <span id="k-sepatu" class="absolute right-0 top-[34px] hidden text-[8px] text-[#444] md:block"></span>
+      </button>
+    </div>
+
+    <button id="upBtn" class="mt-[10px] w-full cursor-pointer border-2 border-[#111] bg-[#e2672b] p-[10px] font-bold text-white shadow-[4px_4px_0_#111] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0_#111] md:w-auto">+ Unggah item</button>
+  </aside>
+</main>
+</div>
+
+<!-- ===== DIALOG UNGGAH ===== -->
+<dialog id="dlg" class="m-auto w-[min(92vw,340px)] border-2 border-[#111] bg-[#fbf1d6] p-[18px] text-[#111] shadow-[6px_6px_0_#111] backdrop:bg-black/50">
+  <form method="dialog" id="frm">
+    <strong>Unggah item baru</strong>
+
+    <label for="fCat" class="mb-[4px] mt-[10px] block text-[11px] font-bold">Kategori</label>
+    <select id="fCat" class="w-full border-2 border-[#111] bg-white p-[7px]"></select>
+
+    <label for="fName" class="mb-[4px] mt-[10px] block text-[11px] font-bold">Nama item</label>
+    <input id="fName" placeholder="mis. Denim Jacket" required class="w-full border-2 border-[#111] bg-white p-[7px]">
+
+    <label for="fFile" class="mb-[4px] mt-[10px] block text-[11px] font-bold">Foto (opsional)</label>
+    <input id="fFile" type="file" accept="image/*" class="w-full border-2 border-[#111] bg-white p-[7px]">
+
+    <div class="mt-[16px] flex justify-end gap-[8px]">
+      <button type="button" id="cancel" class="cursor-pointer border-2 border-[#111] bg-white px-[14px] py-[7px] font-bold">Batal</button>
+      <button value="ok" class="cursor-pointer border-2 border-[#111] bg-[#e2672b] px-[14px] py-[7px] font-bold text-white">Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" class="pointer-events-none fixed bottom-[calc(20px+env(safe-area-inset-bottom,0px))] left-1/2 z-50 -translate-x-1/2 translate-y-[30px] bg-[#111] px-[16px] py-[9px] text-[#f2be4a] opacity-0 transition duration-200 data-[show=true]:translate-y-0 data-[show=true]:opacity-100 motion-reduce:transition-none"></div>
+
+{% verbatim %}
+<script>
+const svg = (cls, body) =>
+  `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+const IMG   = '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m21 15-5-5L5 21"/>';
+const SHIRT = '<path d="M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0Z"/>';
+
+const cats = [
+  { id:'topi',    label:'TOPI',    slot:svg('size-4 text-black', IMG),    thumb:svg('size-3.5 text-black', IMG),    items:[{n:'Baseball Cap'},{n:'Bucket Hat'},{n:'Beanie'}] },         // filler
+  { id:'atasan',  label:'ATASAN',  slot:svg('size-7 text-black', SHIRT),  thumb:svg('size-3.5 text-black', SHIRT),  items:[{n:'Work Jacket'},{n:'Flannel Shirt'},{n:'Knit Sweater'}] },
+  { id:'bawahan', label:'BAWAHAN', slot:svg('size-4 text-black', IMG),    thumb:svg('size-3.5 text-black', IMG),    items:[{n:'Fatigue Pants'},{n:'Denim Jeans'},{n:'Cargo Shorts'}] },
+  { id:'sepatu',  label:'SEPATU',  slot:svg('size-4 text-black', IMG),    thumb:svg('size-3.5 text-black', IMG),    items:[{n:'Loafers'},{n:'Sneakers'},{n:'Boots'}] }
+];
+cats.forEach(c => c.i = 0);
+
+const $ = s => document.querySelector(s);
+const board = $('#board');
+let zoom = 1;
+
+function render(c, pop) {
+  const it = c.items[c.i], el = $('#s-' + c.id);
+  el.innerHTML = it.img
+    ? `<img class="size-full object-cover" src="${it.img}" alt="${it.n}">`
+    : `${c.slot}<span>${c.label} ${c.i + 1}</span>`;
+  $('#n-' + c.id).textContent = `${c.i + 1}/${c.items.length}`;
+  $('#t-' + c.id).innerHTML = it.img
+    ? `<img class="size-full object-cover" src="${it.img}" alt="${it.n}">`
+    : `${c.thumb}<span>${c.label}</span>`;
+  $('#m-' + c.id).textContent = it.n;
+  $('#k-' + c.id).textContent = `${c.i + 1}/${c.items.length}`;
+  if (pop === true) {
+    el.classList.add('ring-4', 'ring-[#f2be4a]');
+    setTimeout(() => el.classList.remove('ring-4', 'ring-[#f2be4a]'), 250);
+  }
+}
+
+function step(id, d) {
+  const c = cats.find(x => x.id === id);
+  c.i = (c.i + d + c.items.length) % c.items.length;
+  render(c, true);
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-c]');
+  if (b) step(b.dataset.c, +b.dataset.d);
+});
+
+// keyboard: tekan 1-4 untuk memilih baris, lalu ←/→
+let focusCat = 0;
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input,select')) return;
+  if ('1234'.includes(e.key) && e.key) focusCat = +e.key - 1;
+  if (e.key === 'ArrowLeft')  step(cats[focusCat].id, -1);
+  if (e.key === 'ArrowRight') step(cats[focusCat].id, 1);
+});
+
+// zoom + grid
+function applyZoom() {
+  board.style.transform = `scale(${zoom})`;
+  $('#zv').textContent = Math.round(zoom * 100) + '%';
+}
+$('#zi').onclick = () => { zoom = Math.min(1.5, +(zoom + .1).toFixed(2)); applyZoom(); };
+$('#zo').onclick = () => { zoom = Math.max(.5, +(zoom - .1).toFixed(2)); applyZoom(); };
+$('#gr').onclick = e => {
+  const cv = $('#canvas');
+  const on = cv.dataset.grid !== 'on';
+  cv.dataset.grid = on ? 'on' : 'off';
+  e.currentTarget.setAttribute('aria-pressed', on);
+  e.currentTarget.textContent = 'Grid: ' + (on ? 'aktif' : 'mati');
+};
+$('#rs').onclick = () => {
+  cats.forEach(c => { c.i = Math.floor(Math.random() * c.items.length); render(c, true); });
+  toast('Outfit diacak');
+};
+
+// upload
+const dlg = $('#dlg');
+$('#fCat').innerHTML = cats.map(c => `<option value="${c.id}">${c.label[0] + c.label.slice(1).toLowerCase()}</option>`).join('');
+$('#upBtn').onclick = () => { $('#frm').reset(); dlg.showModal(); $('#fName').focus(); };
+$('#cancel').onclick = () => dlg.close('cancel');
+dlg.addEventListener('close', () => {
+  if (dlg.returnValue !== 'ok') return;
+  const c = cats.find(x => x.id === $('#fCat').value),
+        n = $('#fName').value.trim(),
+        f = $('#fFile').files[0];
+  if (!n) return;
+  const add = img => {
+    c.items.push({ n, img });
+    c.i = c.items.length - 1;
+    render(c, true);
+    toast(`"${n}" ditambahkan ke ${c.label.toLowerCase()}`);
+  };
+  if (f) { const r = new FileReader(); r.onload = () => add(r.result); r.readAsDataURL(f); }
+  else add();
+});
+
+let tt;
+function toast(m) {
+  const t = $('#toast');
+  t.textContent = m;
+  t.dataset.show = 'true';
+  clearTimeout(tt);
+  tt = setTimeout(() => { t.dataset.show = 'false'; }, 1800);
+}
+
+cats.forEach(c => render(c));
+applyZoom();
+</script>
+{% endverbatim %}
+{% endblock content %}
