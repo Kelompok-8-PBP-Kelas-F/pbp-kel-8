@@ -6,12 +6,12 @@
         
         <!-- Wadah Tombol Aksi -->
         <div class="flex gap-3">
-            <a href="{% url 'core:tambah_barang' %}" class="bg-orange-600 text-white px-4 py-2 rounded shadow hover:bg-orange-700 font-bold text-sm flex items-center">
+            <a href="{% url 'marketplace:tambah_barang' %}" class="bg-orange-600 text-white px-4 py-2 rounded shadow hover:bg-orange-700 font-bold text-sm flex items-center">
                 + Tambah Barang
             </a>
             
             <!-- Tombol Poin 2 -->
-            <a href="{% url 'core:seller_profile' username=user.username %}" class="bg-white text-black border-2 border-black px-4 py-2 font-bold text-sm shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-gray-100 flex items-center gap-2">
+            <a href="{% url 'marketplace:seller_profile' username=user.username %}" class="bg-white text-black border-2 border-black px-4 py-2 font-bold text-sm shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-gray-100 flex items-center gap-2">
                 👤 Lihat Profil Saya
             </a>
         </div>
@@ -41,8 +41,8 @@
                 <span class="text-xs px-2 py-1 bg-gray-200 border border-black rounded">{{ item.status }}</span>
                 
                 <div class="mt-4 flex justify-between gap-2">
-                    <a href="{% url 'core:edit_barang' item.id %}" class="flex-1 text-center bg-yellow-400 border-2 border-black font-bold py-1 hover:bg-yellow-500">Edit</a>
-                    <form action="{% url 'core:hapus_barang' item.id %}" method="POST" class="flex-1">
+                    <a href="{% url 'marketplace:edit_barang' item.id %}" class="flex-1 text-center bg-yellow-400 border-2 border-black font-bold py-1 hover:bg-yellow-500">Edit</a>
+                    <form action="{% url 'marketplace:hapus_barang' item.id %}" method="POST" class="flex-1">
                         {% csrf_token %}
                         <button type="submit" class="w-full text-center bg-red-500 text-white border-2 border-black font-bold py-1 hover:bg-red-600">Hapus</button>
                     </form>
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const query = searchInput.value;
         const status = statusFilter.value;
         
-        fetch(`{% url 'core:ajax_filter_barang' %}?q=${query}&status=${status}`)
+        fetch(`{% url 'marketplace:ajax_filter_barang' %}?q=${query}&status=${status}`)
             .then(response => response.json())
             .then(data => {
                 productGrid.innerHTML = ''; // Bersihkan grid

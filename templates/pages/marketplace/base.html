@@ -30,13 +30,13 @@
         <div class="flex items-center gap-2 sm:gap-3">
             {% if user.is_authenticated %}
                 <!-- Tombol Buka Dashboard Kelola Barang -->
-                <a href="{% url 'core:marketplace_penjual' %}" 
+                <a href="{% url 'marketplace:marketplace_penjual' %}" 
                 class="bg-[#f8d775] text-black border-2 border-black px-3 py-1.5 font-black text-xs uppercase tracking-wider shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-[#f5c842] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_rgba(0,0,0,1)] transition-all">
                     📊 Dashboard
                 </a>
 
                 <!-- Tombol Buka Profil Penjual Sendiri -->
-                <a href="{% url 'core:seller_profile' username=user.username %}" 
+                <a href="{% url 'marketplace:seller_profile' username=user.username %}" 
                 class="flex items-center gap-2 bg-white border-2 border-black px-2.5 py-1.5 font-bold text-xs shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-amber-50 active:translate-x-[1px] active:translate-y-[1px] transition-all"
                 title="Lihat Profil Saya">
                     <div class="bg-black text-white flex items-center justify-center w-5 h-5 text-[10px] font-black shrink-0">
@@ -46,13 +46,13 @@
                 </a>
 
                 <!-- Tombol Keluar -->
-                <a href="{% url 'core:logout' %}" 
+                <a href="{% url 'marketplace:logout' %}" 
                 class="bg-[#e05628] text-white border-2 border-black px-3 py-1.5 font-bold text-xs shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b] active:translate-x-[1px] active:translate-y-[1px] transition-all">
                     Keluar
                 </a>
             {% else %}
                 <!-- Tombol Masuk jika belum login -->
-                <a href="{% url 'core:login' %}" 
+                <a href="{% url 'marketplace:login' %}" 
                 class="bg-white border-2 border-black px-4 py-1.5 font-bold text-xs uppercase shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-gray-100 active:translate-x-[1px] active:translate-y-[1px] transition-all">
                     Masuk Penjual
                 </a>
