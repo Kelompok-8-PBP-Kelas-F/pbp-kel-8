@@ -4,4 +4,6 @@ psycopg2-binary
 python-dotenv
 whitenoise
 django-tailwind
-requests>=2.32,<3 
+django-browser-reload
+requests>=2.32,<3
+Pillow

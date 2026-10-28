@@ -7,53 +7,43 @@
 {% block content %}
 <main id="main-content" class="forum-detail-page w-full bg-background font-main text-foreground min-h-screen">
   <!-- Top Navigation / Breadcrumbs -->
-  <section class="border-b-2 border-line bg-background px-4 py-4 sm:px-6 lg:px-8">
-    <div class="mx-auto flex w-full max-w-6xl flex-col gap-3">
-      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-2 text-xs">
-          <a href="{% url 'forum:forum_main' %}" class="inline-flex items-center gap-1.5 font-bold text-foreground transition-colors hover:text-accent">
-            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-            <span>Kembali ke Forum</span>
-          </a>
-          <span class="text-muted" aria-hidden="true">/</span>
-          <span class="font-semibold text-muted capitalize">{{ post.get_category_display|default:post.category }}</span>
-        </nav>
-        <p class="hidden text-xs text-muted sm:block">
-          Guest dapat membaca. Pengguna terdaftar dapat menyukai dan berkomentar.
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-0.5">
-        <p class="text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Forum Komunitas &middot; Detail Thread</p>
-        <h1 class="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl lg:text-3xl">Percakapan komunitas</h1>
-      </div>
+  <section class="bg-background px-4 pt-4 pb-1 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl items-center">
+      <nav aria-label="Breadcrumb" class="flex min-w-0 items-center gap-2 text-xs">
+        <a href="{% url 'forum:forum_main' %}" class="inline-flex shrink-0 items-center gap-1.5 font-bold text-foreground transition-colors hover:text-accent">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          <span>Kembali ke Forum</span>
+        </a>
+        <span class="shrink-0 text-muted" aria-hidden="true">/</span>
+        <span class="truncate font-semibold text-muted" aria-current="page" title="{{ post.title }}">{{ post.title }}</span>
+      </nav>
     </div>
   </section>
 
   <!-- Content Layout -->
-  <section class="px-4 py-6 sm:px-6 lg:px-8">
+  <section class="px-4 pt-3 pb-10 sm:px-6 lg:px-8">
     <div class="mx-auto grid w-full max-w-6xl min-w-0 grid-cols-1 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
       
       <!-- Left Column: Post and Comments -->
       <div class="flex min-w-0 flex-col gap-5">
         
         <!-- Main Post Card -->
-        <article class="forum-post-detail flex flex-col gap-4 border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
+        <article class="forum-post flex min-w-0 flex-col gap-3.5 border-2 border-line bg-surface p-3.5 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
           <!-- Author Header -->
-          <header class="flex items-start justify-between gap-3">
-            <div class="flex items-center gap-2.5">
-              <div class="avatar flex size-9 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-sm font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
+          <header class="forum-post__author flex min-w-0 items-center justify-between gap-2.5">
+            <div class="flex min-w-0 items-center gap-2.5">
+              <div class="avatar flex size-8.5 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs sm:text-sm font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
                 {{ post.author_username|first|upper }}
               </div>
-              <div class="flex flex-col gap-0.5">
-                <div class="flex flex-wrap items-center gap-1.5">
-                  <span class="text-xs sm:text-[0.8125rem] font-bold text-foreground leading-[18px]">@{{ post.author_username }}</span>
+              <div class="flex min-w-0 flex-col gap-0.5">
+                <div class="flex min-w-0 flex-wrap items-center gap-1.5">
+                  <span class="forum-post__username truncate text-xs sm:text-[0.8125rem] font-bold text-foreground leading-[18px]">@{{ post.author_username }}</span>
                   <span class="inline-flex h-[18px] items-center justify-center border-2 border-line bg-category px-1 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none">
                     {{ post.get_category_display|default:post.category }}
                   </span>
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5 text-[0.6875rem] text-muted">
-                  <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"d M Y, H:i" }}</time>
+                  <time class="forum-post__time text-[0.6875rem] text-muted" datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"d M Y, H:i" }}</time>
                   {% if post.updated_at != post.created_at %}
                   <span>&middot;</span>
                   <span>Diedit {{ post.updated_at|date:"d M Y, H:i" }}</span>
@@ -64,12 +54,13 @@
 
             <!-- Post Actions Dropdown -->
             <div class="relative">
-              <button id="post-options-btn" class="grid size-7 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer" type="button" aria-label="Menu opsi post" aria-haspopup="true">
+              <button id="post-options-btn" class="grid size-7 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer shrink-0" type="button" aria-label="Menu opsi post" aria-haspopup="true">
                 <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
                 </svg>
               </button>
               <div id="post-options-menu" class="absolute right-0 top-full z-20 mt-1 hidden min-w-40 border-2 border-line bg-surface py-1 shadow-[3px_3px_0_var(--shadow-color)]" role="menu">
+                {% if can_manage %}
                 <button type="button" id="menu-edit-post-btn" popovertarget="forum-edit-modal" popovertargetaction="show" class="flex w-full items-center gap-2 px-3 py-1.5 text-xs font-bold text-foreground hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                   <span>Edit post</span>
@@ -79,9 +70,10 @@
                   <span>Hapus post</span>
                 </button>
                 <hr class="border-line/20 my-1">
+                {% endif %}
                 <button type="button" id="copy-link-menu-btn" class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-foreground hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                  <span>Salin tautan thread</span>
+                  <span>Salin tautan post</span>
                 </button>
                 <button type="button" class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-muted hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
@@ -91,19 +83,19 @@
             </div>
           </header>
 
-          <!-- Post Title -->
-          <h2 class="font-heading text-lg font-bold leading-snug text-foreground sm:text-xl">
-            {{ post.title }}
-          </h2>
-
           <!-- Post Content -->
-          <div class="post-content font-main text-xs sm:text-[0.8125rem] leading-relaxed text-foreground whitespace-pre-line space-y-2.5">
-            {{ post.content }}
+          <div class="forum-post__content flex flex-col gap-2">
+            <h1 class="forum-post__title font-heading text-lg font-bold leading-snug tracking-tight text-foreground sm:text-xl">
+              {{ post.title }}
+            </h1>
+            <div class="forum-post__body font-main text-xs sm:text-[0.8125rem] leading-relaxed text-foreground whitespace-pre-line space-y-2.5">
+              {{ post.content }}
+            </div>
           </div>
 
           <!-- Post Image (if present) -->
           {% if post.image_url %}
-          <figure class="group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]">
+          <figure class="forum-post__media group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]">
             <div class="relative flex max-h-72 sm:max-h-84 w-full items-center justify-center overflow-hidden bg-background">
               <img class="relative z-1 max-h-72 sm:max-h-84 w-auto max-w-full object-contain" src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy">
             </div>
@@ -116,53 +108,49 @@
           </figure>
           {% endif %}
 
-          <!-- Post Stats -->
-          <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line/30 pt-3 text-[0.6875rem] text-muted">
-            <div class="flex flex-wrap items-center gap-2">
-              <span>1.284 kali dilihat</span>
-              <span>&middot;</span>
-              <span>{{ post.total_comments|default:12 }} komentar</span>
-              <span>&middot;</span>
-              <span>2 menit baca</span>
-            </div>
-            <div class="font-mono text-[0.625rem] uppercase tracking-wider text-muted">
-              THREAD #PRWT-{{ post.id|stringformat:".4s" }}
-            </div>
-          </div>
-
           <!-- Action Buttons Row -->
-          <footer class="flex flex-wrap items-center gap-2 pt-1">
-            <button id="like-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-3.5 text-accent sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <footer class="forum-post__actions flex flex-wrap items-center gap-2 border-t-2 border-line pt-3">
+            <button id="like-btn"
+              class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line {% if is_liked %}bg-accent text-accent-foreground{% else %}bg-surface text-foreground{% endif %} px-2.5 py-1 text-[0.6875rem] font-semibold shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
+              type="button"
+              data-liked="{% if is_liked %}true{% else %}false{% endif %}"
+              data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
+              data-login-url="{% url 'user:login' %}?next={{ request.path|urlencode }}"
+              aria-pressed="{% if is_liked %}true{% else %}false{% endif %}"
+              aria-label="{% if is_liked %}Batal menyukai post{% else %}Sukai post{% endif %}">
+              <svg class="size-3.5 shrink-0 sm:size-4 {% if is_liked %}fill-current{% else %}text-foreground{% endif %}" viewBox="0 0 24 24" fill="{% if is_liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/>
               </svg>
-              <span id="like-count">{{ post.total_likes|default:38 }} suka</span>
+              <span id="like-count">{{ post.total_likes }} suka</span>
             </button>
 
-            <a href="#tulis-komentar" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5">
-              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <a href="#tulis-komentar" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5">
+              <svg class="size-3.5 text-foreground shrink-0 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"/>
               </svg>
-              <span>{{ post.total_comments|default:12 }} komentar</span>
+              <span>{{ post.total_comments|default:0 }} komentar</span>
             </a>
 
-            <button id="save-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+            {% if can_manage %}
+            <button type="button" id="action-edit-btn" popovertarget="forum-edit-modal" popovertargetaction="show" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5">
+              <svg class="size-3.5 shrink-0 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
               </svg>
-              <span id="save-btn-text">Simpan</span>
+              <span>Edit</span>
             </button>
 
-            <button id="share-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            <button type="button" id="action-delete-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-red-600 shadow-none transition-colors hover:bg-red-50 sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5">
+              <svg class="size-3.5 shrink-0 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
               </svg>
-              <span>Bagikan</span>
+              <span>Hapus</span>
             </button>
+            {% endif %}
           </footer>
         </article>
 
         <!-- Guest Banner Note -->
+         {% if not request.user.is_authenticated %}
         <div class="guest-note flex flex-col items-start gap-2 border-2 border-line bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 shadow-[3px_3px_0_var(--shadow-color)]" role="note">
           <p class="guest-note__copy flex items-center gap-2 text-xs leading-relaxed text-muted">
             <svg class="size-4 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
@@ -170,38 +158,43 @@
           </p>
           <a class="text-xs font-bold text-accent hover:underline" href="#">Masuk untuk menyukai &amp; berkomentar &rarr;</a>
         </div>
+        {% endif %}
 
         <!-- Comment Input Section -->
         <section id="tulis-komentar" class="border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
           <header class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-2.5">
               <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
-                {% if request.user.is_authenticated %}{{ request.user.username|first|upper }}{% else %}A{% endif %}
+                {% if request.user.is_authenticated %}{{ request.user.username|first|upper }}{% else %}?{% endif %}
               </div>
               <div class="flex flex-col">
                 <h3 class="font-heading text-sm font-bold text-foreground sm:text-base">Tulis komentar</h3>
-                <p class="text-[0.6875rem] text-muted">Sebagai {{ request.user.username|default:"anindita" }} &middot; {% if request.user.is_authenticated %}Pengguna terdaftar{% else %}Pengguna terdaftar{% endif %}</p>
+                <p class="text-[0.6875rem] text-muted">
+                  {% if request.user.is_authenticated %}
+                  Sebagai {{ request.user.username }} &middot; Pengguna terdaftar
+                  {% else %}
+                  Tamu &middot; Masuk untuk menulis komentar
+                  {% endif %}
+                </p>
               </div>
             </div>
             <p class="hidden text-[0.6875rem] text-muted sm:block">Jaga percakapan tetap ramah dan relevan.</p>
           </header>
 
-          <form id="comment-form" class="mt-3 flex flex-col gap-2.5">
+          <form id="comment-form" class="mt-3 flex flex-col gap-2.5" data-action="{% url 'forum:add_comment_api' post.id %}" data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}" data-login-url="{% url 'user:login' %}?next={{ request.path|urlencode }}">
+            {% csrf_token %}
+            <div id="comment-error" class="hidden border-2 border-red-600 bg-red-50 p-2.5 text-xs font-semibold text-red-600" role="alert"></div>
             <div class="relative">
-              <textarea id="comment-textarea" rows="3" maxlength="2000" placeholder="Bagikan pengalaman atau saran perawatanmu..." class="w-full resize-none border-2 border-line bg-background p-3 pb-6 text-xs text-foreground outline-none placeholder:text-muted focus:bg-surface transition-colors"></textarea>
+              <textarea id="comment-textarea" name="content" rows="3" maxlength="2000" placeholder="{% if request.user.is_authenticated %}Bagikan tanggapan atau saranmu...{% else %}Silakan masuk terlebih dahulu untuk menulis komentar...{% endif %}" class="w-full resize-none border-2 border-line bg-background p-3 pb-6 text-xs text-foreground outline-none placeholder:text-muted focus:bg-surface transition-colors" {% if not request.user.is_authenticated %}readonly{% endif %}></textarea>
               <span id="comment-char-counter" class="absolute bottom-2 right-3 text-[0.5625rem] font-semibold text-muted">0 / 2.000</span>
             </div>
-            <div class="flex flex-wrap items-center justify-between gap-2.5 pt-0.5">
-              <div class="flex items-center gap-1 text-muted">
-                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface font-serif text-xs font-bold hover:bg-background cursor-pointer" title="Tebal (Bold)">B</button>
-                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface font-serif text-xs italic hover:bg-background cursor-pointer" title="Miring (Italic)">I</button>
-                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface hover:bg-background cursor-pointer" title="Lampiran">
-                  <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                </button>
-              </div>
-              <button type="submit" class="inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer">
-                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                <span>Kirim komentar</span>
+            <div class="flex flex-wrap items-center justify-end gap-2.5 pt-0.5">
+              <button type="submit" id="submit-comment-btn" class="inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer">
+                <svg class="comment-spinner hidden size-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                <svg class="comment-icon size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                <span class="comment-btn-text">Kirim komentar</span>
               </button>
             </div>
           </form>
@@ -211,206 +204,61 @@
         <section class="flex flex-col gap-4 border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]" aria-labelledby="comments-heading">
           <header class="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between border-b border-line/30 pb-3">
             <div>
-              <h3 id="comments-heading" class="font-heading text-lg font-bold text-foreground sm:text-xl">12 komentar</h3>
-              <p class="text-xs text-muted">Diskusi dari 8 anggota komunitas</p>
+              <h3 id="comments-heading" class="font-heading text-lg font-bold text-foreground sm:text-xl">
+                <span id="comments-count-title">{{ post.total_comments|default:0 }}</span> komentar
+              </h3>
+              <p class="text-xs text-muted">Diskusi seputar thread ini</p>
             </div>
             <div class="flex items-center gap-2 self-start sm:self-auto">
               <label for="comment-sort" class="text-xs font-medium text-muted">Urutkan:</label>
               <select id="comment-sort" class="border-2 border-line bg-surface px-2.5 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] outline-none cursor-pointer">
-                <option value="helpful">Paling membantu</option>
                 <option value="newest">Terbaru</option>
                 <option value="oldest">Terlama</option>
               </select>
             </div>
           </header>
 
-          <ol class="flex flex-col gap-6" id="comments-container">
-            <!-- Comment 1 (with threaded replies) -->
-            <li class="flex flex-col gap-3">
-              <article class="flex flex-col gap-2.5">
+          <ol class="flex flex-col gap-4" id="comments-container" data-post-id="{{ post.id }}" data-comments-url="{% url 'forum:get_comments_api' post.id %}">
+            {% for comment in comments %}
+            <li class="comment-item flex flex-col gap-2.5 border-b border-line/20 pb-4 last:border-b-0 last:pb-0" id="comment-{{ comment.id }}">
+              <article class="flex flex-col gap-2">
                 <header class="flex items-start justify-between gap-3">
                   <div class="flex items-center gap-2.5">
-                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">M</div>
-                    <span class="text-xs font-bold text-foreground leading-[18px]">@mayakain</span>
-                    <span class="inline-flex h-[18px] items-center justify-center border border-line bg-category px-1 text-[0.5625rem] font-bold uppercase text-foreground shrink-0 leading-none">Ahli Perawatan</span>
-                    <time class="text-[0.6875rem] text-muted">1 jam lalu</time>
+                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
+                      {{ comment.author_username|first|upper }}
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <span class="text-xs font-bold text-foreground leading-[18px]">@{{ comment.author_username }}</span>
+                      {% if comment.author_username == post.author_username %}
+                      <span class="inline-flex h-[18px] items-center justify-center border-2 border-line bg-highlight px-1 text-[0.5625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none">
+                        Pembuat Post
+                      </span>
+                      {% endif %}
+                    </div>
+                    <time class="text-[0.6875rem] text-muted" datetime="{{ comment.created_at|date:'c' }}">
+                      {{ comment.created_at|date:"d M Y, H:i" }}
+                    </time>
                   </div>
-                  <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+
+                  {% if request.user.is_authenticated and request.user.username == comment.author_username or request.user.is_superuser or request.user.username == post.author_username %}
+                  <button type="button" class="delete-comment-btn grid size-6 place-items-center text-muted transition-colors hover:text-red-600 cursor-pointer" data-delete-url="{% url 'forum:delete_comment_api' comment.id %}" aria-label="Hapus komentar" title="Hapus komentar">
+                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    </svg>
                   </button>
+                  {% endif %}
                 </header>
-                <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-10.5">
-                  Mulai dari menyerap sisa minyak dulu, jangan langsung menggosok. Taburkan tepung maizena atau bedak tanpa pewangi selama 30&ndash;60 menit, sikat pelan, lalu teteskan sabun cuci piring bening. Uji di bagian dalam karena linen bisa berubah warna.
-                </p>
-                <footer class="flex items-center gap-3 pl-10.5 text-xs text-muted">
-                  <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                    <span>24</span>
-                  </button>
-                  <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="mayakain">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    <span>Balas</span>
-                  </button>
-                </footer>
-              </article>
-
-              <!-- Threaded Replies -->
-              <ol class="ml-4 sm:ml-10 flex flex-col gap-4 border-l-2 border-line/30 pl-4 sm:pl-6 pt-2">
-                <!-- Reply 1.1 -->
-                <li>
-                  <article class="flex flex-col gap-2">
-                    <header class="flex items-start justify-between gap-3">
-                      <div class="flex items-center gap-2.5">
-                        <div class="avatar flex size-7 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-[0.625rem] font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">N</div>
-                        <span class="text-xs font-bold text-foreground leading-[18px]">@nadia.r</span>
-                        <span class="inline-flex h-[18px] items-center justify-center border border-line bg-highlight px-1 text-[0.5625rem] font-bold uppercase text-foreground shrink-0 leading-none">Pembuat Post</span>
-                        <time class="text-[0.6875rem] text-muted">48 menit lalu</time>
-                      </div>
-                      <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                      </button>
-                    </header>
-                    <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-9.5">
-                      Terima kasih! Nodanya sudah cukup lama dan warnanya kekuningan. Apakah tetap perlu mulai dari maizena?
-                    </p>
-                    <footer class="flex items-center gap-3 pl-9.5 text-xs text-muted">
-                      <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                        <span>7</span>
-                      </button>
-                      <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="nadia.r">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                        <span>Balas</span>
-                      </button>
-                    </footer>
-                  </article>
-                </li>
-
-                <!-- Reply 1.2 -->
-                <li>
-                  <article class="flex flex-col gap-2">
-                    <header class="flex items-start justify-between gap-3">
-                      <div class="flex items-center gap-2.5">
-                        <div class="avatar flex size-7 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-[0.625rem] font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">M</div>
-                        <span class="text-xs font-bold text-foreground">@mayakain</span>
-                        <time class="text-[0.6875rem] text-muted">36 menit lalu</time>
-                      </div>
-                      <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                      </button>
-                    </header>
-                    <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-9.5">
-                      Masih boleh, tetapi hasilnya mungkin terbatas. Setelah itu rendam singkat dengan air hangat-suam kuku dan deterjen enzim yang aman untuk linen. Hindari pemutih klorin.
-                    </p>
-                    <footer class="flex items-center gap-3 pl-9.5 text-xs text-muted">
-                      <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                        <span>11</span>
-                      </button>
-                      <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="mayakain">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                        <span>Balas</span>
-                      </button>
-                    </footer>
-                  </article>
-                </li>
-              </ol>
-            </li>
-
-            <!-- Comment 2 -->
-            <li class="flex flex-col gap-3 border-t border-line/20 pt-4">
-              <article class="flex flex-col gap-2.5">
-                <header class="flex items-start justify-between gap-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">B</div>
-                    <span class="text-xs font-bold text-foreground">@benangbaik</span>
-                    <time class="text-[0.6875rem] text-muted">2 jam lalu</time>
-                  </div>
-                  <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                  </button>
-                </header>
-                <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-10.5">
-                  Aku pernah menangani noda serupa di taplak linen. Baking soda aman jika dibuat pasta tipis dan tidak dibiarkan mengering keras. Tepuk dari sisi belakang kain dengan handuk putih di bawahnya agar minyak berpindah, bukan melebar.
-                </p>
-                <footer class="flex items-center gap-3 pl-10.5 text-xs text-muted">
-                  <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                    <span>18</span>
-                  </button>
-                  <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="benangbaik">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    <span>Balas</span>
-                  </button>
-                </footer>
-              </article>
-
-              <!-- Threaded Reply 2.1 -->
-              <ol class="ml-4 sm:ml-10 flex flex-col gap-4 border-l-2 border-line/30 pl-4 sm:pl-6 pt-2">
-                <li>
-                  <article class="flex flex-col gap-2">
-                    <header class="flex items-start justify-between gap-3">
-                      <div class="flex items-center gap-2.5">
-                        <div class="avatar flex size-7 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-[0.625rem] font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">S</div>
-                        <span class="text-xs font-bold text-foreground">@sarulang</span>
-                        <time class="text-[0.6875rem] text-muted">1 jam lalu</time>
-                      </div>
-                      <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                      </button>
-                    </header>
-                    <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-9.5">
-                      Setuju soal handuk putih. Aku juga akan menghindari pengering sebelum nodanya benar-benar hilang, karena panas bisa mengunci sisa minyak.
-                    </p>
-                    <footer class="flex items-center gap-3 pl-9.5 text-xs text-muted">
-                      <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                        <span>5</span>
-                      </button>
-                      <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="sarulang">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                        <span>Balas</span>
-                      </button>
-                    </footer>
-                  </article>
-                </li>
-              </ol>
-            </li>
-
-            <!-- Comment 3 -->
-            <li class="flex flex-col gap-3 border-t border-line/20 pt-4">
-              <article class="flex flex-col gap-2.5">
-                <header class="flex items-start justify-between gap-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">R</div>
-                    <span class="text-xs font-bold text-foreground">@rakapreloved</span>
-                    <time class="text-[0.6875rem] text-muted">3 jam lalu</time>
-                  </div>
-                  <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                  </button>
-                </header>
-                <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-10.5">
-                  Kalau label perawatan masih ada, ikuti suhu maksimalnya. Kerjakan satu siklus, bilas, lalu cek saat kain masih lembap. Mengulang langkah ringan biasanya lebih aman daripada satu perlakuan yang terlalu kuat.
-                </p>
-                <footer class="flex items-center gap-3 pl-10.5 text-xs text-muted">
-                  <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                    <span>9</span>
-                  </button>
-                  <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="rakapreloved">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    <span>Balas</span>
-                  </button>
-                </footer>
+                <div class="text-xs sm:text-[0.8125rem] leading-relaxed text-foreground pl-10.5 whitespace-pre-line">
+                  {{ comment.content }}
+                </div>
               </article>
             </li>
+            {% empty %}
+            <li id="no-comments-msg" class="py-8 text-center text-xs text-muted">
+              Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!
+            </li>
+            {% endfor %}
           </ol>
-
-          <!-- Show More Button -->
-          <button type="button" class="mt-2 w-full border-2 border-line bg-highlight py-3 text-xs sm:text-sm font-bold text-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer">
-            Tampilkan 6 komentar lainnya
-          </button>
         </section>
 
       </div>
@@ -503,71 +351,13 @@
     </div>
   </section>
 
-  <!-- Community Footer (matching mockup exactly with Thrift.io palette) -->
-  <footer class="mt-10 border-t-2 border-line bg-hero text-hero-foreground px-4 py-8 sm:px-6 lg:px-8">
-    <div class="mx-auto flex w-full max-w-6xl flex-col gap-8">
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-5">
-        <div class="flex flex-col gap-4 lg:col-span-2">
-          <div class="flex items-center gap-2">
-            <div class="size-8 bg-surface text-foreground font-heading font-bold text-sm grid place-items-center border border-line">
-              T
-            </div>
-            <span class="font-heading text-lg font-bold text-hero-foreground">Thrift.io</span>
-          </div>
-          <p class="max-w-sm text-xs leading-relaxed text-hero-foreground/80">
-            Memperpanjang usia pakaian lewat pilihan yang lebih sadar, keterampilan praktis, dan komunitas yang saling berbagi.
-          </p>
-          <p class="text-xs font-semibold text-hero-accent">
-            8.421 anggota &middot; 12.608 percakapan
-          </p>
-        </div>
 
-        <div class="flex flex-col gap-3">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-hero-accent">Jelajahi</h4>
-          <ul class="flex flex-col gap-2 text-xs text-hero-foreground/80">
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Marketplace</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Event lokal</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Berita fashion</a></li>
-            <li><a href="{% url 'forum:forum_main' %}" class="hover:text-hero-accent transition-colors">Forum komunitas</a></li>
-          </ul>
-        </div>
-
-        <div class="flex flex-col gap-3">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-hero-accent">Sumber Daya</h4>
-          <ul class="flex flex-col gap-2 text-xs text-hero-foreground/80">
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Panduan perawatan</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Panduan thrifting</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Reparasi dasar</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Dampak fashion</a></li>
-          </ul>
-        </div>
-
-        <div class="flex flex-col gap-3">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-hero-accent">Bantuan</h4>
-          <ul class="flex flex-col gap-2 text-xs text-hero-foreground/80">
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Tentang Thrift.io</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Panduan komunitas</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Hubungi kami</a></li>
-            <li><a href="#" class="hover:text-hero-accent transition-colors">Privasi</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-hero-foreground/20 pt-6 text-xs text-hero-foreground/70">
-        <p>&copy; 2026 Thrift.io. Dibuat untuk lemari yang bertahan lebih lama.</p>
-        <div class="flex flex-wrap items-center gap-4">
-          <a href="#" class="hover:text-hero-accent transition-colors">Syarat penggunaan</a>
-          <span>&middot;</span>
-          <a href="#" class="hover:text-hero-accent transition-colors">Kebijakan privasi</a>
-          <span>&middot;</span>
-          <span>Versi 1.0</span>
-        </div>
-      </div>
-    </div>
-  </footer>
 </main>
 
+{% if can_manage %}
 {% include 'pages/forum/components/forum_edit.html' %}
+{% endif %}
+{% include 'pages/forum/components/forum_delete_modal.html' %}
 
 <!-- Interactive Script for Detail Page -->
 <script>
@@ -587,6 +377,99 @@
       });
     }
 
+    // Delete Confirmation Modal Management
+    const deleteModal = document.getElementById("delete-confirm-modal");
+    const deleteModalTitle = document.getElementById("delete-modal-title");
+    const deleteModalDescription = document.getElementById("delete-modal-description");
+    const deleteModalError = document.getElementById("delete-modal-error");
+    const deleteModalCancelBtn = document.getElementById("delete-modal-cancel-btn");
+    const deleteModalConfirmBtn = document.getElementById("delete-modal-confirm-btn");
+    const deleteSpinner = deleteModalConfirmBtn?.querySelector(".delete-spinner");
+    const deleteBtnText = deleteModalConfirmBtn?.querySelector(".delete-btn-text");
+
+    let currentDeleteAction = null;
+
+    function openDeleteModal({ title, description, confirmText = "Hapus", onConfirm }) {
+      if (!deleteModal) return;
+
+      if (deleteModalTitle) deleteModalTitle.textContent = title;
+      if (deleteModalDescription) deleteModalDescription.textContent = description;
+      if (deleteBtnText) deleteBtnText.textContent = confirmText;
+
+      if (deleteModalError) {
+        deleteModalError.classList.add("hidden");
+        deleteModalError.textContent = "";
+      }
+
+      setDeleteLoading(false);
+      currentDeleteAction = onConfirm;
+
+      deleteModal.classList.remove("hidden");
+      deleteModal.classList.add("flex");
+      deleteModalCancelBtn?.focus();
+    }
+
+    function closeDeleteModal() {
+      if (!deleteModal) return;
+      deleteModal.classList.add("hidden");
+      deleteModal.classList.remove("flex");
+      currentDeleteAction = null;
+      setDeleteLoading(false);
+      if (deleteModalError) {
+        deleteModalError.classList.add("hidden");
+        deleteModalError.textContent = "";
+      }
+    }
+
+    function setDeleteLoading(isLoading) {
+      if (!deleteModalConfirmBtn) return;
+      deleteModalConfirmBtn.disabled = isLoading;
+      if (deleteModalCancelBtn) deleteModalCancelBtn.disabled = isLoading;
+      if (deleteSpinner) deleteSpinner.classList.toggle("hidden", !isLoading);
+    }
+
+    deleteModalCancelBtn?.addEventListener("click", closeDeleteModal);
+
+    deleteModal?.addEventListener("click", (e) => {
+      if (e.target === deleteModal) {
+        closeDeleteModal();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && deleteModal && !deleteModal.classList.contains("hidden")) {
+        closeDeleteModal();
+      }
+    });
+
+    deleteModalConfirmBtn?.addEventListener("click", async () => {
+      if (typeof currentDeleteAction === "function") {
+        setDeleteLoading(true);
+        if (deleteModalError) {
+          deleteModalError.classList.add("hidden");
+          deleteModalError.textContent = "";
+        }
+        try {
+          await currentDeleteAction({
+            setError: (msg) => {
+              if (deleteModalError) {
+                deleteModalError.textContent = msg;
+                deleteModalError.classList.remove("hidden");
+              }
+            },
+            close: closeDeleteModal,
+          });
+        } catch (err) {
+          if (deleteModalError) {
+            deleteModalError.textContent = err.message || "Gagal melakukan penghapusan.";
+            deleteModalError.classList.remove("hidden");
+          }
+        } finally {
+          setDeleteLoading(false);
+        }
+      }
+    });
+
     // 2. Comment character counter
     const commentInput = document.getElementById("comment-textarea");
     const commentCounter = document.getElementById("comment-char-counter");
@@ -602,78 +485,333 @@
       });
     }
 
-    // 3. Reply buttons prefill
-    const replyBtns = document.querySelectorAll(".reply-btn");
-    if (commentInput) {
-      replyBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const username = btn.dataset.username;
-          if (username) {
-            commentInput.value = `@${username} ` + commentInput.value.replace(/^@\w+\s*/, "");
-            commentInput.focus();
-            commentInput.scrollIntoView({ behavior: "smooth", block: "center" });
-            commentInput.dispatchEvent(new Event("input"));
+    // 3. Comment Management (Submit, Delete, Sort)
+    function updateCommentCounters(count) {
+      const countTitle = document.getElementById("comments-count-title");
+      if (countTitle) countTitle.textContent = count;
+
+      const footerCommentSpan = document.querySelector('a[href="#tulis-komentar"] span');
+      if (footerCommentSpan) footerCommentSpan.textContent = `${count} komentar`;
+    }
+
+    function createCommentItem(comment) {
+      const li = document.createElement("li");
+      li.className = "comment-item flex flex-col gap-2.5 border-b border-line/20 pb-4 last:border-b-0 last:pb-0";
+      li.id = `comment-${comment.id}`;
+
+      const article = document.createElement("article");
+      article.className = "flex flex-col gap-2";
+
+      const header = document.createElement("header");
+      header.className = "flex items-start justify-between gap-3";
+
+      const authorGroup = document.createElement("div");
+      authorGroup.className = "flex items-center gap-2.5";
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]";
+      avatar.textContent = comment.author_username ? comment.author_username.charAt(0).toUpperCase() : "?";
+
+      const userWrap = document.createElement("div");
+      userWrap.className = "flex flex-wrap items-center gap-1.5";
+
+      const usernameSpan = document.createElement("span");
+      usernameSpan.className = "text-xs font-bold text-foreground leading-[18px]";
+      usernameSpan.textContent = `@${comment.author_username}`;
+      userWrap.appendChild(usernameSpan);
+
+      if (comment.is_post_author) {
+        const badge = document.createElement("span");
+        badge.className = "inline-flex h-[18px] items-center justify-center border-2 border-line bg-highlight px-1 text-[0.5625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none";
+        badge.textContent = "Pembuat Post";
+        userWrap.appendChild(badge);
+      }
+
+      const timeEl = document.createElement("time");
+      timeEl.className = "text-[0.6875rem] text-muted";
+      timeEl.dateTime = comment.created_at;
+      timeEl.textContent = comment.created_at_formatted || new Date(comment.created_at).toLocaleString("id-ID");
+
+      authorGroup.append(avatar, userWrap, timeEl);
+      header.appendChild(authorGroup);
+
+      if (comment.can_delete) {
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "delete-comment-btn grid size-6 place-items-center text-muted transition-colors hover:text-red-600 cursor-pointer";
+        delBtn.setAttribute("aria-label", "Hapus komentar");
+        delBtn.title = "Hapus komentar";
+        delBtn.dataset.deleteUrl = `/api/forum/comment/${comment.id}/delete/`;
+        delBtn.innerHTML = `
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+          </svg>
+        `;
+        delBtn.addEventListener("click", () => handleDeleteComment(delBtn));
+        header.appendChild(delBtn);
+      }
+
+      const body = document.createElement("div");
+      body.className = "text-xs sm:text-[0.8125rem] leading-relaxed text-foreground pl-10.5 whitespace-pre-line";
+      body.textContent = comment.content;
+
+      article.append(header, body);
+      li.appendChild(article);
+      return li;
+    }
+
+    function handleDeleteComment(btn) {
+      const url = btn.dataset.deleteUrl;
+      if (!url) return;
+
+      openDeleteModal({
+        title: "Hapus Komentar",
+        description: "Apakah kamu yakin ingin menghapus komentar ini? Komentar yang telah dihapus tidak dapat dipulihkan.",
+        confirmText: "Hapus Komentar",
+        onConfirm: async ({ setError, close }) => {
+          const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+          const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+              "X-CSRFToken": csrfToken,
+              "Accept": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            setError(data.error || "Gagal menghapus komentar.");
+            return;
           }
-        });
+
+          const data = await response.json();
+          const li = btn.closest(".comment-item");
+          if (li) li.remove();
+
+          updateCommentCounters(data.total_comments);
+
+          const commentsContainer = document.getElementById("comments-container");
+          if (commentsContainer && commentsContainer.querySelectorAll(".comment-item").length === 0) {
+            let emptyMsg = document.getElementById("no-comments-msg");
+            if (!emptyMsg) {
+              emptyMsg = document.createElement("li");
+              emptyMsg.id = "no-comments-msg";
+              emptyMsg.className = "py-8 text-center text-xs text-muted";
+              emptyMsg.textContent = "Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!";
+              commentsContainer.appendChild(emptyMsg);
+            }
+          }
+          close();
+        },
       });
     }
+
+    document.querySelectorAll(".delete-comment-btn").forEach((btn) => {
+      btn.addEventListener("click", () => handleDeleteComment(btn));
+    });
+
+    const commentForm = document.getElementById("comment-form");
+    const commentError = document.getElementById("comment-error");
+    const submitCommentBtn = document.getElementById("submit-comment-btn");
+
+    commentForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (commentForm.dataset.authenticated !== "true") {
+        window.location.href = commentForm.dataset.loginUrl || "{% url 'user:login' %}";
+        return;
+      }
+
+      const content = commentInput.value.trim();
+      if (!content) {
+        if (commentError) {
+          commentError.textContent = "Komentar tidak boleh kosong.";
+          commentError.classList.remove("hidden");
+        }
+        commentInput.focus();
+        return;
+      }
+
+      if (commentError) commentError.classList.add("hidden");
+
+      const spinner = submitCommentBtn?.querySelector(".comment-spinner");
+      const icon = submitCommentBtn?.querySelector(".comment-icon");
+      const btnText = submitCommentBtn?.querySelector(".comment-btn-text");
+
+      if (submitCommentBtn) submitCommentBtn.disabled = true;
+      spinner?.classList.remove("hidden");
+      icon?.classList.add("hidden");
+      if (btnText) btnText.textContent = "Mengirim...";
+
+      try {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+        const response = await fetch(commentForm.dataset.action, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+          },
+          body: JSON.stringify({ content }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || "Gagal mengirim komentar.");
+        }
+
+        const data = await response.json();
+        commentInput.value = "";
+        commentInput.dispatchEvent(new Event("input"));
+
+        document.getElementById("no-comments-msg")?.remove();
+
+        const commentsContainer = document.getElementById("comments-container");
+        if (commentsContainer) {
+          const newCommentEl = createCommentItem(data.comment);
+          commentsContainer.appendChild(newCommentEl);
+          newCommentEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        updateCommentCounters(data.total_comments);
+      } catch (err) {
+        if (commentError) {
+          commentError.textContent = err.message;
+          commentError.classList.remove("hidden");
+        } else {
+          console.error(err.message);
+        }
+      } finally {
+        if (submitCommentBtn) submitCommentBtn.disabled = false;
+        spinner?.classList.add("hidden");
+        icon?.classList.remove("hidden");
+        if (btnText) btnText.textContent = "Kirim komentar";
+      }
+    });
+
+    const commentSort = document.getElementById("comment-sort");
+    commentSort?.addEventListener("change", async () => {
+      const commentsContainer = document.getElementById("comments-container");
+      if (!commentsContainer) return;
+      const url = new URL(commentsContainer.dataset.commentsUrl, window.location.origin);
+      url.searchParams.set("sort", commentSort.value);
+
+      try {
+        const res = await fetch(url.href, {
+          headers: { "Accept": "application/json" }
+        });
+        if (!res.ok) throw new Error("Gagal memuat komentar.");
+        const data = await res.json();
+        commentsContainer.innerHTML = "";
+        if (data.comments && data.comments.length > 0) {
+          data.comments.forEach((c) => {
+            commentsContainer.appendChild(createCommentItem(c));
+          });
+        } else {
+          const emptyMsg = document.createElement("li");
+          emptyMsg.id = "no-comments-msg";
+          emptyMsg.className = "py-8 text-center text-xs text-muted";
+          emptyMsg.textContent = "Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!";
+          commentsContainer.appendChild(emptyMsg);
+        }
+        updateCommentCounters(data.total_comments);
+      } catch (err) {
+        console.error("Gagal mengurutkan komentar:", err);
+      }
+    });
 
     // 4. Like button toggle
     const likeBtn = document.getElementById("like-btn");
     const likeCountSpan = document.getElementById("like-count");
     if (likeBtn && likeCountSpan) {
-      let isLiked = false;
-      let count = parseInt(likeCountSpan.textContent, 10) || 38;
-      likeBtn.addEventListener("click", () => {
-        isLiked = !isLiked;
-        count = isLiked ? count + 1 : Math.max(0, count - 1);
-        likeCountSpan.textContent = `${count} suka`;
-        if (isLiked) {
-          likeBtn.classList.add("bg-accent", "text-accent-foreground");
-          likeBtn.classList.remove("bg-surface", "text-foreground");
-          likeBtn.querySelector("svg")?.classList.add("fill-current");
-        } else {
-          likeBtn.classList.remove("bg-accent", "text-accent-foreground");
-          likeBtn.classList.add("bg-surface", "text-foreground");
-          likeBtn.querySelector("svg")?.classList.remove("fill-current");
+      likeBtn.addEventListener("click", async () => {
+        if (likeBtn.dataset.authenticated !== "true") {
+          window.location.href = likeBtn.dataset.loginUrl || "{% url 'user:login' %}";
+          return;
+        }
+
+        if (likeBtn.dataset.busy === "true") return;
+        likeBtn.dataset.busy = "true";
+
+        const isCurrentlyLiked = likeBtn.dataset.liked === "true";
+        const prevCount = parseInt(likeCountSpan.textContent, 10) || 0;
+        const nextLiked = !isCurrentlyLiked;
+        const nextCount = nextLiked ? prevCount + 1 : Math.max(0, prevCount - 1);
+
+        const svg = likeBtn.querySelector("svg");
+        function updateLikeUI(liked, count) {
+          likeBtn.dataset.liked = liked ? "true" : "false";
+          likeBtn.setAttribute("aria-pressed", liked ? "true" : "false");
+          likeBtn.setAttribute("aria-label", liked ? "Batal menyukai post" : "Sukai post");
+          likeCountSpan.textContent = `${count} suka`;
+          if (liked) {
+            likeBtn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-accent px-2.5 py-1 text-[0.6875rem] font-semibold text-accent-foreground shadow-none transition-colors hover:opacity-95 sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
+            if (svg) {
+              svg.setAttribute("fill", "currentColor");
+              svg.classList.add("fill-current");
+              svg.classList.remove("text-foreground");
+            }
+          } else {
+            likeBtn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
+            if (svg) {
+              svg.setAttribute("fill", "none");
+              svg.classList.remove("fill-current");
+              svg.classList.add("text-foreground");
+            }
+          }
+        }
+
+        updateLikeUI(nextLiked, nextCount);
+
+        try {
+          const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+          const csrfCookie = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+          const csrfToken = csrfInput?.value || (csrfCookie ? csrfCookie[1] : "");
+
+          const response = await fetch("{% url 'forum:like_post_api' post.id %}", {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+          });
+
+          if (response.status === 401) {
+            window.location.href = likeBtn.dataset.loginUrl || "{% url 'user:login' %}";
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error("Gagal menyukai thread.");
+          }
+
+          const data = await response.json();
+          updateLikeUI(data.liked, data.total_likes);
+        } catch (err) {
+          updateLikeUI(isCurrentlyLiked, prevCount);
+          console.error("Gagal melakukan aksi like:", err);
+        } finally {
+          delete likeBtn.dataset.busy;
         }
       });
     }
 
-    // 5. Save button toggle
-    const saveBtn = document.getElementById("save-btn");
-    const saveBtnText = document.getElementById("save-btn-text");
-    if (saveBtn && saveBtnText) {
-      let isSaved = false;
-      saveBtn.addEventListener("click", () => {
-        isSaved = !isSaved;
-        saveBtnText.textContent = isSaved ? "Tersimpan" : "Simpan";
-        if (isSaved) {
-          saveBtn.classList.add("bg-highlight");
-        } else {
-          saveBtn.classList.remove("bg-highlight");
-        }
-      });
-    }
-
-    // 6. Share and Copy Link
-    const shareBtn = document.getElementById("share-btn");
+    // 5. Copy Link Menu Handler
     const copyLinkMenuBtn = document.getElementById("copy-link-menu-btn");
     async function copyCurrentUrl() {
       try {
         await navigator.clipboard.writeText(window.location.href);
-        const originalText = shareBtn ? shareBtn.querySelector("span")?.textContent : "";
-        if (shareBtn && shareBtn.querySelector("span")) {
-          shareBtn.querySelector("span").textContent = "Tersalin!";
+        const span = copyLinkMenuBtn?.querySelector("span");
+        if (span) {
+          const originalText = span.textContent;
+          span.textContent = "Tautan tersalin!";
           setTimeout(() => {
-            if (shareBtn.querySelector("span")) shareBtn.querySelector("span").textContent = originalText || "Bagikan";
+            span.textContent = originalText;
           }, 2000);
         }
       } catch (err) {
         prompt("Salin tautan berikut:", window.location.href);
       }
     }
-    shareBtn?.addEventListener("click", copyCurrentUrl);
     copyLinkMenuBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
       optionsMenu?.classList.add("hidden");
@@ -681,27 +819,28 @@
     });
 
     // 7. Delete post handler (Calls delete_post_api)
-    async function handleDeletePost() {
-      const confirmed = confirm("Apakah kamu yakin ingin menghapus thread forum ini? Tindakan ini tidak dapat dibatalkan.");
-      if (!confirmed) return;
-
-      try {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
-        const response = await fetch("{% url 'forum:delete_post_api' post.id %}", {
-          method: "DELETE",
-          headers: {
-            "X-CSRFToken": csrfToken,
-            "Accept": "application/json",
-          },
-        });
-        if (!response.ok) {
-          const result = await response.json().catch(() => ({}));
-          throw new Error(result.error || "Gagal menghapus post.");
-        }
-        window.location.href = "{% url 'forum:forum_main' %}";
-      } catch (err) {
-        alert(err.message);
-      }
+    function handleDeletePost() {
+      openDeleteModal({
+        title: "Hapus Thread Forum",
+        description: "Apakah kamu yakin ingin menghapus thread forum ini? Seluruh komentar di dalamnya juga akan terhapus dan tindakan ini tidak dapat dibatalkan.",
+        confirmText: "Hapus Thread",
+        onConfirm: async ({ setError }) => {
+          const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+          const response = await fetch("{% url 'forum:delete_post_api' post.id %}", {
+            method: "DELETE",
+            headers: {
+              "X-CSRFToken": csrfToken,
+              "Accept": "application/json",
+            },
+          });
+          if (!response.ok) {
+            const result = await response.json().catch(() => ({}));
+            setError(result.error || "Gagal menghapus thread forum.");
+            return;
+          }
+          window.location.href = "{% url 'forum:forum_main' %}";
+        },
+      });
     }
 
     document.getElementById("action-delete-btn")?.addEventListener("click", handleDeletePost);
