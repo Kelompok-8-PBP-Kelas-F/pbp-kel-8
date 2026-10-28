@@ -1,14 +1,25 @@
 from django.shortcuts import render
+from .models import Item, Category
 
 def marketplace(request):
-    demo_cards = [
-        {'name': 'Atasan putih oversized', 'seller': 'Burhan', 'price': 'Rp 85.000', 'bg': 'bg-[#f09a67]', 'icon': 'shirt'},
-        {'name': 'Bawahan denim straight', 'seller': 'Burhan', 'price': 'Rp 120.000', 'bg': 'bg-[#86a981]', 'icon': 'phone'},
-        {'name': 'Tas tote canvas', 'seller': 'Burhan', 'price': 'Rp 65.000', 'bg': 'bg-[#fbf1d5]', 'icon': 'image'},
-        {'name': 'Sepatu boots hitam', 'seller': 'Burhan', 'price': 'Rp 240.000', 'bg': 'bg-[#E2652B]', 'icon': 'image'},
-        {'name': 'Outer denim jacket', 'seller': 'Burhan', 'price': 'Rp 180.000', 'bg': 'bg-[#f09a67]', 'icon': 'shirt'},
-        {'name': 'Celana chino coklat', 'seller': 'Burhan', 'price': 'Rp 95.000', 'bg': 'bg-[#86a981]', 'icon': 'phone'},
-        {'name': 'Tas sling kulit', 'seller': 'Burhan', 'price': 'Rp 110.000', 'bg': 'bg-[#fbf1d5]', 'icon': 'image'},
-        {'name': 'Sepatu sneaker putih', 'seller': 'Burhan', 'price': 'Rp 190.000', 'bg': 'bg-[#E2652B]', 'icon': 'image'},
-    ]
-    return render(request, 'pages/marketplace/marketplace.html', {'demo_cards': demo_cards, 'items': []})
+    items = Item.objects.filter(is_available=True).select_related('seller', 'category').order_by('-created_at')
+    categories = Category.objects.all()
+
+    q = request.GET.get('q')
+    category_id = request.GET.get('category')
+    condition = request.GET.get('condition')
+
+    if q:
+        items = items.filter(title__icontains=q)
+    if category_id:
+        items = items.filter(category_id=category_id)
+    if condition:
+        items = items.filter(condition=condition)
+
+    return render(request, 'pages/marketplace/marketplace.html', {
+        'items': items,
+        'categories': categories,
+        'selected_category': category_id,
+        'selected_condition': condition,
+        'q': q or '',
+    })
