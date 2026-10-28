@@ -1,4 +1,6 @@
 from django.urls import path
+
+import marketplace
 from .views import filter_barang, edit_barang, hapus_barang, landing_page, login_view, logout_view, marketplace_penjual, seller_profile, tambah_barang
 app_name = 'marketplace'
 
@@ -9,4 +11,5 @@ urlpatterns = [
     path('marketplace-penjual/hapus/<int:pk>/', hapus_barang, name='hapus_barang'),
     path('marketplace-penjual/filter-barang/', filter_barang, name='filter_barang'),
     path('seller/<str:username>/', seller_profile, name='seller_profile'),
+    path('marketplace/', marketplace, name='marketplace_list'),
 ]
