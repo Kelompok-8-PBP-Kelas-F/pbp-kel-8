@@ -1,6 +1,26 @@
 from django.forms import ModelForm, Select, TextInput, Textarea, URLInput
 
-from .models import Forum
+from .models import Forum, Comment
+
+
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["content"]
+        labels = {
+            "content": "Komentar",
+        }
+        widgets = {
+            "content": Textarea(
+                attrs={
+                    "id": "comment-textarea",
+                    "rows": 3,
+                    "maxlength": 2000,
+                    "placeholder": "Bagikan tanggapan atau saranmu...",
+                    "class": "w-full resize-none border-2 border-line bg-background p-3 pb-6 text-xs text-foreground outline-none placeholder:text-muted focus:bg-surface transition-colors",
+                }
+            ),
+        }
 
 
 class ForumForm(ModelForm):
