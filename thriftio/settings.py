@@ -32,7 +32,7 @@ CSRF_TRUSTED_ORIGINS = ["http://luthfi.ahmad51-thriftio.pws.cs.ui.ac.id"]
 SECRET_KEY = 'django-insecure-32a+-=divf1k7qe(zqaawg#y)ccg9i(8$22f-aejkuz1rc-#an'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "luthfi.ahmad51-thriftio.pws.cs.ui.ac.id"]
 
@@ -165,7 +165,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-if DEBUG:
+if not PRODUCTION:
     INSTALLED_APPS += ["django_browser_reload"]
     MIDDLEWARE += [
         "django_browser_reload.middleware.BrowserReloadMiddleware",
