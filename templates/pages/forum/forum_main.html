@@ -45,8 +45,8 @@
           <h2
             class="community-feed__title font-heading text-xl font-bold leading-tight text-foreground sm:text-2xl"
             id="feed-title">Feed komunitas</h2>
-          <p class="community-feed__description text-xs text-muted">Percakapan terbaru dari 8.421 anggota</p>
         </div>
+        {% if request.user.is_authenticated %}
         <button
           class="community-feed__create inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto sm:text-[0.8125rem] cursor-pointer"
           type="button" popovertarget="forum-create-modal" popovertargetaction="show">
@@ -57,6 +57,18 @@
           <span>Buat post</span>
           <span class="hidden font-normal sm:inline">· Pengguna terdaftar</span>
         </button>
+        {% else %}
+        <a
+          href="{% url 'user:login' %}?next={% url 'forum:forum_main' %}"
+          class="community-feed__create inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] sm:self-auto sm:text-[0.8125rem] cursor-pointer">
+          <svg class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          <span>Buat post</span>
+          <span class="hidden font-normal sm:inline">· Masuk terlebih dahulu</span>
+        </a>
+        {% endif %}
       </header>
 
       <div class="community-feed__layout grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
@@ -66,8 +78,22 @@
             <div class="feed-controls__sort flex min-w-0 flex-1 items-center gap-1 sm:flex-initial sm:gap-1.5"
               role="group" aria-label="Urutkan post">
               <button
-                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
+                id="sort-terbaru-btn"
+                data-sort="latest"
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5"
                 type="button" aria-pressed="true">
+                <svg class="size-3 shrink-0 sm:size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.8" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                Terbaru
+              </button>
+              <button
+                id="sort-trending-btn"
+                data-sort="trending"
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted hover:text-foreground sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5"
+                type="button" aria-pressed="false">
                 <svg class="size-3 shrink-0 sm:size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-width="1.8" aria-hidden="true">
                   <path d="m3 17 6-6 4 4 8-8" />
@@ -75,19 +101,13 @@
                 </svg>
                 Trending
               </button>
-              <button
-                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
-                type="button" aria-pressed="false">Terbaru</button>
-              <button
-                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
-                type="button" aria-pressed="false">Diikuti</button>
             </div>
-            <p class="feed-controls__count w-full text-right text-[0.625rem] text-muted sm:ml-auto sm:w-auto">128 post
-              minggu ini</p>
           </div>
 
           <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}"
-            data-current-user="{{ request.user.username|default:'' }}">
+            data-current-user="{{ request.user.username|default:'' }}"
+            data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
+            data-login-url="{% url 'user:login' %}?next={% url 'forum:forum_main' %}">
             <li class="w-full py-6 text-center text-xs text-muted" data-posts-loading role="status">
               Memuat post forum...
             </li>
@@ -191,8 +211,14 @@
               dalam percakapan</h2>
             <p class="member-access__description text-[0.625rem] leading-relaxed text-hero-foreground">Pengguna
               terdaftar dapat menyukai post, membuat post baru, dan menulis komentar.</p>
+            {% if request.user.is_authenticated %}
+            <button
+              class="member-access__action grid min-h-8.5 place-items-center border-2 border-line bg-highlight px-3 py-1.5 text-xs font-bold text-foreground cursor-pointer"
+              type="button" popovertarget="forum-create-modal" popovertargetaction="show">Buat post sekarang</button>
+            {% else %}
             <a class="member-access__action grid min-h-8.5 place-items-center border-2 border-line bg-highlight px-3 py-1.5 text-xs font-bold text-foreground"
-              href="#">Daftar gratis</a>
+              href="{% url 'user:register' %}">Daftar gratis</a>
+            {% endif %}
           </section>
         </aside>
       </div>
@@ -229,6 +255,39 @@
         icon.appendChild(path);
       });
       return icon;
+    }
+
+    function getCsrfToken() {
+      const input = document.querySelector('[name=csrfmiddlewaretoken]');
+      if (input && input.value) return input.value;
+      const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+      return match ? match[1] : "";
+    }
+
+    function setLikeButtonState(btn, isLiked, count) {
+      btn.setAttribute("aria-pressed", isLiked ? "true" : "false");
+      btn.setAttribute("aria-label", isLiked ? "Batal menyukai post" : "Sukai post");
+      const svg = btn.querySelector("svg");
+      const textSpan = btn.querySelector("span");
+
+      if (isLiked) {
+        btn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-accent px-2.5 py-1 text-[0.6875rem] font-semibold text-accent-foreground shadow-none transition-colors hover:opacity-95 sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
+        if (svg) {
+          svg.setAttribute("fill", "currentColor");
+          svg.classList.add("fill-current");
+          svg.classList.remove("text-foreground");
+        }
+      } else {
+        btn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
+        if (svg) {
+          svg.setAttribute("fill", "none");
+          svg.classList.remove("fill-current");
+          svg.classList.add("text-foreground");
+        }
+      }
+      if (textSpan) {
+        textSpan.textContent = `${count ?? 0} suka`;
+      }
     }
 
     function formatPostDateTime(dateString) {
@@ -365,15 +424,67 @@
       }
 
       const footer = makeElement("footer", "forum-post__actions flex flex-wrap items-center gap-2 border-t-2 border-line pt-3");
-      const likes = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      const likes = makeElement("button", "");
       likes.type = "button";
-      likes.append(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
+      likes.append(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-3.5 shrink-0 sm:size-4"));
       likes.append(makeElement("span", "", `${post.total_likes ?? 0} suka`));
-      likes.addEventListener("click", (e) => {
+      setLikeButtonState(likes, Boolean(post.is_liked), post.total_likes ?? 0);
+
+      likes.addEventListener("click", async (e) => {
         e.stopPropagation();
+
+        const isAuthenticated = postList.dataset.authenticated === "true";
+        if (!isAuthenticated) {
+          const loginUrl = postList.dataset.loginUrl || "{% url 'user:login' %}?next={% url 'forum:forum_main' %}";
+          window.location.href = loginUrl;
+          return;
+        }
+
+        if (likes.dataset.busy === "true") return;
+        likes.dataset.busy = "true";
+
+        const prevLiked = Boolean(post.is_liked);
+        const prevCount = post.total_likes ?? 0;
+        const nextLiked = !prevLiked;
+        const nextCount = nextLiked ? prevCount + 1 : Math.max(0, prevCount - 1);
+
+        post.is_liked = nextLiked;
+        post.total_likes = nextCount;
+        setLikeButtonState(likes, nextLiked, nextCount);
+
+        try {
+          const response = await fetch(`/api/forum/like/${post.id}/`, {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "X-CSRFToken": getCsrfToken(),
+            },
+          });
+
+          if (response.status === 401) {
+            window.location.href = postList.dataset.loginUrl || "{% url 'user:login' %}?next={% url 'forum:forum_main' %}";
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error("Gagal menyukai post.");
+          }
+
+          const data = await response.json();
+          post.is_liked = data.liked;
+          post.total_likes = data.total_likes;
+          setLikeButtonState(likes, data.liked, data.total_likes);
+        } catch (err) {
+          post.is_liked = prevLiked;
+          post.total_likes = prevCount;
+          setLikeButtonState(likes, prevLiked, prevCount);
+          console.error("Gagal melakukan aksi like:", err);
+        } finally {
+          delete likes.dataset.busy;
+        }
       });
 
-      const comments = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      const comments = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5");
       comments.type = "button";
       comments.append(createIcon(["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
       comments.append(makeElement("span", "", `${post.total_comments ?? 0} komentar`));
@@ -410,6 +521,7 @@
     }
 
     let currentTitleFilter = "";
+    let currentSort = "latest";
     let searchDebounceTimer = null;
 
     function createEmptyState(query = "") {
@@ -453,6 +565,9 @@
         const url = new URL(postList.dataset.postsUrl, window.location.origin);
         if (title.trim()) {
           url.searchParams.set("title", title.trim());
+        }
+        if (currentSort) {
+          url.searchParams.set("sort", currentSort);
         }
 
         // Tampilkan feedback memuat saat mencari
@@ -843,7 +958,36 @@
       });
     }
 
+    const sortButtons = document.querySelectorAll(".sort-option");
+    function updateSortButtonsUI() {
+      sortButtons.forEach((b) => {
+        const isActive = b.dataset.sort === currentSort;
+        b.setAttribute("aria-pressed", isActive ? "true" : "false");
+        if (isActive) {
+          b.className = "sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5";
+        } else {
+          b.className = "sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted hover:text-foreground sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5";
+        }
+      });
+    }
+
+    sortButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const sortType = btn.dataset.sort;
+        if (!sortType || sortType === currentSort) return;
+        currentSort = sortType;
+        updateSortButtonsUI();
+        fetchPostsByFilter(currentTitleFilter);
+      });
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
+    const initialSort = urlParams.get("sort");
+    if (initialSort && (initialSort === "trending" || initialSort === "latest")) {
+      currentSort = initialSort;
+      updateSortButtonsUI();
+    }
+
     const initialQuery = urlParams.get("title") || urlParams.get("q") || "";
     if (initialQuery && searchInput) {
       searchInput.value = initialQuery;

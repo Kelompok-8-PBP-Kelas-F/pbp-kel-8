@@ -1,8 +1,9 @@
+import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Forum
+from .models import Forum, Comment
 
 
 class ForumCreateModalTests(TestCase):
@@ -97,6 +98,19 @@ class ForumCreateModalTests(TestCase):
         self.assertIn("errors", response.json())
         self.assertEqual(Forum.objects.count(), 0)
 
+    def test_create_api_requires_authentication(self):
+        self.client.logout()
+        response = self.client.post(
+            reverse("forum:create_post_api"),
+            {
+                "title": "Post by Guest",
+                "content": "Should be rejected.",
+                "category": "QUESTION",
+            },
+        )
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(Forum.objects.count(), 0)
+
     def test_forum_detail_view(self):
         post = Forum.objects.create(
             author_username=self.user.username,
@@ -106,6 +120,7 @@ class ForumCreateModalTests(TestCase):
         response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["post"], post)
+        self.assertTrue(response.context["can_manage"])
         self.assertContains(response, "Post Detail")
         self.assertContains(response, "Konten Detail")
         self.assertContains(response, "Kembali ke Forum")
@@ -115,30 +130,425 @@ class ForumCreateModalTests(TestCase):
         self.assertContains(response, 'id="menu-delete-post-btn"')
         self.assertContains(response, 'id="forum-edit-modal"')
 
-    def test_edit_post_api_put(self):
-        from urllib.parse import urlencode
+    def test_forum_detail_view_non_owner_and_guest(self):
         post = Forum.objects.create(
-            author_username="someone",
+            author_username="another-author",
+            title="Post By Other",
+            content="Konten Lain",
+        )
+        # Logged in as non-owner (self.user)
+        response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context["can_manage"])
+        self.assertNotContains(response, 'id="menu-edit-post-btn"')
+        self.assertNotContains(response, 'id="menu-delete-post-btn"')
+        self.assertNotContains(response, 'id="forum-edit-modal"')
+
+        # Guest (unauthenticated)
+        self.client.logout()
+        res_guest = self.client.get(reverse("forum:forum_detail", args=[post.id]))
+        self.assertEqual(res_guest.status_code, 200)
+        self.assertFalse(res_guest.context["can_manage"])
+        self.assertNotContains(res_guest, 'id="menu-edit-post-btn"')
+        self.assertNotContains(res_guest, 'id="menu-delete-post-btn"')
+
+    def test_forum_detail_view_superuser(self):
+        admin_user = get_user_model().objects.create_superuser(
+            username="admin-user",
+            password="admin-password",
+        )
+        self.client.force_login(admin_user)
+        post = Forum.objects.create(
+            author_username="some-user",
+            title="Admin Viewing",
+            content="Content",
+        )
+        response = self.client.get(reverse("forum:forum_detail", args=[post.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context["can_manage"])
+        self.assertContains(response, 'id="menu-edit-post-btn"')
+        self.assertContains(response, 'id="menu-delete-post-btn"')
+
+    def test_edit_post_api_authorization(self):
+        from urllib.parse import urlencode
+
+        post = Forum.objects.create(
+            author_username="original-owner",
             title="Old Title",
             content="Old Content",
         )
-        self.client.logout()  # Unauthenticated to verify no auth check
-        response = self.client.put(
+
+        # 1. Unauthenticated -> 401
+        self.client.logout()
+        res_unauth = self.client.put(
             reverse("forum:edit_post_api", args=[post.id]),
-            data=urlencode({"title": "Updated Title", "content": "Updated Content", "category": "DISCUSSION"}),
+            data=urlencode({"title": "Hack Title", "content": "Hack Content", "category": "DISCUSSION"}),
             content_type="application/x-www-form-urlencoded",
         )
-        self.assertEqual(response.status_code, 200)
-        post.refresh_from_db()
-        self.assertEqual(post.title, "Updated Title")
+        self.assertEqual(res_unauth.status_code, 401)
 
-    def test_delete_post_api_delete(self):
+        # 2. Authenticated as non-owner (self.user) -> 403
+        self.client.force_login(self.user)
+        res_forbidden = self.client.put(
+            reverse("forum:edit_post_api", args=[post.id]),
+            data=urlencode({"title": "Other User Title", "content": "Other User Content", "category": "DISCUSSION"}),
+            content_type="application/x-www-form-urlencoded",
+        )
+        self.assertEqual(res_forbidden.status_code, 403)
+
+        # 3. Authenticated as owner -> 200
+        owner_user = get_user_model().objects.create_user(
+            username="original-owner",
+            password="owner-password",
+        )
+        self.client.force_login(owner_user)
+        res_owner = self.client.put(
+            reverse("forum:edit_post_api", args=[post.id]),
+            data=urlencode({"title": "Owner Updated Title", "content": "Updated Content", "category": "DISCUSSION"}),
+            content_type="application/x-www-form-urlencoded",
+        )
+        self.assertEqual(res_owner.status_code, 200)
+        post.refresh_from_db()
+        self.assertEqual(post.title, "Owner Updated Title")
+
+        # 4. Superuser -> 200 (can edit any post)
+        admin_user = get_user_model().objects.create_superuser(
+            username="super-admin",
+            password="admin-password",
+        )
+        self.client.force_login(admin_user)
+        res_admin = self.client.put(
+            reverse("forum:edit_post_api", args=[post.id]),
+            data=urlencode({"title": "Superuser Overwrite", "content": "Admin Content", "category": "DISCUSSION"}),
+            content_type="application/x-www-form-urlencoded",
+        )
+        self.assertEqual(res_admin.status_code, 200)
+        post.refresh_from_db()
+        self.assertEqual(post.title, "Superuser Overwrite")
+
+    def test_delete_post_api_authorization(self):
         post = Forum.objects.create(
-            author_username="someone",
+            author_username="post-owner",
             title="To Delete",
             content="Content",
         )
-        self.client.logout()  # Unauthenticated to verify no auth check
-        response = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
-        self.assertEqual(response.status_code, 200)
+
+        # 1. Unauthenticated -> 401
+        self.client.logout()
+        res_unauth = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
+        self.assertEqual(res_unauth.status_code, 401)
+        self.assertTrue(Forum.objects.filter(pk=post.id).exists())
+
+        # 2. Authenticated as non-owner (self.user) -> 403
+        self.client.force_login(self.user)
+        res_forbidden = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
+        self.assertEqual(res_forbidden.status_code, 403)
+        self.assertTrue(Forum.objects.filter(pk=post.id).exists())
+
+        # 3. Authenticated as owner -> 200
+        owner_user = get_user_model().objects.create_user(
+            username="post-owner",
+            password="owner-password",
+        )
+        self.client.force_login(owner_user)
+        res_owner = self.client.delete(reverse("forum:delete_post_api", args=[post.id]))
+        self.assertEqual(res_owner.status_code, 200)
         self.assertFalse(Forum.objects.filter(pk=post.id).exists())
+
+        # 4. Superuser can delete any post -> 200
+        another_post = Forum.objects.create(
+            author_username="someone-else",
+            title="Post for Superuser to Delete",
+            content="Content",
+        )
+        admin_user = get_user_model().objects.create_superuser(
+            username="super-admin-deleter",
+            password="admin-password",
+        )
+        self.client.force_login(admin_user)
+        res_admin = self.client.delete(reverse("forum:delete_post_api", args=[another_post.id]))
+        self.assertEqual(res_admin.status_code, 200)
+        self.assertFalse(Forum.objects.filter(pk=another_post.id).exists())
+
+    def test_like_api_requires_authentication(self):
+        post = Forum.objects.create(
+            author_username="someone",
+            title="Post to Like",
+            content="Content",
+        )
+        self.client.logout()
+        response = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json()["error"], "Authentication required. Silakan masuk terlebih dahulu.")
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 0)
+
+    def test_like_api_toggle_and_total_likes(self):
+        post = Forum.objects.create(
+            author_username="author-1",
+            title="Post for Like Toggle",
+            content="Content for like toggle",
+        )
+        self.client.force_login(self.user)
+
+        # 1. First like -> liked=True, total_likes=1
+        res1 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res1.status_code, 200)
+        self.assertTrue(res1.json()["liked"])
+        self.assertEqual(res1.json()["total_likes"], 1)
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 1)
+        self.assertTrue(post.liked_by.filter(pk=self.user.pk).exists())
+
+        # 2. Second like (unlike) -> liked=False, total_likes=0
+        res2 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res2.status_code, 200)
+        self.assertFalse(res2.json()["liked"])
+        self.assertEqual(res2.json()["total_likes"], 0)
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 0)
+        self.assertFalse(post.liked_by.filter(pk=self.user.pk).exists())
+
+    def test_like_api_multiple_users(self):
+        post = Forum.objects.create(
+            author_username="author-1",
+            title="Multi-user Like",
+            content="Testing multi-user likes",
+        )
+        user2 = get_user_model().objects.create_user(
+            username="second-user",
+            password="test-password-2",
+        )
+
+        # User 1 likes
+        self.client.force_login(self.user)
+        res1 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res1.status_code, 200)
+        self.assertEqual(res1.json()["total_likes"], 1)
+
+        # User 2 likes
+        self.client.force_login(user2)
+        res2 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res2.status_code, 200)
+        self.assertEqual(res2.json()["total_likes"], 2)
+
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 2)
+        self.assertEqual(post.liked_by.count(), 2)
+
+    def test_like_api_invalid_method(self):
+        post = Forum.objects.create(
+            author_username="someone",
+            title="Invalid Method Post",
+            content="Content",
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_like_api_not_found(self):
+        import uuid
+        self.client.force_login(self.user)
+        random_id = uuid.uuid4()
+        response = self.client.post(reverse("forum:like_post_api", args=[random_id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_posts_api_includes_is_liked_flag(self):
+        post1 = Forum.objects.create(
+            author_username="user1",
+            title="Liked Post",
+            content="Content 1",
+        )
+        post2 = Forum.objects.create(
+            author_username="user2",
+            title="Unliked Post",
+            content="Content 2",
+        )
+        post1.liked_by.add(self.user)
+        post1.total_likes = 1
+        post1.save()
+
+        # When logged in as self.user
+        self.client.force_login(self.user)
+        res = self.client.get(reverse("forum:get_posts_api"))
+        self.assertEqual(res.status_code, 200)
+        posts_data = {p["title"]: p for p in res.json()}
+        self.assertTrue(posts_data["Liked Post"]["is_liked"])
+        self.assertFalse(posts_data["Unliked Post"]["is_liked"])
+
+        # When guest
+        self.client.logout()
+        res_guest = self.client.get(reverse("forum:get_posts_api"))
+        self.assertEqual(res_guest.status_code, 200)
+        for p in res_guest.json():
+            self.assertFalse(p["is_liked"])
+
+    def test_forum_main_sort_buttons_no_diikuti(self):
+        response = self.client.get(reverse("forum:forum_main"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'id="sort-terbaru-btn"')
+        self.assertContains(response, 'id="sort-trending-btn"')
+        self.assertNotContains(response, "Diikuti")
+
+    def test_posts_api_sort_by_latest_and_trending(self):
+        import time
+        from django.utils import timezone
+        from datetime import timedelta
+
+        # Create older post with more likes
+        post_older = Forum.objects.create(
+            author_username="user1",
+            title="Older Trending Post",
+            content="Content",
+            total_likes=10,
+        )
+        # Manually backdate created_at
+        Forum.objects.filter(pk=post_older.pk).update(created_at=timezone.now() - timedelta(days=2))
+
+        # Create newer post with fewer likes
+        post_newer = Forum.objects.create(
+            author_username="user2",
+            title="Newer Post",
+            content="Content",
+            total_likes=1,
+        )
+
+        # 1. Sort by latest -> newer post first
+        res_latest = self.client.get(reverse("forum:get_posts_api"), {"sort": "latest"})
+        self.assertEqual(res_latest.status_code, 200)
+        json_latest = res_latest.json()
+        self.assertEqual(json_latest[0]["title"], "Newer Post")
+        self.assertEqual(json_latest[1]["title"], "Older Trending Post")
+
+        # 2. Sort by trending -> post with more likes first
+        res_trending = self.client.get(reverse("forum:get_posts_api"), {"sort": "trending"})
+        self.assertEqual(res_trending.status_code, 200)
+        json_trending = res_trending.json()
+        self.assertEqual(json_trending[0]["title"], "Older Trending Post")
+        self.assertEqual(json_trending[1]["title"], "Newer Post")
+
+    def test_comment_model_creation_and_non_nested(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Post for Comment",
+            content="Content",
+        )
+        comment1 = Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komentar pertama",
+        )
+        comment2 = Comment.objects.create(
+            forum=post,
+            author_username="another_user",
+            content="Komentar kedua",
+        )
+        self.assertEqual(post.comments.count(), 2)
+        self.assertEqual(comment1.forum, post)
+        self.assertEqual(comment2.forum, post)
+        # Verify non-nested: neither has a parent comment
+        self.assertFalse(hasattr(comment1, 'parent'))
+
+    def test_add_comment_api_authenticated_and_unauthenticated(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Post with Comments",
+            content="Content",
+        )
+        add_url = reverse("forum:add_comment_api", args=[post.id])
+
+        # 1. Logged in -> success
+        res = self.client.post(
+            add_url,
+            data=json.dumps({"content": "Ini komentar testing"}),
+            content_type="application/json",
+        )
+        self.assertEqual(res.status_code, 201)
+        data = res.json()
+        self.assertEqual(data["comment"]["content"], "Ini komentar testing")
+        self.assertEqual(data["total_comments"], 1)
+        post.refresh_from_db()
+        self.assertEqual(post.total_comments, 1)
+
+        # 2. Unauthenticated -> 401
+        self.client.logout()
+        res_guest = self.client.post(
+            add_url,
+            data=json.dumps({"content": "Komentar anonim"}),
+            content_type="application/json",
+        )
+        self.assertEqual(res_guest.status_code, 401)
+
+    def test_add_comment_api_empty_validation(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Validation Post",
+            content="Content",
+        )
+        add_url = reverse("forum:add_comment_api", args=[post.id])
+        res = self.client.post(
+            add_url,
+            data=json.dumps({"content": "   "}),
+            content_type="application/json",
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("error", res.json())
+
+    def test_delete_comment_api_permissions(self):
+        other_user = get_user_model().objects.create_user(
+            username="other-member",
+            password="test-password",
+        )
+        post = Forum.objects.create(
+            author_username="third-party",
+            title="Post for delete test",
+            content="Content",
+        )
+        comment = Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komentar yang akan dihapus",
+        )
+        del_url = reverse("forum:delete_comment_api", args=[comment.id])
+
+        # Other user cannot delete
+        self.client.force_login(other_user)
+        res_forbidden = self.client.delete(del_url)
+        self.assertEqual(res_forbidden.status_code, 403)
+        self.assertEqual(Comment.objects.count(), 1)
+
+        # Author of comment can delete
+        self.client.force_login(self.user)
+        res_ok = self.client.delete(del_url)
+        self.assertEqual(res_ok.status_code, 200)
+        self.assertEqual(Comment.objects.count(), 0)
+
+    def test_get_comments_api(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Post for get comments test",
+            content="Content",
+        )
+        Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komen 1",
+        )
+        Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komen 2",
+        )
+        get_url = reverse("forum:get_comments_api", args=[post.id])
+        res = self.client.get(get_url)
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(len(data["comments"]), 2)
+        self.assertEqual(data["total_comments"], 2)
+
+
+
