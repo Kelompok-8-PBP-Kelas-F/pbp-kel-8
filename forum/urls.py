@@ -6,6 +6,7 @@ from .views import (
     create_post_api,
     edit_post_api,
     delete_post_api,
+    like_post_api,
 )
 
 app_name = 'forum'
@@ -17,4 +18,5 @@ urlpatterns = [
     path('api/forum/create/', create_post_api, name='create_post_api'),
     path('api/forum/edit/<uuid:id>/', edit_post_api, name='edit_post_api'),
     path('api/forum/delete/<uuid:id>/', delete_post_api, name='delete_post_api'),
+    path('api/forum/like/<uuid:id>/', like_post_api, name='like_post_api'),
 ]

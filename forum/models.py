@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 import uuid
 
@@ -26,5 +27,18 @@ class Forum(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    liked_by = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='liked_forum_posts',
+        blank=True,
+    )
     total_likes = models.IntegerField(default=0)
     total_comments = models.IntegerField(default=0)
+
+    def is_liked_by(self, user):
+        if not user or not user.is_authenticated:
+            return False
+        return self.liked_by.filter(pk=user.pk).exists()
+
+    def __str__(self):
+        return self.title

@@ -268,3 +268,117 @@ class ForumCreateModalTests(TestCase):
         res_admin = self.client.delete(reverse("forum:delete_post_api", args=[another_post.id]))
         self.assertEqual(res_admin.status_code, 200)
         self.assertFalse(Forum.objects.filter(pk=another_post.id).exists())
+
+    def test_like_api_requires_authentication(self):
+        post = Forum.objects.create(
+            author_username="someone",
+            title="Post to Like",
+            content="Content",
+        )
+        self.client.logout()
+        response = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json()["error"], "Authentication required. Silakan masuk terlebih dahulu.")
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 0)
+
+    def test_like_api_toggle_and_total_likes(self):
+        post = Forum.objects.create(
+            author_username="author-1",
+            title="Post for Like Toggle",
+            content="Content for like toggle",
+        )
+        self.client.force_login(self.user)
+
+        # 1. First like -> liked=True, total_likes=1
+        res1 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res1.status_code, 200)
+        self.assertTrue(res1.json()["liked"])
+        self.assertEqual(res1.json()["total_likes"], 1)
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 1)
+        self.assertTrue(post.liked_by.filter(pk=self.user.pk).exists())
+
+        # 2. Second like (unlike) -> liked=False, total_likes=0
+        res2 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res2.status_code, 200)
+        self.assertFalse(res2.json()["liked"])
+        self.assertEqual(res2.json()["total_likes"], 0)
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 0)
+        self.assertFalse(post.liked_by.filter(pk=self.user.pk).exists())
+
+    def test_like_api_multiple_users(self):
+        post = Forum.objects.create(
+            author_username="author-1",
+            title="Multi-user Like",
+            content="Testing multi-user likes",
+        )
+        user2 = get_user_model().objects.create_user(
+            username="second-user",
+            password="test-password-2",
+        )
+
+        # User 1 likes
+        self.client.force_login(self.user)
+        res1 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res1.status_code, 200)
+        self.assertEqual(res1.json()["total_likes"], 1)
+
+        # User 2 likes
+        self.client.force_login(user2)
+        res2 = self.client.post(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(res2.status_code, 200)
+        self.assertEqual(res2.json()["total_likes"], 2)
+
+        post.refresh_from_db()
+        self.assertEqual(post.total_likes, 2)
+        self.assertEqual(post.liked_by.count(), 2)
+
+    def test_like_api_invalid_method(self):
+        post = Forum.objects.create(
+            author_username="someone",
+            title="Invalid Method Post",
+            content="Content",
+        )
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("forum:like_post_api", args=[post.id]))
+        self.assertEqual(response.status_code, 405)
+
+    def test_like_api_not_found(self):
+        import uuid
+        self.client.force_login(self.user)
+        random_id = uuid.uuid4()
+        response = self.client.post(reverse("forum:like_post_api", args=[random_id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_posts_api_includes_is_liked_flag(self):
+        post1 = Forum.objects.create(
+            author_username="user1",
+            title="Liked Post",
+            content="Content 1",
+        )
+        post2 = Forum.objects.create(
+            author_username="user2",
+            title="Unliked Post",
+            content="Content 2",
+        )
+        post1.liked_by.add(self.user)
+        post1.total_likes = 1
+        post1.save()
+
+        # When logged in as self.user
+        self.client.force_login(self.user)
+        res = self.client.get(reverse("forum:get_posts_api"))
+        self.assertEqual(res.status_code, 200)
+        posts_data = {p["title"]: p for p in res.json()}
+        self.assertTrue(posts_data["Liked Post"]["is_liked"])
+        self.assertFalse(posts_data["Unliked Post"]["is_liked"])
+
+        # When guest
+        self.client.logout()
+        res_guest = self.client.get(reverse("forum:get_posts_api"))
+        self.assertEqual(res_guest.status_code, 200)
+        for p in res_guest.json():
+            self.assertFalse(p["is_liked"])
+

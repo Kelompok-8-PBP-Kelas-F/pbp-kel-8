@@ -134,11 +134,16 @@
 
           <!-- Action Buttons Row -->
           <footer class="flex flex-wrap items-center gap-2 pt-1">
-            <button id="like-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-3.5 text-accent sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <button id="like-btn"
+              class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line {% if is_liked %}bg-accent text-accent-foreground{% else %}bg-surface text-foreground{% endif %} px-3 py-1 text-xs font-bold shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer"
+              type="button"
+              data-liked="{% if is_liked %}true{% else %}false{% endif %}"
+              data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
+              data-login-url="{% url 'user:login' %}?next={{ request.path|urlencode }}">
+              <svg class="size-3.5 sm:size-4 {% if is_liked %}fill-current{% else %}text-accent{% endif %}" viewBox="0 0 24 24" fill="{% if is_liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/>
               </svg>
-              <span id="like-count">{{ post.total_likes|default:38 }} suka</span>
+              <span id="like-count">{{ post.total_likes }} suka</span>
             </button>
 
             <a href="#tulis-komentar" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5">
@@ -626,20 +631,74 @@
     const likeBtn = document.getElementById("like-btn");
     const likeCountSpan = document.getElementById("like-count");
     if (likeBtn && likeCountSpan) {
-      let isLiked = false;
-      let count = parseInt(likeCountSpan.textContent, 10) || 38;
-      likeBtn.addEventListener("click", () => {
-        isLiked = !isLiked;
-        count = isLiked ? count + 1 : Math.max(0, count - 1);
-        likeCountSpan.textContent = `${count} suka`;
-        if (isLiked) {
-          likeBtn.classList.add("bg-accent", "text-accent-foreground");
-          likeBtn.classList.remove("bg-surface", "text-foreground");
-          likeBtn.querySelector("svg")?.classList.add("fill-current");
-        } else {
-          likeBtn.classList.remove("bg-accent", "text-accent-foreground");
-          likeBtn.classList.add("bg-surface", "text-foreground");
-          likeBtn.querySelector("svg")?.classList.remove("fill-current");
+      likeBtn.addEventListener("click", async () => {
+        if (likeBtn.dataset.authenticated !== "true") {
+          window.location.href = likeBtn.dataset.loginUrl || "{% url 'user:login' %}";
+          return;
+        }
+
+        if (likeBtn.dataset.busy === "true") return;
+        likeBtn.dataset.busy = "true";
+
+        const isCurrentlyLiked = likeBtn.dataset.liked === "true";
+        const prevCount = parseInt(likeCountSpan.textContent, 10) || 0;
+        const nextLiked = !isCurrentlyLiked;
+        const nextCount = nextLiked ? prevCount + 1 : Math.max(0, prevCount - 1);
+
+        const svg = likeBtn.querySelector("svg");
+        function updateLikeUI(liked, count) {
+          likeBtn.dataset.liked = liked ? "true" : "false";
+          likeCountSpan.textContent = `${count} suka`;
+          if (liked) {
+            likeBtn.classList.add("bg-accent", "text-accent-foreground");
+            likeBtn.classList.remove("bg-surface", "text-foreground");
+            if (svg) {
+              svg.setAttribute("fill", "currentColor");
+              svg.classList.add("fill-current");
+              svg.classList.remove("text-accent");
+            }
+          } else {
+            likeBtn.classList.remove("bg-accent", "text-accent-foreground");
+            likeBtn.classList.add("bg-surface", "text-foreground");
+            if (svg) {
+              svg.setAttribute("fill", "none");
+              svg.classList.remove("fill-current");
+              svg.classList.add("text-accent");
+            }
+          }
+        }
+
+        updateLikeUI(nextLiked, nextCount);
+
+        try {
+          const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+          const csrfCookie = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+          const csrfToken = csrfInput?.value || (csrfCookie ? csrfCookie[1] : "");
+
+          const response = await fetch("{% url 'forum:like_post_api' post.id %}", {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "X-CSRFToken": csrfToken,
+            },
+          });
+
+          if (response.status === 401) {
+            window.location.href = likeBtn.dataset.loginUrl || "{% url 'user:login' %}";
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error("Gagal menyukai thread.");
+          }
+
+          const data = await response.json();
+          updateLikeUI(data.liked, data.total_likes);
+        } catch (err) {
+          updateLikeUI(isCurrentlyLiked, prevCount);
+          console.error("Gagal melakukan aksi like:", err);
+        } finally {
+          delete likeBtn.dataset.busy;
         }
       });
     }

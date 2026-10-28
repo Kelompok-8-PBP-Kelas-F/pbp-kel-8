@@ -100,7 +100,9 @@
           </div>
 
           <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}"
-            data-current-user="{{ request.user.username|default:'' }}">
+            data-current-user="{{ request.user.username|default:'' }}"
+            data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
+            data-login-url="{% url 'user:login' %}?next={% url 'forum:forum_main' %}">
             <li class="w-full py-6 text-center text-xs text-muted" data-posts-loading role="status">
               Memuat post forum...
             </li>
@@ -250,6 +252,39 @@
       return icon;
     }
 
+    function getCsrfToken() {
+      const input = document.querySelector('[name=csrfmiddlewaretoken]');
+      if (input && input.value) return input.value;
+      const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+      return match ? match[1] : "";
+    }
+
+    function setLikeButtonState(btn, isLiked, count) {
+      btn.setAttribute("aria-pressed", isLiked ? "true" : "false");
+      btn.setAttribute("aria-label", isLiked ? "Batal menyukai post" : "Sukai post");
+      const svg = btn.querySelector("svg");
+      const textSpan = btn.querySelector("span");
+
+      if (isLiked) {
+        btn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-accent px-2.5 py-1 text-[0.6875rem] font-semibold text-accent-foreground shadow-none transition-colors hover:opacity-95 sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
+        if (svg) {
+          svg.setAttribute("fill", "currentColor");
+          svg.classList.add("fill-current");
+          svg.classList.remove("text-foreground");
+        }
+      } else {
+        btn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
+        if (svg) {
+          svg.setAttribute("fill", "none");
+          svg.classList.remove("fill-current");
+          svg.classList.add("text-foreground");
+        }
+      }
+      if (textSpan) {
+        textSpan.textContent = `${count ?? 0} suka`;
+      }
+    }
+
     function formatPostDateTime(dateString) {
       if (!dateString) return "";
       const date = new Date(dateString);
@@ -384,15 +419,67 @@
       }
 
       const footer = makeElement("footer", "forum-post__actions flex flex-wrap items-center gap-2 border-t-2 border-line pt-3");
-      const likes = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      const likes = makeElement("button", "");
       likes.type = "button";
-      likes.append(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
+      likes.append(createIcon(["M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"], "size-3.5 shrink-0 sm:size-4"));
       likes.append(makeElement("span", "", `${post.total_likes ?? 0} suka`));
-      likes.addEventListener("click", (e) => {
+      setLikeButtonState(likes, Boolean(post.is_liked), post.total_likes ?? 0);
+
+      likes.addEventListener("click", async (e) => {
         e.stopPropagation();
+
+        const isAuthenticated = postList.dataset.authenticated === "true";
+        if (!isAuthenticated) {
+          const loginUrl = postList.dataset.loginUrl || "{% url 'user:login' %}?next={% url 'forum:forum_main' %}";
+          window.location.href = loginUrl;
+          return;
+        }
+
+        if (likes.dataset.busy === "true") return;
+        likes.dataset.busy = "true";
+
+        const prevLiked = Boolean(post.is_liked);
+        const prevCount = post.total_likes ?? 0;
+        const nextLiked = !prevLiked;
+        const nextCount = nextLiked ? prevCount + 1 : Math.max(0, prevCount - 1);
+
+        post.is_liked = nextLiked;
+        post.total_likes = nextCount;
+        setLikeButtonState(likes, nextLiked, nextCount);
+
+        try {
+          const response = await fetch(`/api/forum/like/${post.id}/`, {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "X-CSRFToken": getCsrfToken(),
+            },
+          });
+
+          if (response.status === 401) {
+            window.location.href = postList.dataset.loginUrl || "{% url 'user:login' %}?next={% url 'forum:forum_main' %}";
+            return;
+          }
+
+          if (!response.ok) {
+            throw new Error("Gagal menyukai post.");
+          }
+
+          const data = await response.json();
+          post.is_liked = data.liked;
+          post.total_likes = data.total_likes;
+          setLikeButtonState(likes, data.liked, data.total_likes);
+        } catch (err) {
+          post.is_liked = prevLiked;
+          post.total_likes = prevCount;
+          setLikeButtonState(likes, prevLiked, prevCount);
+          console.error("Gagal melakukan aksi like:", err);
+        } finally {
+          delete likes.dataset.busy;
+        }
       });
 
-      const comments = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer");
+      const comments = makeElement("button", "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5");
       comments.type = "button";
       comments.append(createIcon(["M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"], "size-3.5 text-foreground shrink-0 sm:size-4"));
       comments.append(makeElement("span", "", `${post.total_comments ?? 0} komentar`));
