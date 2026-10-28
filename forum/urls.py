@@ -7,6 +7,9 @@ from .views import (
     edit_post_api,
     delete_post_api,
     like_post_api,
+    add_comment_api,
+    get_comments_api,
+    delete_comment_api,
 )
 
 app_name = 'forum'
@@ -19,4 +22,7 @@ urlpatterns = [
     path('api/forum/edit/<uuid:id>/', edit_post_api, name='edit_post_api'),
     path('api/forum/delete/<uuid:id>/', delete_post_api, name='delete_post_api'),
     path('api/forum/like/<uuid:id>/', like_post_api, name='like_post_api'),
+    path('api/forum/<uuid:id>/comment/', add_comment_api, name='add_comment_api'),
+    path('api/forum/<uuid:id>/comments/', get_comments_api, name='get_comments_api'),
+    path('api/forum/comment/<uuid:comment_id>/delete/', delete_comment_api, name='delete_comment_api'),
 ]

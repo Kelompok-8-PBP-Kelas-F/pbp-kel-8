@@ -165,32 +165,36 @@
           <header class="flex items-start justify-between gap-3">
             <div class="flex items-center gap-2.5">
               <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
-                {% if request.user.is_authenticated %}{{ request.user.username|first|upper }}{% else %}A{% endif %}
+                {% if request.user.is_authenticated %}{{ request.user.username|first|upper }}{% else %}?{% endif %}
               </div>
               <div class="flex flex-col">
                 <h3 class="font-heading text-sm font-bold text-foreground sm:text-base">Tulis komentar</h3>
-                <p class="text-[0.6875rem] text-muted">Sebagai {{ request.user.username|default:"anindita" }} &middot; {% if request.user.is_authenticated %}Pengguna terdaftar{% else %}Pengguna terdaftar{% endif %}</p>
+                <p class="text-[0.6875rem] text-muted">
+                  {% if request.user.is_authenticated %}
+                  Sebagai {{ request.user.username }} &middot; Pengguna terdaftar
+                  {% else %}
+                  Tamu &middot; Masuk untuk menulis komentar
+                  {% endif %}
+                </p>
               </div>
             </div>
             <p class="hidden text-[0.6875rem] text-muted sm:block">Jaga percakapan tetap ramah dan relevan.</p>
           </header>
 
-          <form id="comment-form" class="mt-3 flex flex-col gap-2.5">
+          <form id="comment-form" class="mt-3 flex flex-col gap-2.5" data-action="{% url 'forum:add_comment_api' post.id %}" data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}" data-login-url="{% url 'user:login' %}?next={{ request.path|urlencode }}">
+            {% csrf_token %}
+            <div id="comment-error" class="hidden border-2 border-red-600 bg-red-50 p-2.5 text-xs font-semibold text-red-600" role="alert"></div>
             <div class="relative">
-              <textarea id="comment-textarea" rows="3" maxlength="2000" placeholder="Bagikan pengalaman atau saran perawatanmu..." class="w-full resize-none border-2 border-line bg-background p-3 pb-6 text-xs text-foreground outline-none placeholder:text-muted focus:bg-surface transition-colors"></textarea>
+              <textarea id="comment-textarea" name="content" rows="3" maxlength="2000" placeholder="{% if request.user.is_authenticated %}Bagikan tanggapan atau saranmu...{% else %}Silakan masuk terlebih dahulu untuk menulis komentar...{% endif %}" class="w-full resize-none border-2 border-line bg-background p-3 pb-6 text-xs text-foreground outline-none placeholder:text-muted focus:bg-surface transition-colors" {% if not request.user.is_authenticated %}readonly{% endif %}></textarea>
               <span id="comment-char-counter" class="absolute bottom-2 right-3 text-[0.5625rem] font-semibold text-muted">0 / 2.000</span>
             </div>
-            <div class="flex flex-wrap items-center justify-between gap-2.5 pt-0.5">
-              <div class="flex items-center gap-1 text-muted">
-                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface font-serif text-xs font-bold hover:bg-background cursor-pointer" title="Tebal (Bold)">B</button>
-                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface font-serif text-xs italic hover:bg-background cursor-pointer" title="Miring (Italic)">I</button>
-                <button type="button" class="grid size-7 place-items-center border border-line/40 bg-surface hover:bg-background cursor-pointer" title="Lampiran">
-                  <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                </button>
-              </div>
-              <button type="submit" class="inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer">
-                <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                <span>Kirim komentar</span>
+            <div class="flex flex-wrap items-center justify-end gap-2.5 pt-0.5">
+              <button type="submit" id="submit-comment-btn" class="inline-flex min-h-9 items-center justify-center gap-2 border-2 border-line bg-accent px-4 py-1.5 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-colors hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer">
+                <svg class="comment-spinner hidden size-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                <svg class="comment-icon size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                <span class="comment-btn-text">Kirim komentar</span>
               </button>
             </div>
           </form>
@@ -200,206 +204,61 @@
         <section class="flex flex-col gap-4 border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]" aria-labelledby="comments-heading">
           <header class="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between border-b border-line/30 pb-3">
             <div>
-              <h3 id="comments-heading" class="font-heading text-lg font-bold text-foreground sm:text-xl">12 komentar</h3>
-              <p class="text-xs text-muted">Diskusi dari 8 anggota komunitas</p>
+              <h3 id="comments-heading" class="font-heading text-lg font-bold text-foreground sm:text-xl">
+                <span id="comments-count-title">{{ post.total_comments|default:0 }}</span> komentar
+              </h3>
+              <p class="text-xs text-muted">Diskusi seputar thread ini</p>
             </div>
             <div class="flex items-center gap-2 self-start sm:self-auto">
               <label for="comment-sort" class="text-xs font-medium text-muted">Urutkan:</label>
               <select id="comment-sort" class="border-2 border-line bg-surface px-2.5 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] outline-none cursor-pointer">
-                <option value="helpful">Paling membantu</option>
                 <option value="newest">Terbaru</option>
                 <option value="oldest">Terlama</option>
               </select>
             </div>
           </header>
 
-          <ol class="flex flex-col gap-6" id="comments-container">
-            <!-- Comment 1 (with threaded replies) -->
-            <li class="flex flex-col gap-3">
-              <article class="flex flex-col gap-2.5">
+          <ol class="flex flex-col gap-4" id="comments-container" data-post-id="{{ post.id }}" data-comments-url="{% url 'forum:get_comments_api' post.id %}">
+            {% for comment in comments %}
+            <li class="comment-item flex flex-col gap-2.5 border-b border-line/20 pb-4 last:border-b-0 last:pb-0" id="comment-{{ comment.id }}">
+              <article class="flex flex-col gap-2">
                 <header class="flex items-start justify-between gap-3">
                   <div class="flex items-center gap-2.5">
-                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">M</div>
-                    <span class="text-xs font-bold text-foreground leading-[18px]">@mayakain</span>
-                    <span class="inline-flex h-[18px] items-center justify-center border border-line bg-category px-1 text-[0.5625rem] font-bold uppercase text-foreground shrink-0 leading-none">Ahli Perawatan</span>
-                    <time class="text-[0.6875rem] text-muted">1 jam lalu</time>
+                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
+                      {{ comment.author_username|first|upper }}
+                    </div>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                      <span class="text-xs font-bold text-foreground leading-[18px]">@{{ comment.author_username }}</span>
+                      {% if comment.author_username == post.author_username %}
+                      <span class="inline-flex h-[18px] items-center justify-center border-2 border-line bg-highlight px-1 text-[0.5625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none">
+                        Pembuat Post
+                      </span>
+                      {% endif %}
+                    </div>
+                    <time class="text-[0.6875rem] text-muted" datetime="{{ comment.created_at|date:'c' }}">
+                      {{ comment.created_at|date:"d M Y, H:i" }}
+                    </time>
                   </div>
-                  <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+
+                  {% if request.user.is_authenticated and request.user.username == comment.author_username or request.user.is_superuser or request.user.username == post.author_username %}
+                  <button type="button" class="delete-comment-btn grid size-6 place-items-center text-muted transition-colors hover:text-red-600 cursor-pointer" data-delete-url="{% url 'forum:delete_comment_api' comment.id %}" aria-label="Hapus komentar" title="Hapus komentar">
+                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                    </svg>
                   </button>
+                  {% endif %}
                 </header>
-                <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-10.5">
-                  Mulai dari menyerap sisa minyak dulu, jangan langsung menggosok. Taburkan tepung maizena atau bedak tanpa pewangi selama 30&ndash;60 menit, sikat pelan, lalu teteskan sabun cuci piring bening. Uji di bagian dalam karena linen bisa berubah warna.
-                </p>
-                <footer class="flex items-center gap-3 pl-10.5 text-xs text-muted">
-                  <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                    <span>24</span>
-                  </button>
-                  <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="mayakain">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    <span>Balas</span>
-                  </button>
-                </footer>
-              </article>
-
-              <!-- Threaded Replies -->
-              <ol class="ml-4 sm:ml-10 flex flex-col gap-4 border-l-2 border-line/30 pl-4 sm:pl-6 pt-2">
-                <!-- Reply 1.1 -->
-                <li>
-                  <article class="flex flex-col gap-2">
-                    <header class="flex items-start justify-between gap-3">
-                      <div class="flex items-center gap-2.5">
-                        <div class="avatar flex size-7 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-[0.625rem] font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">N</div>
-                        <span class="text-xs font-bold text-foreground leading-[18px]">@nadia.r</span>
-                        <span class="inline-flex h-[18px] items-center justify-center border border-line bg-highlight px-1 text-[0.5625rem] font-bold uppercase text-foreground shrink-0 leading-none">Pembuat Post</span>
-                        <time class="text-[0.6875rem] text-muted">48 menit lalu</time>
-                      </div>
-                      <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                      </button>
-                    </header>
-                    <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-9.5">
-                      Terima kasih! Nodanya sudah cukup lama dan warnanya kekuningan. Apakah tetap perlu mulai dari maizena?
-                    </p>
-                    <footer class="flex items-center gap-3 pl-9.5 text-xs text-muted">
-                      <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                        <span>7</span>
-                      </button>
-                      <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="nadia.r">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                        <span>Balas</span>
-                      </button>
-                    </footer>
-                  </article>
-                </li>
-
-                <!-- Reply 1.2 -->
-                <li>
-                  <article class="flex flex-col gap-2">
-                    <header class="flex items-start justify-between gap-3">
-                      <div class="flex items-center gap-2.5">
-                        <div class="avatar flex size-7 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-[0.625rem] font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">M</div>
-                        <span class="text-xs font-bold text-foreground">@mayakain</span>
-                        <time class="text-[0.6875rem] text-muted">36 menit lalu</time>
-                      </div>
-                      <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                      </button>
-                    </header>
-                    <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-9.5">
-                      Masih boleh, tetapi hasilnya mungkin terbatas. Setelah itu rendam singkat dengan air hangat-suam kuku dan deterjen enzim yang aman untuk linen. Hindari pemutih klorin.
-                    </p>
-                    <footer class="flex items-center gap-3 pl-9.5 text-xs text-muted">
-                      <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                        <span>11</span>
-                      </button>
-                      <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="mayakain">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                        <span>Balas</span>
-                      </button>
-                    </footer>
-                  </article>
-                </li>
-              </ol>
-            </li>
-
-            <!-- Comment 2 -->
-            <li class="flex flex-col gap-3 border-t border-line/20 pt-4">
-              <article class="flex flex-col gap-2.5">
-                <header class="flex items-start justify-between gap-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">B</div>
-                    <span class="text-xs font-bold text-foreground">@benangbaik</span>
-                    <time class="text-[0.6875rem] text-muted">2 jam lalu</time>
-                  </div>
-                  <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                  </button>
-                </header>
-                <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-10.5">
-                  Aku pernah menangani noda serupa di taplak linen. Baking soda aman jika dibuat pasta tipis dan tidak dibiarkan mengering keras. Tepuk dari sisi belakang kain dengan handuk putih di bawahnya agar minyak berpindah, bukan melebar.
-                </p>
-                <footer class="flex items-center gap-3 pl-10.5 text-xs text-muted">
-                  <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                    <span>18</span>
-                  </button>
-                  <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="benangbaik">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    <span>Balas</span>
-                  </button>
-                </footer>
-              </article>
-
-              <!-- Threaded Reply 2.1 -->
-              <ol class="ml-4 sm:ml-10 flex flex-col gap-4 border-l-2 border-line/30 pl-4 sm:pl-6 pt-2">
-                <li>
-                  <article class="flex flex-col gap-2">
-                    <header class="flex items-start justify-between gap-3">
-                      <div class="flex items-center gap-2.5">
-                        <div class="avatar flex size-7 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-[0.625rem] font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">S</div>
-                        <span class="text-xs font-bold text-foreground">@sarulang</span>
-                        <time class="text-[0.6875rem] text-muted">1 jam lalu</time>
-                      </div>
-                      <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                        <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                      </button>
-                    </header>
-                    <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-9.5">
-                      Setuju soal handuk putih. Aku juga akan menghindari pengering sebelum nodanya benar-benar hilang, karena panas bisa mengunci sisa minyak.
-                    </p>
-                    <footer class="flex items-center gap-3 pl-9.5 text-xs text-muted">
-                      <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                        <span>5</span>
-                      </button>
-                      <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="sarulang">
-                        <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                        <span>Balas</span>
-                      </button>
-                    </footer>
-                  </article>
-                </li>
-              </ol>
-            </li>
-
-            <!-- Comment 3 -->
-            <li class="flex flex-col gap-3 border-t border-line/20 pt-4">
-              <article class="flex flex-col gap-2.5">
-                <header class="flex items-start justify-between gap-3">
-                  <div class="flex items-center gap-2.5">
-                    <div class="avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">R</div>
-                    <span class="text-xs font-bold text-foreground">@rakapreloved</span>
-                    <time class="text-[0.6875rem] text-muted">3 jam lalu</time>
-                  </div>
-                  <button type="button" class="text-muted hover:text-foreground cursor-pointer" aria-label="Menu komentar">
-                    <svg class="size-4" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
-                  </button>
-                </header>
-                <p class="text-xs sm:text-sm leading-relaxed text-foreground pl-10.5">
-                  Kalau label perawatan masih ada, ikuti suhu maksimalnya. Kerjakan satu siklus, bilas, lalu cek saat kain masih lembap. Mengulang langkah ringan biasanya lebih aman daripada satu perlakuan yang terlalu kuat.
-                </p>
-                <footer class="flex items-center gap-3 pl-10.5 text-xs text-muted">
-                  <button type="button" class="inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/></svg>
-                    <span>9</span>
-                  </button>
-                  <button type="button" class="reply-btn inline-flex items-center gap-1 font-semibold hover:text-accent cursor-pointer" data-username="rakapreloved">
-                    <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 14-5-5 5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg>
-                    <span>Balas</span>
-                  </button>
-                </footer>
+                <div class="text-xs sm:text-[0.8125rem] leading-relaxed text-foreground pl-10.5 whitespace-pre-line">
+                  {{ comment.content }}
+                </div>
               </article>
             </li>
+            {% empty %}
+            <li id="no-comments-msg" class="py-8 text-center text-xs text-muted">
+              Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!
+            </li>
+            {% endfor %}
           </ol>
-
-          <!-- Show More Button -->
-          <button type="button" class="mt-2 w-full border-2 border-line bg-highlight py-3 text-xs sm:text-sm font-bold text-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--shadow-color)] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer">
-            Tampilkan 6 komentar lainnya
-          </button>
         </section>
 
       </div>
@@ -593,21 +452,237 @@
       });
     }
 
-    // 3. Reply buttons prefill
-    const replyBtns = document.querySelectorAll(".reply-btn");
-    if (commentInput) {
-      replyBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const username = btn.dataset.username;
-          if (username) {
-            commentInput.value = `@${username} ` + commentInput.value.replace(/^@\w+\s*/, "");
-            commentInput.focus();
-            commentInput.scrollIntoView({ behavior: "smooth", block: "center" });
-            commentInput.dispatchEvent(new Event("input"));
-          }
-        });
-      });
+    // 3. Comment Management (Submit, Delete, Sort)
+    function updateCommentCounters(count) {
+      const countTitle = document.getElementById("comments-count-title");
+      if (countTitle) countTitle.textContent = count;
+
+      const footerCommentSpan = document.querySelector('a[href="#tulis-komentar"] span');
+      if (footerCommentSpan) footerCommentSpan.textContent = `${count} komentar`;
     }
+
+    function createCommentItem(comment) {
+      const li = document.createElement("li");
+      li.className = "comment-item flex flex-col gap-2.5 border-b border-line/20 pb-4 last:border-b-0 last:pb-0";
+      li.id = `comment-${comment.id}`;
+
+      const article = document.createElement("article");
+      article.className = "flex flex-col gap-2";
+
+      const header = document.createElement("header");
+      header.className = "flex items-start justify-between gap-3";
+
+      const authorGroup = document.createElement("div");
+      authorGroup.className = "flex items-center gap-2.5";
+
+      const avatar = document.createElement("div");
+      avatar.className = "avatar flex size-8 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]";
+      avatar.textContent = comment.author_username ? comment.author_username.charAt(0).toUpperCase() : "?";
+
+      const userWrap = document.createElement("div");
+      userWrap.className = "flex flex-wrap items-center gap-1.5";
+
+      const usernameSpan = document.createElement("span");
+      usernameSpan.className = "text-xs font-bold text-foreground leading-[18px]";
+      usernameSpan.textContent = `@${comment.author_username}`;
+      userWrap.appendChild(usernameSpan);
+
+      if (comment.is_post_author) {
+        const badge = document.createElement("span");
+        badge.className = "inline-flex h-[18px] items-center justify-center border-2 border-line bg-highlight px-1 text-[0.5625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none";
+        badge.textContent = "Pembuat Post";
+        userWrap.appendChild(badge);
+      }
+
+      const timeEl = document.createElement("time");
+      timeEl.className = "text-[0.6875rem] text-muted";
+      timeEl.dateTime = comment.created_at;
+      timeEl.textContent = comment.created_at_formatted || new Date(comment.created_at).toLocaleString("id-ID");
+
+      authorGroup.append(avatar, userWrap, timeEl);
+      header.appendChild(authorGroup);
+
+      if (comment.can_delete) {
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "delete-comment-btn grid size-6 place-items-center text-muted transition-colors hover:text-red-600 cursor-pointer";
+        delBtn.setAttribute("aria-label", "Hapus komentar");
+        delBtn.title = "Hapus komentar";
+        delBtn.dataset.deleteUrl = `/api/forum/comment/${comment.id}/delete/`;
+        delBtn.innerHTML = `
+          <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+          </svg>
+        `;
+        delBtn.addEventListener("click", () => handleDeleteComment(delBtn));
+        header.appendChild(delBtn);
+      }
+
+      const body = document.createElement("div");
+      body.className = "text-xs sm:text-[0.8125rem] leading-relaxed text-foreground pl-10.5 whitespace-pre-line";
+      body.textContent = comment.content;
+
+      article.append(header, body);
+      li.appendChild(article);
+      return li;
+    }
+
+    async function handleDeleteComment(btn) {
+      const confirmed = confirm("Apakah kamu yakin ingin menghapus komentar ini?");
+      if (!confirmed) return;
+
+      const url = btn.dataset.deleteUrl;
+      if (!url) return;
+
+      try {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+        const response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || "Gagal menghapus komentar.");
+        }
+
+        const data = await response.json();
+        const li = btn.closest(".comment-item");
+        if (li) li.remove();
+
+        updateCommentCounters(data.total_comments);
+
+        const commentsContainer = document.getElementById("comments-container");
+        if (commentsContainer && commentsContainer.querySelectorAll(".comment-item").length === 0) {
+          let emptyMsg = document.getElementById("no-comments-msg");
+          if (!emptyMsg) {
+            emptyMsg = document.createElement("li");
+            emptyMsg.id = "no-comments-msg";
+            emptyMsg.className = "py-8 text-center text-xs text-muted";
+            emptyMsg.textContent = "Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!";
+            commentsContainer.appendChild(emptyMsg);
+          }
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    document.querySelectorAll(".delete-comment-btn").forEach((btn) => {
+      btn.addEventListener("click", () => handleDeleteComment(btn));
+    });
+
+    const commentForm = document.getElementById("comment-form");
+    const commentError = document.getElementById("comment-error");
+    const submitCommentBtn = document.getElementById("submit-comment-btn");
+
+    commentForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (commentForm.dataset.authenticated !== "true") {
+        window.location.href = commentForm.dataset.loginUrl || "{% url 'user:login' %}";
+        return;
+      }
+
+      const content = commentInput.value.trim();
+      if (!content) {
+        if (commentError) {
+          commentError.textContent = "Komentar tidak boleh kosong.";
+          commentError.classList.remove("hidden");
+        }
+        commentInput.focus();
+        return;
+      }
+
+      if (commentError) commentError.classList.add("hidden");
+
+      const spinner = submitCommentBtn?.querySelector(".comment-spinner");
+      const icon = submitCommentBtn?.querySelector(".comment-icon");
+      const btnText = submitCommentBtn?.querySelector(".comment-btn-text");
+
+      if (submitCommentBtn) submitCommentBtn.disabled = true;
+      spinner?.classList.remove("hidden");
+      icon?.classList.add("hidden");
+      if (btnText) btnText.textContent = "Mengirim...";
+
+      try {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+        const response = await fetch(commentForm.dataset.action, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+            "Accept": "application/json",
+          },
+          body: JSON.stringify({ content }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || "Gagal mengirim komentar.");
+        }
+
+        const data = await response.json();
+        commentInput.value = "";
+        commentInput.dispatchEvent(new Event("input"));
+
+        document.getElementById("no-comments-msg")?.remove();
+
+        const commentsContainer = document.getElementById("comments-container");
+        if (commentsContainer) {
+          const newCommentEl = createCommentItem(data.comment);
+          commentsContainer.appendChild(newCommentEl);
+          newCommentEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+
+        updateCommentCounters(data.total_comments);
+      } catch (err) {
+        if (commentError) {
+          commentError.textContent = err.message;
+          commentError.classList.remove("hidden");
+        } else {
+          alert(err.message);
+        }
+      } finally {
+        if (submitCommentBtn) submitCommentBtn.disabled = false;
+        spinner?.classList.add("hidden");
+        icon?.classList.remove("hidden");
+        if (btnText) btnText.textContent = "Kirim komentar";
+      }
+    });
+
+    const commentSort = document.getElementById("comment-sort");
+    commentSort?.addEventListener("change", async () => {
+      const commentsContainer = document.getElementById("comments-container");
+      if (!commentsContainer) return;
+      const url = new URL(commentsContainer.dataset.commentsUrl, window.location.origin);
+      url.searchParams.set("sort", commentSort.value);
+
+      try {
+        const res = await fetch(url.href, {
+          headers: { "Accept": "application/json" }
+        });
+        if (!res.ok) throw new Error("Gagal memuat komentar.");
+        const data = await res.json();
+        commentsContainer.innerHTML = "";
+        if (data.comments && data.comments.length > 0) {
+          data.comments.forEach((c) => {
+            commentsContainer.appendChild(createCommentItem(c));
+          });
+        } else {
+          const emptyMsg = document.createElement("li");
+          emptyMsg.id = "no-comments-msg";
+          emptyMsg.className = "py-8 text-center text-xs text-muted";
+          emptyMsg.textContent = "Belum ada komentar. Jadilah yang pertama berkomentar di thread ini!";
+          commentsContainer.appendChild(emptyMsg);
+        }
+        updateCommentCounters(data.total_comments);
+      } catch (err) {
+        console.error("Gagal mengurutkan komentar:", err);
+      }
+    });
 
     // 4. Like button toggle
     const likeBtn = document.getElementById("like-btn");

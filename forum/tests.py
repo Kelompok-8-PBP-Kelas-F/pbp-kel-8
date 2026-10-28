@@ -1,8 +1,9 @@
+import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Forum
+from .models import Forum, Comment
 
 
 class ForumCreateModalTests(TestCase):
@@ -425,5 +426,129 @@ class ForumCreateModalTests(TestCase):
         json_trending = res_trending.json()
         self.assertEqual(json_trending[0]["title"], "Older Trending Post")
         self.assertEqual(json_trending[1]["title"], "Newer Post")
+
+    def test_comment_model_creation_and_non_nested(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Post for Comment",
+            content="Content",
+        )
+        comment1 = Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komentar pertama",
+        )
+        comment2 = Comment.objects.create(
+            forum=post,
+            author_username="another_user",
+            content="Komentar kedua",
+        )
+        self.assertEqual(post.comments.count(), 2)
+        self.assertEqual(comment1.forum, post)
+        self.assertEqual(comment2.forum, post)
+        # Verify non-nested: neither has a parent comment
+        self.assertFalse(hasattr(comment1, 'parent'))
+
+    def test_add_comment_api_authenticated_and_unauthenticated(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Post with Comments",
+            content="Content",
+        )
+        add_url = reverse("forum:add_comment_api", args=[post.id])
+
+        # 1. Logged in -> success
+        res = self.client.post(
+            add_url,
+            data=json.dumps({"content": "Ini komentar testing"}),
+            content_type="application/json",
+        )
+        self.assertEqual(res.status_code, 201)
+        data = res.json()
+        self.assertEqual(data["comment"]["content"], "Ini komentar testing")
+        self.assertEqual(data["total_comments"], 1)
+        post.refresh_from_db()
+        self.assertEqual(post.total_comments, 1)
+
+        # 2. Unauthenticated -> 401
+        self.client.logout()
+        res_guest = self.client.post(
+            add_url,
+            data=json.dumps({"content": "Komentar anonim"}),
+            content_type="application/json",
+        )
+        self.assertEqual(res_guest.status_code, 401)
+
+    def test_add_comment_api_empty_validation(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Validation Post",
+            content="Content",
+        )
+        add_url = reverse("forum:add_comment_api", args=[post.id])
+        res = self.client.post(
+            add_url,
+            data=json.dumps({"content": "   "}),
+            content_type="application/json",
+        )
+        self.assertEqual(res.status_code, 400)
+        self.assertIn("error", res.json())
+
+    def test_delete_comment_api_permissions(self):
+        other_user = get_user_model().objects.create_user(
+            username="other-member",
+            password="test-password",
+        )
+        post = Forum.objects.create(
+            author_username="third-party",
+            title="Post for delete test",
+            content="Content",
+        )
+        comment = Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komentar yang akan dihapus",
+        )
+        del_url = reverse("forum:delete_comment_api", args=[comment.id])
+
+        # Other user cannot delete
+        self.client.force_login(other_user)
+        res_forbidden = self.client.delete(del_url)
+        self.assertEqual(res_forbidden.status_code, 403)
+        self.assertEqual(Comment.objects.count(), 1)
+
+        # Author of comment can delete
+        self.client.force_login(self.user)
+        res_ok = self.client.delete(del_url)
+        self.assertEqual(res_ok.status_code, 200)
+        self.assertEqual(Comment.objects.count(), 0)
+
+    def test_get_comments_api(self):
+        post = Forum.objects.create(
+            author_username=self.user.username,
+            title="Post for get comments test",
+            content="Content",
+        )
+        Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komen 1",
+        )
+        Comment.objects.create(
+            forum=post,
+            user=self.user,
+            author_username=self.user.username,
+            content="Komen 2",
+        )
+        get_url = reverse("forum:get_comments_api", args=[post.id])
+        res = self.client.get(get_url)
+        self.assertEqual(res.status_code, 200)
+        data = res.json()
+        self.assertEqual(len(data["comments"]), 2)
+        self.assertEqual(data["total_comments"], 2)
+
 
 

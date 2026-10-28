@@ -3,8 +3,28 @@ from django.db.models import Q
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import Forum
-from .forms import ForumForm
+from .models import Forum, Comment
+from .forms import ForumForm, CommentForm
+
+
+def serialize_comment(comment, current_user=None):
+    can_delete = False
+    if current_user and current_user.is_authenticated:
+        can_delete = (
+            current_user.username == comment.author_username
+            or current_user.username == comment.forum.author_username
+            or current_user.is_superuser
+        )
+    return {
+        'id': str(comment.id),
+        'forum_id': str(comment.forum_id),
+        'author_username': comment.author_username,
+        'content': comment.content,
+        'created_at': comment.created_at.isoformat(),
+        'created_at_formatted': comment.created_at.strftime('%d %b %Y, %H:%M'),
+        'is_post_author': comment.author_username == comment.forum.author_username,
+        'can_delete': can_delete,
+    }
 
 
 def serialize_post(post, is_liked=False):
@@ -44,6 +64,8 @@ def forum_detail(request, id):
         and (request.user.username == post.author_username or request.user.is_superuser)
     )
     is_liked = request.user.is_authenticated and post.is_liked_by(request.user)
+    comments = post.comments.all().order_by('created_at')
+    comment_form = CommentForm()
     return render(
         request,
         'pages/forum/forum_detail.html',
@@ -51,6 +73,8 @@ def forum_detail(request, id):
             'post': post,
             'can_manage': can_manage,
             'is_liked': is_liked,
+            'comments': comments,
+            'comment_form': comment_form,
         },
     )
 
@@ -190,3 +214,97 @@ def like_post_api(request, id):
             status=200,
         )
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def add_comment_api(request, id):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required. Silakan masuk terlebih dahulu.'}, status=401)
+
+        post = get_object_or_404(Forum, pk=id)
+        
+        content = ""
+        if request.content_type == 'application/json':
+            try:
+                data = json.loads(request.body.decode('utf-8'))
+                content = data.get('content', '')
+            except Exception:
+                content = ""
+        else:
+            content = request.POST.get('content', '')
+
+        content = content.strip()
+        if not content:
+            return JsonResponse({'error': 'Komentar tidak boleh kosong.'}, status=400)
+        if len(content) > 2000:
+            return JsonResponse({'error': 'Komentar maksimal 2.000 karakter.'}, status=400)
+
+        comment = Comment.objects.create(
+            forum=post,
+            user=request.user,
+            author_username=request.user.username,
+            content=content,
+        )
+        post.total_comments = post.comments.count()
+        post.save(update_fields=['total_comments'])
+
+        return JsonResponse(
+            {
+                'message': 'Komentar berhasil ditambahkan.',
+                'comment': serialize_comment(comment, request.user),
+                'total_comments': post.total_comments,
+            },
+            status=201,
+        )
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def get_comments_api(request, id):
+    if request.method == "GET":
+        post = get_object_or_404(Forum, pk=id)
+        sort = request.GET.get('sort', 'newest').lower().strip()
+        if sort == 'oldest':
+            comments = post.comments.all().order_by('created_at')
+        else:
+            comments = post.comments.all().order_by('-created_at')
+
+        data = [serialize_comment(c, request.user) for c in comments]
+        return JsonResponse(
+            {
+                'comments': data,
+                'total_comments': post.comments.count(),
+            },
+            status=200,
+        )
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def delete_comment_api(request, comment_id):
+    if request.method in ("DELETE", "POST"):
+        if not request.user.is_authenticated:
+            return JsonResponse({'error': 'Authentication required. Silakan masuk terlebih dahulu.'}, status=401)
+
+        comment = get_object_or_404(Comment, pk=comment_id)
+        post = comment.forum
+        can_delete = (
+            request.user.username == comment.author_username
+            or request.user.username == post.author_username
+            or request.user.is_superuser
+        )
+        if not can_delete:
+            return JsonResponse({'error': 'Permission denied. Kamu tidak dapat menghapus komentar ini.'}, status=403)
+
+        comment.delete()
+        post.total_comments = post.comments.count()
+        post.save(update_fields=['total_comments'])
+
+        return JsonResponse(
+            {
+                'message': 'Komentar berhasil dihapus.',
+                'comment_id': str(comment_id),
+                'total_comments': post.total_comments,
+            },
+            status=200,
+        )
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
