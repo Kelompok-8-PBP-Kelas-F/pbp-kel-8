@@ -1,7 +1,6 @@
 from django.urls import path
 
-import marketplace
-from .views import filter_barang, edit_barang, hapus_barang, landing_page, login_view, logout_view, marketplace_penjual, seller_profile, tambah_barang
+from .views import filter_barang, edit_barang, hapus_barang, landing_page, login_view, logout_view, marketplace, marketplace_penjual, seller_profile, tambah_barang
 app_name = 'marketplace'
 
 urlpatterns = [
