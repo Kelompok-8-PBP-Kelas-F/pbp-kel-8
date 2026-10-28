@@ -76,7 +76,7 @@ def hapus_barang(request, pk):
     return render(request, 'pages/marketplace_seller/konfirmasi_hapus.html', {'item': item})
 
 # --- AJAX LIVE SEARCH / FILTER ---
-def ajax_filter_barang(request):
+def filter_barang(request):
     query = request.GET.get('q', '')
     status = request.GET.get('status', '')
     

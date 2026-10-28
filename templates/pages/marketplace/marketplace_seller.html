@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const query = searchInput.value;
         const status = statusFilter.value;
         
-        fetch(`{% url 'marketplace:ajax_filter_barang' %}?q=${query}&status=${status}`)
+        fetch(`{% url 'marketplace:filter_barang' %}?q=${query}&status=${status}`)
             .then(response => response.json())
             .then(data => {
                 productGrid.innerHTML = ''; // Bersihkan grid
