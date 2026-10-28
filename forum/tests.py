@@ -382,3 +382,48 @@ class ForumCreateModalTests(TestCase):
         for p in res_guest.json():
             self.assertFalse(p["is_liked"])
 
+    def test_forum_main_sort_buttons_no_diikuti(self):
+        response = self.client.get(reverse("forum:forum_main"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'id="sort-terbaru-btn"')
+        self.assertContains(response, 'id="sort-trending-btn"')
+        self.assertNotContains(response, "Diikuti")
+
+    def test_posts_api_sort_by_latest_and_trending(self):
+        import time
+        from django.utils import timezone
+        from datetime import timedelta
+
+        # Create older post with more likes
+        post_older = Forum.objects.create(
+            author_username="user1",
+            title="Older Trending Post",
+            content="Content",
+            total_likes=10,
+        )
+        # Manually backdate created_at
+        Forum.objects.filter(pk=post_older.pk).update(created_at=timezone.now() - timedelta(days=2))
+
+        # Create newer post with fewer likes
+        post_newer = Forum.objects.create(
+            author_username="user2",
+            title="Newer Post",
+            content="Content",
+            total_likes=1,
+        )
+
+        # 1. Sort by latest -> newer post first
+        res_latest = self.client.get(reverse("forum:get_posts_api"), {"sort": "latest"})
+        self.assertEqual(res_latest.status_code, 200)
+        json_latest = res_latest.json()
+        self.assertEqual(json_latest[0]["title"], "Newer Post")
+        self.assertEqual(json_latest[1]["title"], "Older Trending Post")
+
+        # 2. Sort by trending -> post with more likes first
+        res_trending = self.client.get(reverse("forum:get_posts_api"), {"sort": "trending"})
+        self.assertEqual(res_trending.status_code, 200)
+        json_trending = res_trending.json()
+        self.assertEqual(json_trending[0]["title"], "Older Trending Post")
+        self.assertEqual(json_trending[1]["title"], "Newer Post")
+
+

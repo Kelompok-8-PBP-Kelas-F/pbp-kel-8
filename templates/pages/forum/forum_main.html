@@ -45,7 +45,6 @@
           <h2
             class="community-feed__title font-heading text-xl font-bold leading-tight text-foreground sm:text-2xl"
             id="feed-title">Feed komunitas</h2>
-          <p class="community-feed__description text-xs text-muted">Percakapan terbaru dari 8.421 anggota</p>
         </div>
         {% if request.user.is_authenticated %}
         <button
@@ -79,8 +78,22 @@
             <div class="feed-controls__sort flex min-w-0 flex-1 items-center gap-1 sm:flex-initial sm:gap-1.5"
               role="group" aria-label="Urutkan post">
               <button
-                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
+                id="sort-terbaru-btn"
+                data-sort="latest"
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5"
                 type="button" aria-pressed="true">
+                <svg class="size-3 shrink-0 sm:size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="1.8" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                Terbaru
+              </button>
+              <button
+                id="sort-trending-btn"
+                data-sort="trending"
+                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted hover:text-foreground sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5"
+                type="button" aria-pressed="false">
                 <svg class="size-3 shrink-0 sm:size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-width="1.8" aria-hidden="true">
                   <path d="m3 17 6-6 4 4 8-8" />
@@ -88,15 +101,7 @@
                 </svg>
                 Trending
               </button>
-              <button
-                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
-                type="button" aria-pressed="false">Terbaru</button>
-              <button
-                class="sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted sm:flex-initial sm:px-3 sm:text-[0.6875rem]"
-                type="button" aria-pressed="false">Diikuti</button>
             </div>
-            <p class="feed-controls__count w-full text-right text-[0.625rem] text-muted sm:ml-auto sm:w-auto">128 post
-              minggu ini</p>
           </div>
 
           <ul class="post-list flex min-w-0 flex-col gap-3" data-posts-url="{% url 'forum:get_posts_api' %}"
@@ -516,6 +521,7 @@
     }
 
     let currentTitleFilter = "";
+    let currentSort = "latest";
     let searchDebounceTimer = null;
 
     function createEmptyState(query = "") {
@@ -559,6 +565,9 @@
         const url = new URL(postList.dataset.postsUrl, window.location.origin);
         if (title.trim()) {
           url.searchParams.set("title", title.trim());
+        }
+        if (currentSort) {
+          url.searchParams.set("sort", currentSort);
         }
 
         // Tampilkan feedback memuat saat mencari
@@ -949,7 +958,36 @@
       });
     }
 
+    const sortButtons = document.querySelectorAll(".sort-option");
+    function updateSortButtonsUI() {
+      sortButtons.forEach((b) => {
+        const isActive = b.dataset.sort === currentSort;
+        b.setAttribute("aria-pressed", isActive ? "true" : "false");
+        if (isActive) {
+          b.className = "sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-line bg-accent px-2 text-[0.625rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5";
+        } else {
+          b.className = "sort-option inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1.5 border-2 border-transparent px-2 text-[0.625rem] font-bold text-muted hover:text-foreground sm:flex-initial sm:px-3 sm:text-[0.6875rem] cursor-pointer transition-colors active:translate-x-0.5 active:translate-y-0.5";
+        }
+      });
+    }
+
+    sortButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const sortType = btn.dataset.sort;
+        if (!sortType || sortType === currentSort) return;
+        currentSort = sortType;
+        updateSortButtonsUI();
+        fetchPostsByFilter(currentTitleFilter);
+      });
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
+    const initialSort = urlParams.get("sort");
+    if (initialSort && (initialSort === "trending" || initialSort === "latest")) {
+      currentSort = initialSort;
+      updateSortButtonsUI();
+    }
+
     const initialQuery = urlParams.get("title") || urlParams.get("q") || "";
     if (initialQuery && searchInput) {
       searchInput.value = initialQuery;

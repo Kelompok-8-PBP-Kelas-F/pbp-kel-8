@@ -57,7 +57,7 @@ def forum_detail(request, id):
 
 def get_posts_api(request):
     if request.method == "GET":
-        posts = Forum.objects.order_by('-created_at')
+        posts = Forum.objects.all()
         query = request.GET.get('title') or request.GET.get('q')
         if query:
             query = query.strip()
@@ -67,6 +67,13 @@ def get_posts_api(request):
                 Q(category__icontains=query) |
                 Q(author_username__icontains=clean_query)
             )
+
+        sort = request.GET.get('sort', 'latest').lower().strip()
+        if sort in ('trending', 'popular'):
+            posts = posts.order_by('-total_likes', '-created_at')
+        else:
+            posts = posts.order_by('-created_at')
+
         liked_post_ids = set()
         if request.user.is_authenticated:
             liked_post_ids = set(request.user.liked_forum_posts.values_list('id', flat=True))

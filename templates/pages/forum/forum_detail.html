@@ -7,26 +7,16 @@
 {% block content %}
 <main id="main-content" class="forum-detail-page w-full bg-background font-main text-foreground min-h-screen">
   <!-- Top Navigation / Breadcrumbs -->
-  <section class="border-b-2 border-line bg-background px-4 py-4 sm:px-6 lg:px-8">
-    <div class="mx-auto flex w-full max-w-6xl flex-col gap-3">
-      <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <nav aria-label="Breadcrumb" class="flex flex-wrap items-center gap-2 text-xs">
-          <a href="{% url 'forum:forum_main' %}" class="inline-flex items-center gap-1.5 font-bold text-foreground transition-colors hover:text-accent">
-            <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
-            <span>Kembali ke Forum</span>
-          </a>
-          <span class="text-muted" aria-hidden="true">/</span>
-          <span class="font-semibold text-muted capitalize">{{ post.get_category_display|default:post.category }}</span>
-        </nav>
-        <p class="hidden text-xs text-muted sm:block">
-          Guest dapat membaca. Pengguna terdaftar dapat menyukai dan berkomentar.
-        </p>
-      </div>
-
-      <div class="flex flex-col gap-0.5">
-        <p class="text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Forum Komunitas &middot; Detail Thread</p>
-        <h1 class="font-heading text-xl font-bold tracking-tight text-foreground sm:text-2xl lg:text-3xl">Percakapan komunitas</h1>
-      </div>
+  <section class="border-b-2 border-line bg-background px-4 py-3 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl items-center">
+      <nav aria-label="Breadcrumb" class="flex min-w-0 items-center gap-2 text-xs">
+        <a href="{% url 'forum:forum_main' %}" class="inline-flex shrink-0 items-center gap-1.5 font-bold text-foreground transition-colors hover:text-accent">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          <span>Kembali ke Forum</span>
+        </a>
+        <span class="shrink-0 text-muted" aria-hidden="true">/</span>
+        <span class="truncate font-semibold text-muted" aria-current="page" title="{{ post.title }}">{{ post.title }}</span>
+      </nav>
     </div>
   </section>
 
@@ -38,22 +28,22 @@
       <div class="flex min-w-0 flex-col gap-5">
         
         <!-- Main Post Card -->
-        <article class="forum-post-detail flex flex-col gap-4 border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
+        <article class="forum-post flex min-w-0 flex-col gap-3.5 border-2 border-line bg-surface p-3.5 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
           <!-- Author Header -->
-          <header class="flex items-start justify-between gap-3">
-            <div class="flex items-center gap-2.5">
-              <div class="avatar flex size-9 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-sm font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
+          <header class="forum-post__author flex min-w-0 items-center justify-between gap-2.5">
+            <div class="flex min-w-0 items-center gap-2.5">
+              <div class="avatar flex size-8.5 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-xs sm:text-sm font-bold text-foreground shadow-[1px_1px_0_var(--shadow-color)]" aria-hidden="true">
                 {{ post.author_username|first|upper }}
               </div>
-              <div class="flex flex-col gap-0.5">
-                <div class="flex flex-wrap items-center gap-1.5">
-                  <span class="text-xs sm:text-[0.8125rem] font-bold text-foreground leading-[18px]">@{{ post.author_username }}</span>
+              <div class="flex min-w-0 flex-col gap-0.5">
+                <div class="flex min-w-0 flex-wrap items-center gap-1.5">
+                  <span class="forum-post__username truncate text-xs sm:text-[0.8125rem] font-bold text-foreground leading-[18px]">@{{ post.author_username }}</span>
                   <span class="inline-flex h-[18px] items-center justify-center border-2 border-line bg-category px-1 text-[0.5625rem] sm:text-[0.625rem] font-bold uppercase tracking-wider text-foreground shrink-0 leading-none">
                     {{ post.get_category_display|default:post.category }}
                   </span>
                 </div>
                 <div class="flex flex-wrap items-center gap-1.5 text-[0.6875rem] text-muted">
-                  <time datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"d M Y, H:i" }}</time>
+                  <time class="forum-post__time text-[0.6875rem] text-muted" datetime="{{ post.created_at|date:'c' }}">{{ post.created_at|date:"d M Y, H:i" }}</time>
                   {% if post.updated_at != post.created_at %}
                   <span>&middot;</span>
                   <span>Diedit {{ post.updated_at|date:"d M Y, H:i" }}</span>
@@ -64,7 +54,7 @@
 
             <!-- Post Actions Dropdown -->
             <div class="relative">
-              <button id="post-options-btn" class="grid size-7 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer" type="button" aria-label="Menu opsi post" aria-haspopup="true">
+              <button id="post-options-btn" class="grid size-7 place-items-center text-muted transition-colors hover:text-foreground cursor-pointer shrink-0" type="button" aria-label="Menu opsi post" aria-haspopup="true">
                 <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
                 </svg>
@@ -83,7 +73,7 @@
                 {% endif %}
                 <button type="button" id="copy-link-menu-btn" class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-foreground hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                  <span>Salin tautan thread</span>
+                  <span>Salin tautan post</span>
                 </button>
                 <button type="button" class="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs font-semibold text-muted hover:bg-background cursor-pointer" role="menuitem">
                   <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
@@ -93,19 +83,19 @@
             </div>
           </header>
 
-          <!-- Post Title -->
-          <h2 class="font-heading text-lg font-bold leading-snug text-foreground sm:text-xl">
-            {{ post.title }}
-          </h2>
-
           <!-- Post Content -->
-          <div class="post-content font-main text-xs sm:text-[0.8125rem] leading-relaxed text-foreground whitespace-pre-line space-y-2.5">
-            {{ post.content }}
+          <div class="forum-post__content flex flex-col gap-2">
+            <h1 class="forum-post__title font-heading text-lg font-bold leading-snug tracking-tight text-foreground sm:text-xl">
+              {{ post.title }}
+            </h1>
+            <div class="forum-post__body font-main text-xs sm:text-[0.8125rem] leading-relaxed text-foreground whitespace-pre-line space-y-2.5">
+              {{ post.content }}
+            </div>
           </div>
 
           <!-- Post Image (if present) -->
           {% if post.image_url %}
-          <figure class="group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]">
+          <figure class="forum-post__media group relative isolate overflow-hidden border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)]">
             <div class="relative flex max-h-72 sm:max-h-84 w-full items-center justify-center overflow-hidden bg-background">
               <img class="relative z-1 max-h-72 sm:max-h-84 w-auto max-w-full object-contain" src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy">
             </div>
@@ -118,58 +108,49 @@
           </figure>
           {% endif %}
 
-          <!-- Post Stats -->
-          <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line/30 pt-3 text-[0.6875rem] text-muted">
-            <div class="flex flex-wrap items-center gap-2">
-              <span>1.284 kali dilihat</span>
-              <span>&middot;</span>
-              <span>{{ post.total_comments|default:12 }} komentar</span>
-              <span>&middot;</span>
-              <span>2 menit baca</span>
-            </div>
-            <div class="font-mono text-[0.625rem] uppercase tracking-wider text-muted">
-              THREAD #PRWT-{{ post.id|stringformat:".4s" }}
-            </div>
-          </div>
-
           <!-- Action Buttons Row -->
-          <footer class="flex flex-wrap items-center gap-2 pt-1">
+          <footer class="forum-post__actions flex flex-wrap items-center gap-2 border-t-2 border-line pt-3">
             <button id="like-btn"
-              class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line {% if is_liked %}bg-accent text-accent-foreground{% else %}bg-surface text-foreground{% endif %} px-3 py-1 text-xs font-bold shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer"
+              class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line {% if is_liked %}bg-accent text-accent-foreground{% else %}bg-surface text-foreground{% endif %} px-2.5 py-1 text-[0.6875rem] font-semibold shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5"
               type="button"
               data-liked="{% if is_liked %}true{% else %}false{% endif %}"
               data-authenticated="{% if request.user.is_authenticated %}true{% else %}false{% endif %}"
-              data-login-url="{% url 'user:login' %}?next={{ request.path|urlencode }}">
-              <svg class="size-3.5 sm:size-4 {% if is_liked %}fill-current{% else %}text-accent{% endif %}" viewBox="0 0 24 24" fill="{% if is_liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              data-login-url="{% url 'user:login' %}?next={{ request.path|urlencode }}"
+              aria-pressed="{% if is_liked %}true{% else %}false{% endif %}"
+              aria-label="{% if is_liked %}Batal menyukai post{% else %}Sukai post{% endif %}">
+              <svg class="size-3.5 shrink-0 sm:size-4 {% if is_liked %}fill-current{% else %}text-foreground{% endif %}" viewBox="0 0 24 24" fill="{% if is_liked %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path d="M20.8 8.6c0 5.1-8.8 10-8.8 10s-8.8-4.9-8.8-10A4.6 4.6 0 0 1 12 6.2a4.6 4.6 0 0 1 8.8 2.4Z"/>
               </svg>
               <span id="like-count">{{ post.total_likes }} suka</span>
             </button>
 
-            <a href="#tulis-komentar" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5">
-              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <a href="#tulis-komentar" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5">
+              <svg class="size-3.5 text-foreground shrink-0 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
                 <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h2A7.5 7.5 0 0 1 20 11.5Z"/>
               </svg>
-              <span>{{ post.total_comments|default:12 }} komentar</span>
+              <span>{{ post.total_comments|default:0 }} komentar</span>
             </a>
 
-            <button id="save-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+            {% if can_manage %}
+            <button type="button" id="action-edit-btn" popovertarget="forum-edit-modal" popovertargetaction="show" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5">
+              <svg class="size-3.5 shrink-0 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
               </svg>
-              <span id="save-btn-text">Simpan</span>
+              <span>Edit</span>
             </button>
 
-            <button id="share-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-3 py-1 text-xs font-bold text-foreground shadow-[2px_2px_0_var(--shadow-color)] transition-colors hover:bg-background active:translate-x-0.5 active:translate-y-0.5 cursor-pointer" type="button">
-              <svg class="size-3.5 text-muted sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            <button type="button" id="action-delete-btn" class="inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-red-600 shadow-none transition-colors hover:bg-red-50 sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5">
+              <svg class="size-3.5 shrink-0 sm:size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
               </svg>
-              <span>Bagikan</span>
+              <span>Hapus</span>
             </button>
+            {% endif %}
           </footer>
         </article>
 
         <!-- Guest Banner Note -->
+         {% if not request.user.is_authenticated %}
         <div class="guest-note flex flex-col items-start gap-2 border-2 border-line bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 shadow-[3px_3px_0_var(--shadow-color)]" role="note">
           <p class="guest-note__copy flex items-center gap-2 text-xs leading-relaxed text-muted">
             <svg class="size-4 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
@@ -177,6 +158,7 @@
           </p>
           <a class="text-xs font-bold text-accent hover:underline" href="#">Masuk untuk menyukai &amp; berkomentar &rarr;</a>
         </div>
+        {% endif %}
 
         <!-- Comment Input Section -->
         <section id="tulis-komentar" class="border-2 border-line bg-surface p-4 sm:p-5 shadow-[3px_3px_0_var(--shadow-color)]">
@@ -648,22 +630,22 @@
         const svg = likeBtn.querySelector("svg");
         function updateLikeUI(liked, count) {
           likeBtn.dataset.liked = liked ? "true" : "false";
+          likeBtn.setAttribute("aria-pressed", liked ? "true" : "false");
+          likeBtn.setAttribute("aria-label", liked ? "Batal menyukai post" : "Sukai post");
           likeCountSpan.textContent = `${count} suka`;
           if (liked) {
-            likeBtn.classList.add("bg-accent", "text-accent-foreground");
-            likeBtn.classList.remove("bg-surface", "text-foreground");
+            likeBtn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-accent px-2.5 py-1 text-[0.6875rem] font-semibold text-accent-foreground shadow-none transition-colors hover:opacity-95 sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
             if (svg) {
               svg.setAttribute("fill", "currentColor");
               svg.classList.add("fill-current");
-              svg.classList.remove("text-accent");
+              svg.classList.remove("text-foreground");
             }
           } else {
-            likeBtn.classList.remove("bg-accent", "text-accent-foreground");
-            likeBtn.classList.add("bg-surface", "text-foreground");
+            likeBtn.className = "inline-flex min-h-7.5 items-center gap-1.5 border-2 border-line bg-surface px-2.5 py-1 text-[0.6875rem] font-semibold text-foreground shadow-none transition-colors hover:bg-background sm:text-xs cursor-pointer active:translate-x-0.5 active:translate-y-0.5";
             if (svg) {
               svg.setAttribute("fill", "none");
               svg.classList.remove("fill-current");
-              svg.classList.add("text-accent");
+              svg.classList.add("text-foreground");
             }
           }
         }
@@ -703,40 +685,23 @@
       });
     }
 
-    // 5. Save button toggle
-    const saveBtn = document.getElementById("save-btn");
-    const saveBtnText = document.getElementById("save-btn-text");
-    if (saveBtn && saveBtnText) {
-      let isSaved = false;
-      saveBtn.addEventListener("click", () => {
-        isSaved = !isSaved;
-        saveBtnText.textContent = isSaved ? "Tersimpan" : "Simpan";
-        if (isSaved) {
-          saveBtn.classList.add("bg-highlight");
-        } else {
-          saveBtn.classList.remove("bg-highlight");
-        }
-      });
-    }
-
-    // 6. Share and Copy Link
-    const shareBtn = document.getElementById("share-btn");
+    // 5. Copy Link Menu Handler
     const copyLinkMenuBtn = document.getElementById("copy-link-menu-btn");
     async function copyCurrentUrl() {
       try {
         await navigator.clipboard.writeText(window.location.href);
-        const originalText = shareBtn ? shareBtn.querySelector("span")?.textContent : "";
-        if (shareBtn && shareBtn.querySelector("span")) {
-          shareBtn.querySelector("span").textContent = "Tersalin!";
+        const span = copyLinkMenuBtn?.querySelector("span");
+        if (span) {
+          const originalText = span.textContent;
+          span.textContent = "Tautan tersalin!";
           setTimeout(() => {
-            if (shareBtn.querySelector("span")) shareBtn.querySelector("span").textContent = originalText || "Bagikan";
+            span.textContent = originalText;
           }, 2000);
         }
       } catch (err) {
         prompt("Salin tautan berikut:", window.location.href);
       }
     }
-    shareBtn?.addEventListener("click", copyCurrentUrl);
     copyLinkMenuBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
       optionsMenu?.classList.add("hidden");
