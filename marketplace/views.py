@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Item, Category
+from django.db.models import Q
 
 
 def marketplace(request):
@@ -13,7 +14,7 @@ def marketplace(request):
     condition = request.GET.get('condition')
 
     if q:
-        items = items.filter(title__icontains=q)
+        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q))
     if category_id:
         items = items.filter(category_id=category_id)
     if condition:
@@ -82,6 +83,23 @@ def seller_profile(request, username):
         'total_items': items.count(),
         'items_tersedia': items.filter(is_available=True).count(),
         'items_terjual': items.filter(is_available=False).count(),
+    })
+
+
+def item_detail(request, pk):
+    item = get_object_or_404(Item, pk=pk)
+    seller_profile = getattr(item.seller, 'profile', None)
+    wa_number = getattr(seller_profile, 'phone', '').strip()
+    line_id = getattr(seller_profile, 'line_id', '').strip()
+    wa_link = f"https://wa.me/{wa_number.lstrip('0').replace('+', '')}" if wa_number else None
+    related_items = Item.objects.filter(
+        is_available=True, category=item.category
+    ).exclude(pk=pk).select_related('seller', 'category')[:4]
+    return render(request, 'pages/marketplace/item_detail.html', {
+        'item': item,
+        'wa_link': wa_link,
+        'line_id': line_id,
+        'related_items': related_items,
     })
 
 

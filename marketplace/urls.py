@@ -5,6 +5,7 @@ app_name = 'marketplace'
 
 urlpatterns = [
     path('marketplace/', views.marketplace, name='marketplace_list'),
+    path('marketplace/<uuid:pk>/', views.item_detail, name='item_detail'),
     path('marketplace-penjual/', views.marketplace_penjual, name='marketplace_penjual'),
     path('marketplace-penjual/tambah/', views.tambah_barang, name='tambah_barang'),
     path('marketplace-penjual/edit/<uuid:pk>/', views.edit_barang, name='edit_barang'),

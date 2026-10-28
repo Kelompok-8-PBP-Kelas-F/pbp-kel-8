@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>{{ item.title }} - Thrift.io</title>
+{% endblock meta %}
+
+{% block content %}
+<main class="w-full min-h-screen bg-[#f2c14e] font-main text-[#121212]">
+  <div class="max-w-6xl mx-auto px-6 py-6">
+
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-sm font-medium mb-6">
+      <a href="{% url 'marketplace:marketplace_list' %}" class="flex items-center gap-1 hover:underline">
+        <svg class="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Marketplace
+      </a>
+      <span class="text-[#5c4a1a]">/</span>
+      <span class="text-[#5c4a1a]">{{ item.title }}</span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+
+      <!-- Image -->
+      <div class="border-2 border-[#121212] shadow-[4px_4px_0_#121212] aspect-square flex items-center justify-center bg-[#f09a67]">
+        {% if item.image %}
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+        {% else %}
+        <div class="flex flex-col items-center gap-3 text-[#121212]/40">
+          <svg class="w-20 h-20 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+          </svg>
+          <span class="text-xs font-semibold uppercase tracking-wide">Gambar produk utama</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Detail -->
+      <div class="flex flex-col gap-4">
+
+        <!-- Top row: condition badge + listing ID -->
+        <div class="flex items-center justify-between">
+          <span class="px-3 py-1 text-xs font-bold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212] uppercase">
+            {{ item.get_condition_display }}
+          </span>
+          <span class="text-xs text-[#5c4a1a] font-mono">Listing #{{ item.id|stringformat:"s"|slice:":8"|upper }}</span>
+        </div>
+
+        <!-- Title & Price -->
+        <div>
+          <h1 class="text-3xl font-extrabold leading-tight">{{ item.title }}</h1>
+          <p class="text-4xl font-extrabold mt-2">Rp{{ item.price|floatformat:0 }}</p>
+        </div>
+
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2">
+          {% if item.category %}
+          <span class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">{{ item.category.name }}</span>
+          {% endif %}
+          <span class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">{{ item.get_condition_display }}</span>
+          {% if not item.is_available %}
+          <span class="px-3 py-1 text-xs font-bold border-2 border-[#121212] bg-[#E2652B] text-white shadow-[2px_2px_0_#121212]">Terjual</span>
+          {% endif %}
+        </div>
+
+        <!-- Description -->
+        <div>
+          <h2 class="font-extrabold text-sm mb-1">Deskripsi</h2>
+          <p class="text-sm leading-relaxed text-[#121212]">{{ item.description }}</p>
+        </div>
+
+        <!-- Seller Card -->
+        <div class="flex items-center justify-between border-2 border-[#121212] bg-[#fbf1d5] px-4 py-3 shadow-[3px_3px_0_#121212]">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full bg-[#121212] text-white flex items-center justify-center font-extrabold text-sm shrink-0">
+              {{ item.seller.username|first|upper }}
+            </div>
+            <div>
+              <p class="font-extrabold text-sm">{{ item.seller.username }}</p>
+              <p class="text-xs text-[#5c4a1a]">Penjual terdaftar</p>
+            </div>
+          </div>
+          <a href="{% url 'marketplace:seller_profile' item.seller.username %}"
+             class="px-4 py-2 text-xs font-bold border-2 border-[#121212] bg-[#f2c14e] shadow-[2px_2px_0_#121212] hover:bg-white transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
+            Lihat profil
+          </a>
+        </div>
+
+        <!-- Contact Buttons -->
+        {% if item.is_available %}
+        <div class="flex flex-col gap-2">
+          {% if wa_link %}
+          <a href="{{ wa_link }}" target="_blank"
+             class="flex items-center justify-center gap-2 py-3 bg-[#25D366] text-white font-bold text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+            Hubungi via WhatsApp
+          </a>
+          {% endif %}
+          {% if line_id %}
+          <div class="flex items-center justify-between py-3 px-4 bg-[#06C755] text-white font-bold text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212]">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+              Hubungi via Line
+            </div>
+            <span class="font-mono text-sm">{{ line_id }}</span>
+          </div>
+          {% endif %}
+          {% if not wa_link and not line_id %}
+          <p class="text-xs text-[#5c4a1a] italic text-center py-2">Penjual belum mencantumkan kontak.</p>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <p class="text-xs text-[#5c4a1a]">Diposting {{ item.created_at|date:"d M Y" }}</p>
+      </div>
+    </div>
+
+    <!-- Related Items -->
+    {% if related_items %}
+    <div class="mt-12">
+      <div class="flex items-end justify-between mb-4">
+        <div>
+          <h2 class="font-extrabold text-lg">Produk serupa</h2>
+          {% if item.category %}
+          <p class="text-xs text-[#5c4a1a]">Pilihan preloved lain dari kategori {{ item.category.name }}</p>
+          {% endif %}
+        </div>
+        <a href="{% url 'marketplace:marketplace_list' %}{% if item.category %}?category={{ item.category.id }}{% endif %}" class="text-xs font-bold hover:underline">Lihat semua produk</a>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for rel in related_items %}
+        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] flex flex-col">
+          <div class="w-full aspect-square border-b-2 border-[#121212] flex flex-col items-center justify-center gap-2
+            {% cycle 'bg-[#86a981]' 'bg-[#f09a67]' 'bg-[#fbf1d5]' 'bg-[#E2652B]' %}">
+            {% if rel.image %}
+            <img src="{{ rel.image.url }}" alt="{{ rel.title }}" class="w-full h-full object-cover">
+            {% else %}
+            <svg class="w-10 h-10 stroke-current fill-none text-[#121212]/40" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
+            </svg>
+            <span class="text-[10px] font-semibold uppercase tracking-wide text-[#121212]/40">Gambar {{ rel.category.name|default:"produk" }}</span>
+            {% endif %}
+          </div>
+          <div class="p-3 flex flex-col gap-1 flex-1">
+            <p class="text-sm font-bold leading-tight">{{ rel.title }}</p>
+            <p class="text-xs text-[#5c4a1a]">{{ rel.get_condition_display }} · {{ rel.seller.username }}</p>
+            <p class="text-sm font-extrabold mt-0.5">Rp{{ rel.price|floatformat:0 }}</p>
+          </div>
+          <div class="px-3 pb-3">
+            <a href="{% url 'marketplace:item_detail' rel.id %}"
+               class="block w-full py-2 text-center font-bold text-xs border-2 border-[#121212] bg-[#f2c14e] shadow-[2px_2px_0_#121212] hover:bg-white transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
+              Lihat produk
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</main>
+{% endblock content %}

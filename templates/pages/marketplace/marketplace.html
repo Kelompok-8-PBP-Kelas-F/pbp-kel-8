@@ -205,11 +205,11 @@
             {% endif %}
           </div>
           <!-- Info -->
-          <div class="p-3 flex flex-col gap-1 flex-1">
+          <a href="{% url 'marketplace:item_detail' item.id %}" class="p-3 flex flex-col gap-1 flex-1 hover:underline">
             <p class="text-sm font-bold text-[#121212] leading-tight">{{ item.title }}</p>
             <p class="text-xs text-[#5c4a1a]">{{ item.get_condition_display }} · {{ item.seller.username }}</p>
             <p class="text-sm font-extrabold text-[#121212] mt-0.5">Rp {{ item.price|floatformat:0 }}</p>
-          </div>
+          </a>
           <!-- Button -->
           <div class="px-3 pb-3">
             <button class="w-full py-2 bg-[#E2652B] text-white font-bold text-xs border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
