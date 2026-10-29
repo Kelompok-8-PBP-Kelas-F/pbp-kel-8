@@ -77,7 +77,7 @@ def seller_profile(request, username):
     from django.contrib.auth.models import User
     seller = get_object_or_404(User, username=username)
     items = Item.objects.filter(seller=seller).order_by('-created_at')
-    return render(request, 'pages/marketplace_seller/seller_profile.html', {
+    return render(request, 'pages/marketplace/seller_profile.html', {
         'seller': seller,
         'items': items,
         'total_items': items.count(),
