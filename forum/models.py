@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.html import escape
 import uuid
 
 class Forum(models.Model):
@@ -40,6 +41,51 @@ class Forum(models.Model):
             return False
         return self.liked_by.filter(pk=user.pk).exists()
 
+    def clean_title(self):
+        if self.title:
+            if "<" in self.title or ">" in self.title:
+                self.title = escape(self.title.strip())
+            else:
+                self.title = self.title.strip()
+        return self.title
+
+    def clean_content(self):
+        if self.content:
+            if "<" in self.content or ">" in self.content:
+                self.content = escape(self.content.strip())
+            else:
+                self.content = self.content.strip()
+        return self.content
+
+    def clean_image_caption(self):
+        if self.image_caption:
+            if "<" in self.image_caption or ">" in self.image_caption:
+                self.image_caption = escape(self.image_caption.strip())
+            else:
+                self.image_caption = self.image_caption.strip()
+        return self.image_caption
+
+    def clean(self):
+        super().clean()
+        self.clean_title()
+        self.clean_content()
+        self.clean_image_caption()
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if exclude is None:
+            exclude = []
+        if 'title' not in exclude:
+            self.clean_title()
+        if 'content' not in exclude:
+            self.clean_content()
+        if 'image_caption' not in exclude:
+            self.clean_image_caption()
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
 
@@ -65,6 +111,29 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['created_at']
+
+    def clean_content(self):
+        if self.content:
+            if "<" in self.content or ">" in self.content:
+                self.content = escape(self.content.strip())
+            else:
+                self.content = self.content.strip()
+        return self.content
+
+    def clean(self):
+        super().clean()
+        self.clean_content()
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if exclude is None:
+            exclude = []
+        if 'content' not in exclude:
+            self.clean_content()
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Komentar oleh @{self.author_username} di {self.forum.title}"

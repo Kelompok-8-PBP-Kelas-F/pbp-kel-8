@@ -884,7 +884,7 @@
         if (submitButtonText) submitButtonText.textContent = "Memublikasikan...";
       }
       const formData = new FormData(postForm);
-      const csrfToken = formData.get("csrfmiddlewaretoken");
+      const csrfToken = formData.get("csrfmiddlewaretoken") || getCsrfToken();
 
       try {
         const response = await fetch("{% url 'forum:create_post_api' %}", {
