@@ -5,7 +5,7 @@
 {% endblock meta %}
 
 {% block content %}
-<main class="w-full min-h-screen bg-[#f2c14e] font-main text-[#121212]">
+<main class="w-full min-h-screen bg-background font-main text-foreground">
   <div class="max-w-6xl mx-auto px-6 py-6">
 
     <!-- Breadcrumb -->
@@ -14,18 +14,18 @@
         <svg class="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         Marketplace
       </a>
-      <span class="text-[#5c4a1a]">/</span>
-      <span class="text-[#5c4a1a]">{{ item.title }}</span>
+      <span class="text-muted">/</span>
+      <span class="text-muted">{{ item.title }}</span>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 
       <!-- Image -->
-      <div class="border-2 border-[#121212] shadow-[4px_4px_0_#121212] aspect-square flex items-center justify-center bg-[#f09a67]">
+      <div class="border-2 border-line shadow-[4px_4px_0_var(--shadow-color)] aspect-[3/4] flex items-center justify-center overflow-hidden bg-category">
         {% if item.image %}
         <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
         {% else %}
-        <div class="flex flex-col items-center gap-3 text-[#121212]/40">
+        <div class="flex flex-col items-center gap-3 text-foreground/40">
           <svg class="w-20 h-20 stroke-current fill-none" viewBox="0 0 24 24" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
           </svg>
@@ -39,10 +39,10 @@
 
         <!-- Top row: condition badge + listing ID -->
         <div class="flex items-center justify-between">
-          <span class="px-3 py-1 text-xs font-bold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212] uppercase">
+          <span class="px-3 py-1 text-xs font-bold border-2 border-line bg-surface shadow-[2px_2px_0_var(--shadow-color)] uppercase">
             {{ item.get_condition_display }}
           </span>
-          <span class="text-xs text-[#5c4a1a] font-mono">Listing #{{ item.id|stringformat:"s"|slice:":8"|upper }}</span>
+          <span class="text-xs text-muted font-mono">Listing #{{ item.id|stringformat:"s"|slice:":8"|upper }}</span>
         </div>
 
         <!-- Title & Price -->
@@ -54,33 +54,33 @@
         <!-- Tags -->
         <div class="flex flex-wrap gap-2">
           {% if item.category %}
-          <span class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">{{ item.category.name }}</span>
+          <span class="px-3 py-1 text-xs font-semibold border-2 border-line bg-surface shadow-[2px_2px_0_var(--shadow-color)]">{{ item.category.name }}</span>
           {% endif %}
-          <span class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">{{ item.get_condition_display }}</span>
+          <span class="px-3 py-1 text-xs font-semibold border-2 border-line bg-surface shadow-[2px_2px_0_var(--shadow-color)]">{{ item.get_condition_display }}</span>
           {% if not item.is_available %}
-          <span class="px-3 py-1 text-xs font-bold border-2 border-[#121212] bg-[#E2652B] text-white shadow-[2px_2px_0_#121212]">Terjual</span>
+          <span class="px-3 py-1 text-xs font-bold border-2 border-line bg-accent text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)]">Terjual</span>
           {% endif %}
         </div>
 
         <!-- Description -->
         <div>
           <h2 class="font-extrabold text-sm mb-1">Deskripsi</h2>
-          <p class="text-sm leading-relaxed text-[#121212]">{{ item.description }}</p>
+          <p class="text-sm leading-relaxed text-foreground">{{ item.description }}</p>
         </div>
 
         <!-- Seller Card -->
-        <div class="flex items-center justify-between border-2 border-[#121212] bg-[#fbf1d5] px-4 py-3 shadow-[3px_3px_0_#121212]">
+        <div class="flex items-center justify-between border-2 border-line bg-surface px-4 py-3 shadow-[3px_3px_0_var(--shadow-color)]">
           <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-full bg-[#121212] text-white flex items-center justify-center font-extrabold text-sm shrink-0">
+            <div class="w-9 h-9 rounded-full bg-foreground text-background flex items-center justify-center font-extrabold text-sm shrink-0">
               {{ item.seller.username|first|upper }}
             </div>
             <div>
               <p class="font-extrabold text-sm">{{ item.seller.username }}</p>
-              <p class="text-xs text-[#5c4a1a]">Penjual terdaftar</p>
+              <p class="text-xs text-muted">Penjual terdaftar</p>
             </div>
           </div>
           <a href="{% url 'marketplace:seller_profile' item.seller.username %}"
-             class="px-4 py-2 text-xs font-bold border-2 border-[#121212] bg-[#f2c14e] shadow-[2px_2px_0_#121212] hover:bg-white transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
+             class="px-4 py-2 text-xs font-bold border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-80 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)]">
             Lihat profil
           </a>
         </div>
@@ -89,7 +89,7 @@
         {% if user.is_authenticated %}
         <form method="post" action="{% url 'marketplace:toggle_wishlist' item.id %}">
           {% csrf_token %}
-          <button type="submit" class="w-full py-3 font-bold text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212] cursor-pointer {% if is_wishlisted %}bg-[#E2652B] text-white{% else %}bg-[#fbf1d5]{% endif %}">
+          <button type="submit" class="w-full py-3 font-bold text-sm border-2 border-line shadow-[3px_3px_0_var(--shadow-color)] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] cursor-pointer {% if is_wishlisted %}bg-accent text-accent-foreground{% else %}bg-surface{% endif %}">
             {% if is_wishlisted %}♥ Tersimpan di Wishlist{% else %}♡ Simpan ke Wishlist{% endif %}
           </button>
         </form>
@@ -115,12 +115,12 @@
           </div>
           {% endif %}
           {% if not wa_link and not line_id %}
-          <p class="text-xs text-[#5c4a1a] italic text-center py-2">Penjual belum mencantumkan kontak.</p>
+          <p class="text-xs text-muted italic text-center py-2">Penjual belum mencantumkan kontak.</p>
           {% endif %}
         </div>
         {% endif %}
 
-        <p class="text-xs text-[#5c4a1a]">Diposting {{ item.created_at|date:"d M Y" }}</p>
+        <p class="text-xs text-muted">Diposting {{ item.created_at|date:"d M Y" }}</p>
       </div>
     </div>
 
@@ -131,33 +131,33 @@
         <div>
           <h2 class="font-extrabold text-lg">Produk serupa</h2>
           {% if item.category %}
-          <p class="text-xs text-[#5c4a1a]">Pilihan preloved lain dari kategori {{ item.category.name }}</p>
+          <p class="text-xs text-muted">Pilihan preloved lain dari kategori {{ item.category.name }}</p>
           {% endif %}
         </div>
         <a href="{% url 'marketplace:marketplace_list' %}{% if item.category %}?category={{ item.category.id }}{% endif %}" class="text-xs font-bold hover:underline">Lihat semua produk</a>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {% for rel in related_items %}
-        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] flex flex-col">
-          <div class="w-full aspect-square border-b-2 border-[#121212] flex flex-col items-center justify-center gap-2
-            {% cycle 'bg-[#86a981]' 'bg-[#f09a67]' 'bg-[#fbf1d5]' 'bg-[#E2652B]' %}">
+        <div class="bg-surface border-2 border-line shadow-[3px_3px_0_var(--shadow-color)] flex flex-col">
+          <div class="w-full aspect-[3/4] border-b-2 border-line flex flex-col items-center justify-center gap-2 overflow-hidden
+            {% cycle 'bg-category' 'bg-[#f09a67]' 'bg-surface' 'bg-accent' %}">
             {% if rel.image %}
             <img src="{{ rel.image.url }}" alt="{{ rel.title }}" class="w-full h-full object-cover">
             {% else %}
-            <svg class="w-10 h-10 stroke-current fill-none text-[#121212]/40" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-10 h-10 stroke-current fill-none text-foreground/40" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
             </svg>
-            <span class="text-[10px] font-semibold uppercase tracking-wide text-[#121212]/40">Gambar {{ rel.category.name|default:"produk" }}</span>
+            <span class="text-[10px] font-semibold uppercase tracking-wide text-foreground/40">Gambar {{ rel.category.name|default:"produk" }}</span>
             {% endif %}
           </div>
           <div class="p-3 flex flex-col gap-1 flex-1">
             <p class="text-sm font-bold leading-tight">{{ rel.title }}</p>
-            <p class="text-xs text-[#5c4a1a]">{{ rel.get_condition_display }} · {{ rel.seller.username }}</p>
+            <p class="text-xs text-muted">{{ rel.get_condition_display }} · {{ rel.seller.username }}</p>
             <p class="text-sm font-extrabold mt-0.5">Rp{{ rel.price|floatformat:0 }}</p>
           </div>
           <div class="px-3 pb-3">
             <a href="{% url 'marketplace:item_detail' rel.id %}"
-               class="block w-full py-2 text-center font-bold text-xs border-2 border-[#121212] bg-[#f2c14e] shadow-[2px_2px_0_#121212] hover:bg-white transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
+               class="block w-full py-2 text-center font-bold text-xs border-2 border-line bg-background shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-80 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)]">
               Lihat produk
             </a>
           </div>

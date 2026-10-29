@@ -3633,6 +3633,30 @@
       color: color-mix(in oklab, var(--foreground) 20%, transparent);
     }
   }
+  .text-foreground\/30 {
+    color: var(--foreground);
+  }
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-foreground\/30 {
+      color: color-mix(in oklab, var(--foreground) 30%, transparent);
+    }
+  }
+  .text-foreground\/40 {
+    color: var(--foreground);
+  }
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-foreground\/40 {
+      color: color-mix(in oklab, var(--foreground) 40%, transparent);
+    }
+  }
+  .text-foreground\/50 {
+    color: var(--foreground);
+  }
+  @supports (color: color-mix(in lab, red, red)) {
+    .text-foreground\/50 {
+      color: color-mix(in oklab, var(--foreground) 50%, transparent);
+    }
+  }
   .text-foreground\/60 {
     color: var(--foreground);
   }
@@ -3953,6 +3977,14 @@
       color: color-mix(in oklab, var(--muted) 60%, transparent);
     }
   }
+  .placeholder\:text-muted\/70::placeholder {
+    color: var(--muted);
+  }
+  @supports (color: color-mix(in lab, red, red)) {
+    .placeholder\:text-muted\/70::placeholder {
+      color: color-mix(in oklab, var(--muted) 70%, transparent);
+    }
+  }
   .last\:border-b-0:last-child {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 0px;
@@ -4039,6 +4071,9 @@
     }
     .hover\:opacity-75:hover {
       opacity: 75%;
+    }
+    .hover\:opacity-80:hover {
+      opacity: 80%;
     }
     .hover\:opacity-90:hover {
       opacity: 90%;
