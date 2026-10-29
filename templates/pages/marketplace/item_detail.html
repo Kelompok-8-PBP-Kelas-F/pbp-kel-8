@@ -86,6 +86,16 @@
         </div>
 
         <!-- Contact Buttons -->
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'marketplace:toggle_wishlist' item.id %}">
+          {% csrf_token %}
+          <button type="submit" class="w-full py-3 font-bold text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212] cursor-pointer {% if is_wishlisted %}bg-[#E2652B] text-white{% else %}bg-[#fbf1d5]{% endif %}">
+            {% if is_wishlisted %}♥ Tersimpan di Wishlist{% else %}♡ Simpan ke Wishlist{% endif %}
+          </button>
+        </form>
+        {% endif %}
+
+        <!-- Contact Buttons -->
         {% if item.is_available %}
         <div class="flex flex-col gap-2">
           {% if wa_link %}
