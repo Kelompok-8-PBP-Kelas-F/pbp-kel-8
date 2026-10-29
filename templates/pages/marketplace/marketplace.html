@@ -118,6 +118,9 @@
         <div class="col-span-full text-center py-16 text-muted font-medium">Memuat...</div>
       </div>
 
+      <!-- Pagination -->
+      <div id="pagination" class="flex items-center justify-center gap-3 mt-8 mb-4"></div>
+
     </div>
   </div>
 </main>
@@ -127,6 +130,7 @@ const FILTER_URL = "{% url 'marketplace:filter_barang' %}";
 const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
 const CSRF_TOKEN = "{{ csrf_token }}";
 const BG_COLORS = ['bg-[#f09a67]', 'bg-category', 'bg-surface', 'bg-accent'];
+let currentPage = 1;
 
 function esc(str) {
   const d = document.createElement('div');
@@ -140,6 +144,7 @@ function getFilters() {
     category: document.querySelector('input[name="category"]:checked')?.value || '',
     condition: document.querySelector('input[name="condition"]:checked')?.value || '',
     sort: document.querySelector('input[name="sort"]:checked')?.value || 'newest',
+    page: currentPage,
   };
 }
 
@@ -175,14 +180,22 @@ function buildCard(item, index) {
     </div>`;
 }
 
-function renderGrid(items) {
+function renderGrid(items, meta) {
   const grid = document.getElementById('product-grid');
-  document.getElementById('item-count').textContent = `${items.length} listing aktif`;
+  document.getElementById('item-count').textContent = `${meta.count} listing aktif`;
   if (!items.length) {
     grid.innerHTML = '<div class="col-span-full text-center py-16 text-muted font-medium">Tidak ada item yang ditemukan.</div>';
+    document.getElementById('pagination').innerHTML = '';
     return;
   }
   grid.innerHTML = items.map((item, i) => buildCard(item, i)).join('');
+
+  // Pagination controls
+  let pg = '';
+  if (meta.has_prev) pg += `<button onclick="goPage(${meta.page - 1})" class="px-4 py-2 border-2 border-line bg-surface font-bold text-xs shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-80 cursor-pointer">← Sebelumnya</button>`;
+  pg += `<span class="px-3 py-2 text-xs font-semibold text-muted">Halaman ${meta.page} / ${meta.num_pages}</span>`;
+  if (meta.has_next) pg += `<button onclick="goPage(${meta.page + 1})" class="px-4 py-2 border-2 border-line bg-surface font-bold text-xs shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-80 cursor-pointer">Selanjutnya →</button>`;
+  document.getElementById('pagination').innerHTML = pg;
 
   // Attach AJAX wishlist toggle to each form
   grid.querySelectorAll('.wishlist-form').forEach(form => {
@@ -206,7 +219,13 @@ async function fetchItems() {
   const params = new URLSearchParams(getFilters());
   const res = await fetch(`${FILTER_URL}?${params}`);
   const data = await res.json();
-  renderGrid(data.items);
+  renderGrid(data.items, data);
+}
+
+function goPage(page) {
+  currentPage = page;
+  fetchItems();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Debounce helper
@@ -218,15 +237,16 @@ function debounce(fn, delay) {
 const debouncedFetch = debounce(fetchItems, 300);
 
 // Wire up inputs
-document.getElementById('search-input').addEventListener('input', debouncedFetch);
+document.getElementById('search-input').addEventListener('input', () => { currentPage = 1; debouncedFetch(); });
 document.querySelectorAll('input[name="category"], input[name="condition"], input[name="sort"]')
-  .forEach(el => el.addEventListener('change', fetchItems));
+  .forEach(el => el.addEventListener('change', () => { currentPage = 1; fetchItems(); }));
 
 document.getElementById('reset-filters').addEventListener('click', () => {
   document.getElementById('search-input').value = '';
   document.querySelector('input[name="category"][value=""]').checked = true;
   document.querySelector('input[name="condition"][value=""]').checked = true;
   document.querySelector('input[name="sort"][value="newest"]').checked = true;
+  currentPage = 1;
   fetchItems();
 });
 

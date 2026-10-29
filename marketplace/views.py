@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Item, Category, Wishlist
 from django.db.models import Q
+from django.core.paginator import Paginator
+
+PAGE_SIZE = 20
 
 
 def marketplace(request):
@@ -14,7 +17,7 @@ def marketplace(request):
     condition = request.GET.get('condition')
 
     if q:
-        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q))
+        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q) | Q(category__name__icontains=q))
     if category_id:
         items = items.filter(category_id=category_id)
     if condition:
@@ -151,7 +154,7 @@ def filter_barang(request):
 
     items = Item.objects.filter(is_available=True).select_related('seller', 'category').order_by(order)
     if q:
-        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q))
+        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q) | Q(category__name__icontains=q))
     if condition:
         items = items.filter(condition=condition)
     if category_id:
@@ -160,6 +163,10 @@ def filter_barang(request):
     wishlist_ids = set()
     if request.user.is_authenticated:
         wishlist_ids = set(Wishlist.objects.filter(user=request.user).values_list('item_id', flat=True))
+
+    page = int(request.GET.get('page', 1))
+    paginator = Paginator(items, PAGE_SIZE)
+    page_obj = paginator.get_page(page)
 
     data = [{
         'id': str(i.id),
@@ -171,5 +178,12 @@ def filter_barang(request):
         'detail_url': f'/marketplace/{i.id}/',
         'wishlist_url': f'/wishlist/toggle/{i.id}/',
         'wishlisted': i.id in wishlist_ids,
-    } for i in items]
-    return JsonResponse({'items': data, 'count': len(data)})
+    } for i in page_obj]
+    return JsonResponse({
+        'items': data,
+        'count': paginator.count,
+        'num_pages': paginator.num_pages,
+        'page': page_obj.number,
+        'has_next': page_obj.has_next(),
+        'has_prev': page_obj.has_previous(),
+    })
