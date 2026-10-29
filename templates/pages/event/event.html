@@ -16,12 +16,23 @@
           <h1 class="font-heading text-[clamp(30px,4vw,44px)] font-extrabold leading-[1.05] tracking-[-.035em]">Event fashion di sekitarmu</h1>
         </div>
         <p class="mb-0.5 max-w-[355px] text-[13px] leading-relaxed">Temukan swap, workshop reparasi, dan bazaar thrift berdasarkan lokasi. Guest dapat melihat agenda tanpa akun.</p>
+        {% if user.is_authenticated %}
+          <a class="inline-flex min-h-10 items-center justify-center border-2 border-[#17140e] bg-[#d95a2b] px-4 text-xs font-extrabold text-white no-underline shadow-[2px_2px_0_#17140e] hover:opacity-90 dark:border-[#d6c99f] dark:bg-[#f08a53] dark:text-[#151a15] dark:shadow-[2px_2px_0_#080b09]" href="{% url 'event:event_create' %}">+ Buat event</a>
+        {% endif %}
       </div>
+
+      {% if messages %}
+        <div class="mt-4 space-y-2" aria-live="polite">
+          {% for message in messages %}
+            <p class="border-2 border-[#17140e] bg-[#fbf2da] px-4 py-2 text-sm font-semibold dark:border-[#d6c99f] dark:bg-[#242c24] {{ message.tags }}">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
 
       <form class="mt-5 grid grid-cols-2 gap-1.5 border-2 border-[#17140e] bg-[#fbf2da] p-2 shadow-[3px_3px_0_#17140e] sm:gap-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto] dark:border-[#d6c99f] dark:bg-[#242c24] dark:shadow-[3px_3px_0_#080b09]" id="event-filters">
         <label class="col-span-2 flex min-h-[38px] min-w-0 items-center gap-2.5 border border-[#bcae8c] bg-[#f8e9b9] px-2.5 lg:col-span-4 dark:border-[#596454] dark:bg-[#202820]">
           <span class="text-xl" aria-hidden="true">⌖</span>
-          <input class="min-w-0 flex-1 border-0 bg-transparent text-xs text-[#17140e] outline-none dark:text-[#f3e6c4]" id="city-filter" type="search" value="Bandung, Jawa Barat" aria-label="Lokasi">
+          <input class="min-w-0 flex-1 border-0 bg-transparent text-xs text-[#17140e] outline-none dark:text-[#f3e6c4]" id="city-filter" type="search" value="{{ user_location }}" placeholder="Masukkan kota atau alamat" aria-label="Lokasi">
           <button class="shrink-0 cursor-pointer bg-transparent text-[9px] font-bold underline" type="button" id="use-location-button">Gunakan lokasi saya</button>
         </label>
         <button class="min-h-[38px] cursor-pointer border border-[#17140e] bg-[#d95a2b] px-3 text-[11px] font-extrabold text-white lg:col-start-5 lg:row-start-1 dark:border-[#d6c99f] dark:bg-[#f08a53] dark:text-[#151a15]" type="submit">Cari event</button>
@@ -42,7 +53,7 @@
             <option value="all">Semua tipe</option>
             <option value="Swap">Swap</option>
             <option value="Workshop">Workshop</option>
-            <option value="Bazar">Bazar</option>
+            <option value="Bazar">Thrift/Bazaar</option>
           </select>
         </label>
         <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
@@ -75,7 +86,7 @@
   <section class="mx-auto max-w-[1228px] px-4 py-[18px] sm:px-6 lg:px-6" aria-labelledby="nearby-heading">
     <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h2 class="font-heading text-xl font-extrabold tracking-[-.035em]" id="nearby-heading">Event terdekat dari Bandung</h2>
+        <h2 class="font-heading text-xl font-extrabold tracking-[-.035em]" id="nearby-heading">Event terdekat dari <span id="location-heading">{% if user_location %}{{ user_location }}{% else %}lokasimu{% endif %}</span></h2>
         <p class="mt-[3px] text-[10px] text-[#695b3d] dark:text-[#c2b58e]" id="results-count" aria-live="polite"></p>
       </div>
       <span class="hidden text-[10px] text-[#695b3d] sm:inline dark:text-[#c2b58e]">Peta diperbarui sesuai filter</span>
@@ -83,9 +94,8 @@
 
     <div class="grid h-auto grid-cols-1 gap-3 lg:h-[390px] lg:grid-cols-[minmax(0,1.45fr)_minmax(330px,1fr)]" id="event-explorer">
       <div class="relative h-[310px] min-w-0 overflow-hidden border-2 border-[#17140e] bg-[#e8dfc7] lg:h-auto dark:border-[#d6c99f] dark:bg-[#242c24]">
-        <div class="z-[1] h-full w-full bg-[#e8dfc7] dark:bg-[#242c24]" id="event-map" aria-label="Peta OpenStreetMap event fashion di Bandung"></div>
+        <div class="z-[1] h-full w-full bg-[#e8dfc7] dark:bg-[#242c24]" id="event-map" aria-label="Peta OpenStreetMap lokasi event"></div>
         <p class="absolute left-2.5 top-[45px] z-[400] m-0 max-w-[calc(100%-20px)] border border-[#17140e] bg-[#fbf2da] px-[9px] py-[7px] text-[10px] dark:border-[#d6c99f] dark:bg-[#242c24] dark:text-[#f3e6c4]" id="map-tile-status" role="status" hidden></p>
-        <span class="absolute left-2.5 top-2.5 z-[400] border border-[#17140e] bg-[#fbf2da] px-2 py-[5px] text-[8px] font-extrabold dark:border-[#d6c99f] dark:bg-[#242c24] dark:text-[#f3e6c4]">OPENSTREETMAP · BANDUNG</span>
         <div class="absolute bottom-2.5 left-2.5 z-[400] flex items-center gap-1.5 border border-[#17140e] bg-[#fbf2da] px-2 py-[5px] text-[8px] dark:border-[#d6c99f] dark:bg-[#242c24] dark:text-[#f3e6c4]">
           <span class="size-2 rounded-full bg-[#d95a2b] dark:bg-[#f08a53]"></span> Event lain
         </div>
@@ -139,7 +149,7 @@
     const explorer = document.getElementById("event-explorer");
     const mapTileStatus = document.getElementById("map-tile-status");
     const markerLayer = L.layerGroup();
-    const map = L.map("event-map", {scrollWheelZoom: false}).setView([-6.9147, 107.6098], 12);
+    const map = L.map("event-map", {scrollWheelZoom: false}).setView([0, 0], 2);
     map.getPane("tilePane").classList.add("dark:brightness-75", "dark:saturate-50");
     const tileAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
     const primaryTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -180,12 +190,71 @@
     })[character]);
     const formatDate = (dateString, options = {day: "2-digit", month: "short"}) =>
       new Intl.DateTimeFormat("id-ID", options).format(new Date(`${dateString}T12:00:00`));
-    const savedEvents = new Set(JSON.parse(localStorage.getItem("thriftio-saved-events") || "[]"));
+    const savedEvents = new Set(JSON.parse(localStorage.getItem("thriftio-saved-events") || "[]").map(String));
+    let userCoordinates = null;
+    let usingDeviceLocation = false;
+    const geocodeCache = new Map();
     let activeEvents = [];
     const tagColors = {
       Swap: "bg-[#e5b0a1] dark:border-[#d6c99f] dark:bg-[#593b35] dark:text-[#f3e6c4]",
       Workshop: "bg-[#9ab18c] dark:border-[#d6c99f] dark:bg-[#344534] dark:text-[#f3e6c4]",
       Bazar: "bg-[#d3b86e] dark:border-[#d6c99f] dark:bg-[#594b27] dark:text-[#f3e6c4]"
+    };
+
+    const setUserCoordinates = (latitude, longitude) => {
+      userCoordinates = {latitude, longitude};
+      events.forEach((event) => {
+        if (event.latitude === null || event.longitude === null) {
+          event.distance = null;
+          return;
+        }
+        const toRadians = (degrees) => degrees * Math.PI / 180;
+        const latitudeDelta = toRadians(event.latitude - latitude);
+        const longitudeDelta = toRadians(event.longitude - longitude);
+        const haversine = Math.sin(latitudeDelta / 2) ** 2
+          + Math.cos(toRadians(latitude)) * Math.cos(toRadians(event.latitude))
+          * Math.sin(longitudeDelta / 2) ** 2;
+        event.distance = 6371 * 2 * Math.asin(Math.sqrt(Math.min(1, haversine)));
+      });
+    };
+
+    const geocodeLocation = async (location) => {
+      const query = location.trim();
+      if (!query) throw new Error("Masukkan kota atau alamat untuk mencari lokasi.");
+      if (!geocodeCache.has(query.toLocaleLowerCase("id"))) {
+        const url = new URL("https://nominatim.openstreetmap.org/search");
+        url.search = new URLSearchParams({
+          q: query,
+          format: "jsonv2",
+          limit: "1",
+          countrycodes: "id"
+        }).toString();
+        const result = fetch(url).then(async (response) => {
+          if (!response.ok) throw new Error("Layanan lokasi OpenStreetMap tidak dapat diakses.");
+          const matches = await response.json();
+          if (!Array.isArray(matches) || !matches.length) {
+            throw new Error("Lokasi tidak ditemukan. Coba masukkan nama kota atau alamat yang lebih lengkap.");
+          }
+          const latitude = Number(matches[0].lat);
+          const longitude = Number(matches[0].lon);
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+            throw new Error("Koordinat lokasi tidak valid.");
+          }
+          return {latitude, longitude};
+        }).catch((error) => {
+          geocodeCache.delete(query.toLocaleLowerCase("id"));
+          throw error;
+        });
+        geocodeCache.set(query.toLocaleLowerCase("id"), result);
+      }
+      return geocodeCache.get(query.toLocaleLowerCase("id"));
+    };
+
+    const fitToEventLocations = () => {
+      const eventCoordinates = events
+        .filter((event) => event.latitude !== null && event.longitude !== null)
+        .map((event) => [event.latitude, event.longitude]);
+      if (eventCoordinates.length) map.fitBounds(eventCoordinates, {padding: [24, 24]});
     };
 
     const eventMarkup = (event) => `
@@ -196,11 +265,11 @@
         </div>
         <div class="min-w-0">
           <span class="inline-block max-w-full overflow-hidden border border-[#465540] ${tagColors[event.type] || "bg-[#9ab18c]"} px-[5px] py-[3px] text-ellipsis whitespace-nowrap text-[7px] font-black leading-none">${escapeHtml(event.tag)}</span>
-          <h3 class="my-1 overflow-hidden text-ellipsis whitespace-nowrap text-[11px] font-extrabold">${escapeHtml(event.name)}</h3>
+          <h3 class="my-1 overflow-hidden text-ellipsis whitespace-nowrap text-[11px] font-extrabold"><a class="text-inherit no-underline hover:underline" href="${event.detail_url ? escapeHtml(event.detail_url) : "#"}">${escapeHtml(event.name)}</a></h3>
           <p class="m-0 text-[8px] text-[#695b3d] dark:text-[#c2b58e]">${escapeHtml(event.location)} · ${escapeHtml(event.time)}</p>
         </div>
-        <span class="col-start-3 row-start-1 self-start whitespace-nowrap pt-[5px] text-[8px]">${event.distance.toLocaleString("id-ID", {maximumFractionDigits: 1})} km</span>
-        <button class="col-start-3 row-start-1 mt-[17px] cursor-pointer whitespace-nowrap border-2 border-[#17140e] px-[7px] py-1.5 text-[8px] font-extrabold hover:bg-[#f8df83] dark:border-[#d6c99f] dark:hover:bg-[#344534]" type="button" data-save-id="${event.id}" aria-label="Simpan ${escapeHtml(event.name)}">${savedEvents.has(event.id) ? "✓ Tersimpan" : "♧ Simpan"}</button>
+        <span class="col-start-3 row-start-1 self-start whitespace-nowrap pt-[5px] text-[8px]">${event.distance === null ? "—" : `${event.distance.toLocaleString("id-ID", {maximumFractionDigits: 1})} km`}</span>
+        <button class="col-start-3 row-start-1 mt-[17px] cursor-pointer whitespace-nowrap border-2 border-[#17140e] px-[7px] py-1.5 text-[8px] font-extrabold hover:bg-[#f8df83] dark:border-[#d6c99f] dark:hover:bg-[#344534]" type="button" data-save-id="${event.id}" aria-label="Simpan ${escapeHtml(event.name)}">${savedEvents.has(String(event.id)) ? "✓ Tersimpan" : "♧ Simpan"}</button>
       </article>`;
 
     const renderRecommendations = () => {
@@ -216,15 +285,14 @@
             <h3 class="mb-0 mt-1.5 text-xs font-extrabold">${escapeHtml(event.name)}</h3>
             <p class="m-0 text-[9px] text-[#695b3d] dark:text-[#c2b58e]">${escapeHtml(event.location)}</p>
             <div class="mt-3 flex items-end justify-between gap-2 text-[8px] font-extrabold">
-              <span>${escapeHtml(event.time)}<small class="mt-[3px] block text-[8px] font-medium text-[#695b3d] dark:text-[#c2b58e]">${event.distance.toLocaleString("id-ID", {maximumFractionDigits: 1})} km dari lokasi</small></span>
-              <a class="border-2 border-[#17140e] px-3 py-1.5 text-inherit no-underline hover:bg-[#f8df83] dark:border-[#d6c99f] dark:hover:bg-[#344534]" href="https://www.openstreetmap.org/?mlat=${event.latitude}&amp;mlon=${event.longitude}#map=16/${event.latitude}/${event.longitude}" target="_blank" rel="noopener noreferrer">Detail</a>
+              <span>${escapeHtml(event.time)}<small class="mt-[3px] block text-[8px] font-medium text-[#695b3d] dark:text-[#c2b58e]">${event.distance === null ? "Jarak belum tersedia" : `${event.distance.toLocaleString("id-ID", {maximumFractionDigits: 1})} km dari lokasi`}</small></span>
+              <a class="border-2 border-[#17140e] px-3 py-1.5 text-inherit no-underline hover:bg-[#f8df83] dark:border-[#d6c99f] dark:hover:bg-[#344534]" href="${event.detail_url ? escapeHtml(event.detail_url) : `https://www.openstreetmap.org/?mlat=${event.latitude}&amp;mlon=${event.longitude}#map=16/${event.latitude}/${event.longitude}`}" ${event.detail_url ? "" : 'target="_blank" rel="noopener noreferrer"'}>Detail</a>
             </div>
           </div>
         </article>`).join("");
     };
 
     const renderEvents = () => {
-      const city = document.getElementById("city-filter").value.trim().toLocaleLowerCase("id");
       const type = document.getElementById("type-filter").value;
       const category = document.getElementById("category-filter").value;
       const maxDistance = Number(document.getElementById("distance-filter").value);
@@ -236,15 +304,14 @@
       activeEvents = events.filter((event) => {
         const eventDate = new Date(`${event.date}T00:00:00`);
         const daysAway = Math.ceil((eventDate - today) / 86400000);
-        return (!city || event.location.toLocaleLowerCase("id").includes(city.split(",")[0]))
-          && (type === "all" || event.type === type)
+        return (type === "all" || event.type === type)
           && (category === "all" || event.category === category)
-          && event.distance <= maxDistance
+          && (!userCoordinates || event.distance === null || event.distance <= maxDistance)
           && (dateRange === "all" || (dateRange === "week" && daysAway <= 7 && daysAway >= 0)
             || (dateRange === "month" && daysAway <= 30 && daysAway >= 0));
       }).sort((a, b) => sortBy === "date"
         ? a.date.localeCompare(b.date)
-        : a.distance - b.distance);
+        : (a.distance ?? Number.POSITIVE_INFINITY) - (b.distance ?? Number.POSITIVE_INFINITY));
 
       resultsCount.textContent = `${activeEvents.length} event ditemukan · menampilkan ${activeEvents.length} terdekat`;
       document.getElementById("distance-caption").textContent = `≤ ${maxDistance} km`;
@@ -254,6 +321,7 @@
 
       markerLayer.clearLayers();
       activeEvents.forEach((event, index) => {
+        if (event.latitude === null || event.longitude === null) return;
         const marker = L.marker([event.latitude, event.longitude], {
           icon: L.divIcon({
             className: "border-0 bg-transparent",
@@ -266,33 +334,62 @@
       });
     };
 
-    document.getElementById("event-filters").addEventListener("submit", (event) => {
+    document.getElementById("event-filters").addEventListener("submit", async (event) => {
       event.preventDefault();
+      const location = document.getElementById("city-filter").value.trim();
+      const status = document.getElementById("map-tile-status");
+      if (location && !usingDeviceLocation) {
+        try {
+          const coordinates = await geocodeLocation(location);
+          setUserCoordinates(coordinates.latitude, coordinates.longitude);
+          map.setView([coordinates.latitude, coordinates.longitude], 12);
+          document.getElementById("location-heading").textContent = location;
+          status.hidden = true;
+        } catch (error) {
+          status.textContent = error.message;
+          status.hidden = false;
+        }
+      } else if (!usingDeviceLocation) {
+        userCoordinates = null;
+        events.forEach((entry) => { entry.distance = null; });
+        document.getElementById("location-heading").textContent = "lokasimu";
+        fitToEventLocations();
+      }
       renderEvents();
+    });
+    document.getElementById("city-filter").addEventListener("input", () => {
+      usingDeviceLocation = false;
     });
     ["date-filter", "type-filter", "category-filter", "distance-filter", "sort-filter"].forEach((id) => {
       document.getElementById(id).addEventListener("change", renderEvents);
     });
     document.getElementById("use-location-button").addEventListener("click", () => {
       if (!navigator.geolocation) {
-        document.getElementById("city-filter").value = "Bandung, Jawa Barat";
-        renderEvents();
+        mapTileStatus.textContent = "Browser ini tidak mendukung akses lokasi.";
+        mapTileStatus.hidden = false;
         return;
       }
       navigator.geolocation.getCurrentPosition(({coords}) => {
+        setUserCoordinates(coords.latitude, coords.longitude);
         map.setView([coords.latitude, coords.longitude], 13);
-        document.getElementById("city-filter").value = "Bandung, Jawa Barat";
+        document.getElementById("city-filter").value = "";
+        usingDeviceLocation = true;
+        document.getElementById("location-heading").textContent = "lokasimu saat ini";
+        mapTileStatus.hidden = true;
         renderEvents();
-      }, () => {
-        document.getElementById("city-filter").value = "Bandung, Jawa Barat";
-        renderEvents();
+      }, (error) => {
+        mapTileStatus.textContent = error.code === error.PERMISSION_DENIED
+          ? "Izin lokasi ditolak. Masukkan kota atau alamat secara manual."
+          : "Lokasi perangkat tidak dapat ditemukan. Coba masukkan lokasi secara manual.";
+        mapTileStatus.hidden = false;
       });
     });
     eventList.addEventListener("click", (event) => {
+      if (event.target.closest("a")) return;
       const saveButton = event.target.closest("[data-save-id]");
       if (saveButton) {
         {% if user.is_authenticated %}
-        const id = Number(saveButton.dataset.saveId);
+        const id = saveButton.dataset.saveId;
         savedEvents.has(id) ? savedEvents.delete(id) : savedEvents.add(id);
         localStorage.setItem("thriftio-saved-events", JSON.stringify([...savedEvents]));
         renderEvents();
@@ -303,8 +400,10 @@
       }
       const item = event.target.closest("[data-event-id]");
       if (item) {
-        const selected = activeEvents.find((entry) => entry.id === Number(item.dataset.eventId));
-        if (selected) map.setView([selected.latitude, selected.longitude], 15);
+        const selected = activeEvents.find((entry) => String(entry.id) === item.dataset.eventId);
+        if (selected && selected.latitude !== null && selected.longitude !== null) {
+          map.setView([selected.latitude, selected.longitude], 15);
+        }
       }
     });
 
@@ -329,6 +428,21 @@
     };
     mapViewButton.addEventListener("click", () => setView("map"));
     listViewButton.addEventListener("click", () => setView("list"));
+
+    const initialLocation = document.getElementById("city-filter").value.trim();
+    if (initialLocation) {
+      geocodeLocation(initialLocation).then((coordinates) => {
+        setUserCoordinates(coordinates.latitude, coordinates.longitude);
+        map.setView([coordinates.latitude, coordinates.longitude], 12);
+        renderEvents();
+      }).catch((error) => {
+        mapTileStatus.textContent = error.message;
+        mapTileStatus.hidden = false;
+        fitToEventLocations();
+      });
+    } else {
+      fitToEventLocations();
+    }
 
     renderRecommendations();
     renderEvents();

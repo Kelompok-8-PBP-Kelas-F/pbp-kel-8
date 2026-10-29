@@ -1,5 +1,6 @@
 import math
 import uuid
+from decimal import Decimal
 
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -22,9 +23,33 @@ class Event(models.Model):
     )
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     desc = models.TextField()
+    rules = models.TextField(blank=True)
+    preparation_notes = models.TextField(blank=True)
     date = models.DateField()
     time = models.TimeField(max_length=20)
+    end_time = models.TimeField(null=True, blank=True)
     location = models.CharField(max_length=200)
+    cover_image = models.ImageField(
+        upload_to="events/covers/",
+        null=True,
+        blank=True,
+    )
+    registration_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        validators=[MinValueValidator(Decimal("0.00"))],
+    )
+    max_attendees = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(1)],
+    )
+    attendees = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="attending_events",
+        blank=True,
+    )
     latitude = models.DecimalField(
         max_digits=9,
         decimal_places=6,

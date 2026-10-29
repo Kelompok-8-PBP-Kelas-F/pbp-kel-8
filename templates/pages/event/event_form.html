@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>{% if is_edit %}Edit{% else %}Buat{% endif %} event - Thrift.io</title>
+<meta name="description" content="{% if is_edit %}Perbarui informasi event komunitas.{% else %}Buat event komunitas fashion sirkular.{% endif %}">
+{% endblock meta %}
+
+{% block content %}
+<main class="min-h-screen bg-[#f2c14e] px-4 py-8 font-main text-[#17140e] dark:bg-[#151a15] dark:text-[#f3e6c4] sm:px-6">
+  <div class="mx-auto max-w-5xl">
+    <nav class="mb-5 text-xs font-semibold">
+      <a class="text-inherit no-underline hover:underline" href="{% url 'event:event_page' %}">← Event</a>
+      {% if is_edit %}
+        <span class="mx-1">/</span>
+        <a class="text-inherit no-underline hover:underline" href="{% url 'event:event_detail' event.pk %}">{{ event.name }}</a>
+      {% endif %}
+    </nav>
+    <header class="mb-6">
+      <p class="mb-1 text-[10px] font-extrabold uppercase tracking-widest text-[#695b3d] dark:text-[#c2b58e]">Event komunitas</p>
+      <h1 class="font-heading text-3xl font-extrabold">{% if is_edit %}Edit event{% else %}Buat event baru{% endif %}</h1>
+      <p class="mt-2 max-w-2xl text-sm text-[#695b3d] dark:text-[#c2b58e]">Lengkapi detail acara. Koordinat lokasi akan dicari otomatis melalui OpenStreetMap.</p>
+    </header>
+    {% if is_edit %}
+      {% include "pages/event/components/event_edit.html" %}
+    {% else %}
+      {% include "pages/event/components/event_create.html" %}
+    {% endif %}
+  </div>
+</main>
+{% endblock content %}

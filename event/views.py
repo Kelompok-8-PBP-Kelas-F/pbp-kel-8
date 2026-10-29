@@ -1,109 +1,209 @@
-from datetime import date, timedelta
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.views.decorators.http import require_http_methods, require_POST
 
-from django.shortcuts import render
+from .forms import EventForm
+from .models import Event
+
+
+INDONESIAN_WEEKDAYS = (
+    "Senin",
+    "Selasa",
+    "Rabu",
+    "Kamis",
+    "Jumat",
+    "Sabtu",
+    "Minggu",
+)
+INDONESIAN_MONTHS = (
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "Mei",
+    "Jun",
+    "Jul",
+    "Agu",
+    "Sep",
+    "Okt",
+    "Nov",
+    "Des",
+)
 
 
 def event_page(request):
-    today = date.today()
-    # placeholder data for events, in a real application this would come from a database using the Event model
-    events = [
+    events = []
+    for event in Event.objects.select_related("organizer").order_by("date", "time"):
+        if event.category == "Thrift/Bazaar":
+            event_type = "Bazar"
+            category = "Bazar thrift"
+            tag = "THRIFT / BAZAAR"
+        else:
+            event_type = event.category
+            category = "Fashion sirkular" if event_type == "Swap" else event_type
+            tag = event_type.upper()
+
+        events.append(
+            {
+                "id": str(event.pk),
+                "name": event.name,
+                "tag": tag,
+                "category": category,
+                "type": event_type,
+                "date": event.date.isoformat(),
+                "time": event.time.strftime("%H.%M")
+                + (f"–{event.end_time.strftime('%H.%M')}" if event.end_time else ""),
+                "location": event.location,
+                "distance": None,
+                "latitude": float(event.latitude) if event.latitude is not None else None,
+                "longitude": float(event.longitude) if event.longitude is not None else None,
+                "description": event.desc,
+                "detail_url": reverse("event:event_detail", args=[event.pk]),
+            }
+        )
+
+    user_location = ""
+    if request.user.is_authenticated:
+        profile = getattr(request.user, "profile", None)
+        if profile:
+            user_location = profile.location
+
+    return render(
+        request,
+        "pages/event/event.html",
+        {"events": events, "user_location": user_location},
+    )
+
+
+def event_detail(request, event_id):
+    event = get_object_or_404(
+        Event.objects.select_related("organizer").prefetch_related("attendees"),
+        pk=event_id,
+    )
+    attendee_count = event.attendees.count()
+    is_attending = (
+        request.user.is_authenticated
+        and event.attendees.filter(pk=request.user.pk).exists()
+    )
+    can_manage = (
+        request.user.is_authenticated and event.organizer_id == request.user.pk
+    )
+    event_date_label = (
+        f"{INDONESIAN_WEEKDAYS[event.date.weekday()]}, "
+        f"{event.date.day:02d} {INDONESIAN_MONTHS[event.date.month - 1]} "
+        f"{event.date.year}"
+    )
+    event_time_label = event.time.strftime("%H.%M")
+    if event.end_time:
+        event_time_label += f"–{event.end_time.strftime('%H.%M')}"
+    event_time_label += " WIB"
+
+    return render(
+        request,
+        "pages/event/eventdetails.html",
         {
-            "id": 1,
-            "name": "Pasar Tukar Pakaian Bandung",
-            "tag": "SWAP",
-            "category": "Fashion sirkular",
-            "type": "Swap",
-            "date": (today + timedelta(days=12)).isoformat(),
-            "time": "10.00–17.00",
-            "location": "Gedung Sate · Bandung",
-            "distance": 2.4,
-            "latitude": -6.9025,
-            "longitude": 107.6188,
-            "description": "Bawa pakaian layak pakai dan temukan koleksi baru dari komunitas lokal.",
+            "event": event,
+            "attendee_count": attendee_count,
+            "is_attending": is_attending,
+            "can_manage": can_manage,
+            "is_full": (
+                event.max_attendees is not None
+                and attendee_count >= event.max_attendees
+                and not is_attending
+            ),
+            "event_date_label": event_date_label,
+            "event_time_label": event_time_label,
         },
-        {
-            "id": 2,
-            "name": "Kelas Reparasi Denim Dasar",
-            "tag": "WORKSHOP",
-            "category": "Workshop",
-            "type": "Workshop",
-            "date": (today + timedelta(days=19)).isoformat(),
-            "time": "13.00–15.30",
-            "location": "Ruang Bersama · Dago",
-            "distance": 4.8,
-            "latitude": -6.8875,
-            "longitude": 107.6137,
-            "description": "Belajar memperbaiki denim favorit bersama perajin lokal.",
-        },
-        {
-            "id": 3,
-            "name": "Thrift Walk Buahbatu",
-            "tag": "THRIFT / BAZAAR",
-            "category": "Bazar thrift",
-            "type": "Bazar",
-            "date": (today + timedelta(days=26)).isoformat(),
-            "time": "09.00–12.00",
-            "location": "Bik K Mum · Buahbatu",
-            "distance": 8.2,
-            "latitude": -6.9517,
-            "longitude": 107.6302,
-            "description": "Jelajahi lapak thrift pilihan dan dukung penjual independen.",
-        },
-        {
-            "id": 4,
-            "name": "Mending Circle Cihapit",
-            "tag": "WORKSHOP",
-            "category": "Workshop",
-            "type": "Workshop",
-            "date": (today + timedelta(days=33)).isoformat(),
-            "time": "14.00–16.00",
-            "location": "Balai Warga Cihapit · Bandung",
-            "distance": 11.6,
-            "latitude": -6.9087,
-            "longitude": 107.6268,
-            "description": "Sesi santai memperbaiki dan memperpanjang usia pakaian.",
-        },
-        {
-            "id": 5,
-            "name": "Lokakarya Pewarna Alami",
-            "tag": "WORKSHOP",
-            "category": "Workshop",
-            "type": "Workshop",
-            "date": (today + timedelta(days=9)).isoformat(),
-            "time": "10.00–14.00",
-            "location": "Studio Tekstil Braga · Bandung",
-            "distance": 3.1,
-            "latitude": -6.9175,
-            "longitude": 107.6094,
-            "description": "Eksplorasi warna alami untuk memperbarui pakaian lama.",
-        },
-        {
-            "id": 6,
-            "name": "Bazaar Lemari Komunitas",
-            "tag": "THRIFT / BAZAAR",
-            "category": "Bazar thrift",
-            "type": "Bazar",
-            "date": (today + timedelta(days=16)).isoformat(),
-            "time": "08.00–16.00",
-            "location": "Taman Film · Bandung",
-            "distance": 5.7,
-            "latitude": -6.8976,
-            "longitude": 107.6084,
-            "description": "Bazar pakaian preloved pilihan dari warga Bandung.",
-        },
-        {
-            "id": 7,
-            "name": "Tukar Baju Anak Akhir Pekan",
-            "tag": "SWAP",
-            "category": "Fashion sirkular",
-            "type": "Swap",
-            "date": (today + timedelta(days=23)).isoformat(),
-            "time": "09.30–13.00",
-            "location": "Ruang Serbaguna · Cimahi",
-            "distance": 9.3,
-            "latitude": -6.8722,
-            "longitude": 107.5421,
-            "description": "Tukar pakaian anak yang masih layak pakai bersama keluarga lain.",
-        },
-    ]
-    return render(request, "pages/event/event.html", {"events": events})
+    )
+
+
+@login_required
+def event_create(request):
+    form = EventForm(
+        request.POST if request.method == "POST" else None,
+        request.FILES if request.method == "POST" else None,
+    )
+    if request.method == "POST" and form.is_valid():
+        event = form.save(commit=False)
+        event.organizer = request.user
+        event.save()
+        messages.success(request, "Event berhasil dibuat.")
+        return redirect("event:event_detail", event_id=event.pk)
+
+    return render(
+        request,
+        "pages/event/event_form.html",
+        {"form": form, "is_edit": False},
+    )
+
+
+@login_required
+def event_edit(request, event_id):
+    event = get_object_or_404(Event, pk=event_id, organizer=request.user)
+    form = EventForm(
+        request.POST if request.method == "POST" else None,
+        request.FILES if request.method == "POST" else None,
+        instance=event,
+    )
+    if request.method == "POST" and form.is_valid():
+        event = form.save()
+        messages.success(request, "Perubahan event berhasil disimpan.")
+        return redirect("event:event_detail", event_id=event.pk)
+
+    return render(
+        request,
+        "pages/event/event_form.html",
+        {"form": form, "event": event, "is_edit": True},
+    )
+
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def event_delete(request, event_id):
+    event = get_object_or_404(Event, pk=event_id, organizer=request.user)
+    if request.method == "POST":
+        event_name = event.name
+        event.delete()
+        messages.success(request, f'Event "{event_name}" berhasil dihapus.')
+        return redirect("event:event_page")
+
+    return render(
+        request,
+        "pages/event/event_delete.html",
+        {"event": event},
+    )
+
+
+@login_required
+@require_POST
+def register_for_event(request, event_id):
+    action = request.POST.get("action", "join")
+    if action not in {"join", "leave"}:
+        messages.error(request, "Permintaan pendaftaran tidak valid.")
+        return redirect("event:event_detail", event_id=event_id)
+
+    with transaction.atomic():
+        event = get_object_or_404(Event.objects.select_for_update(), pk=event_id)
+        already_attending = event.attendees.filter(pk=request.user.pk).exists()
+
+        if action == "leave":
+            if already_attending:
+                event.attendees.remove(request.user)
+                messages.success(request, "Pendaftaran event berhasil dibatalkan.")
+            else:
+                messages.info(request, "Kamu belum terdaftar pada event ini.")
+        elif already_attending:
+            messages.info(request, "Kamu sudah terdaftar pada event ini.")
+        elif (
+            event.max_attendees is not None
+            and event.attendees.count() >= event.max_attendees
+        ):
+            messages.error(request, "Maaf, kuota event ini sudah penuh.")
+        else:
+            event.attendees.add(request.user)
+            messages.success(request, "Kamu berhasil terdaftar pada event ini.")
+
+    return redirect("event:event_detail", event_id=event_id)

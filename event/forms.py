@@ -44,7 +44,20 @@ def _geocode_location(location):
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ("name", "category", "desc", "date", "time", "location")
+        fields = (
+            "name",
+            "category",
+            "desc",
+            "rules",
+            "preparation_notes",
+            "date",
+            "time",
+            "end_time",
+            "location",
+            "cover_image",
+            "registration_fee",
+            "max_attendees",
+        )
         widgets = {
             "name": forms.TextInput(attrs={
                 "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
@@ -58,6 +71,16 @@ class EventForm(forms.ModelForm):
                 "rows": 4,
                 "placeholder": "Deskripsi event",
             }),
+            "rules": forms.Textarea(attrs={
+                "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
+                "rows": 4,
+                "placeholder": "Satu aturan per baris",
+            }),
+            "preparation_notes": forms.Textarea(attrs={
+                "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
+                "rows": 3,
+                "placeholder": "Contoh: bawa tas belanja sendiri",
+            }),
             "date": forms.DateInput(attrs={
                 "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
                 "type": "date",
@@ -66,15 +89,34 @@ class EventForm(forms.ModelForm):
                 "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
                 "type": "time",
             }),
+            "end_time": forms.TimeInput(attrs={
+                "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
+                "type": "time",
+            }),
             "location": forms.TextInput(attrs={
                 "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
                 "placeholder": "Contoh: Gedung Sate, Bandung",
                 "autocomplete": "street-address",
             }),
+            "cover_image": forms.ClearableFileInput(attrs={
+                "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
+                "accept": "image/*",
+            }),
+            "registration_fee": forms.NumberInput(attrs={
+                "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
+                "min": "0",
+                "step": "1000",
+            }),
+            "max_attendees": forms.NumberInput(attrs={
+                "class": "w-full border-2 border-line bg-surface p-2.5 text-foreground",
+                "min": "1",
+                "placeholder": "Kosongkan jika tanpa batas",
+            }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["registration_fee"].initial = self.instance.registration_fee
         self.fields["location"].help_text = (
             "Latitude dan longitude akan dicari otomatis dari OpenStreetMap."
         )
