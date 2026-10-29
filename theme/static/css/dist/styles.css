@@ -2092,6 +2092,9 @@
   .m-0 {
     margin: 0px;
   }
+  .m-auto {
+    margin: auto;
+  }
   .mx-auto {
     margin-inline: auto;
   }
@@ -2210,6 +2213,9 @@
   }
   .mt-1 {
     margin-top: var(--spacing);
+  }
+  .mt-1\.5 {
+    margin-top: calc(var(--spacing) * 1.5);
   }
   .mt-2 {
     margin-top: calc(var(--spacing) * 2);
@@ -2415,6 +2421,9 @@
   .aspect-\[4\/5\] {
     aspect-ratio: 4/5;
   }
+  .aspect-\[16\/9\] {
+    aspect-ratio: 16/9;
+  }
   .aspect-\[16\/10\] {
     aspect-ratio: 16/10;
   }
@@ -2618,6 +2627,9 @@
   }
   .w-72 {
     width: calc(var(--spacing) * 72);
+  }
+  .w-\[calc\(100\%-2rem\)\] {
+    width: calc(100% - 2rem);
   }
   .w-auto {
     width: auto;
@@ -2857,6 +2869,16 @@
   }
   .gap-y-3 {
     row-gap: calc(var(--spacing) * 3);
+  }
+  :where(.divide-y-2 > :not(:last-child)) {
+    --tw-divide-y-reverse: 0;
+    border-bottom-style: var(--tw-border-style);
+    border-top-style: var(--tw-border-style);
+    border-top-width: calc(2px * var(--tw-divide-y-reverse));
+    border-bottom-width: calc(2px * calc(1 - var(--tw-divide-y-reverse)));
+  }
+  :where(.divide-line > :not(:last-child)) {
+    border-color: var(--line);
   }
   .self-start {
     align-self: flex-start;
@@ -3667,6 +3689,9 @@
   .underline {
     text-decoration-line: underline;
   }
+  .underline-offset-4 {
+    text-underline-offset: 4px;
+  }
   .accent-\[\#E2652B\] {
     accent-color: #E2652B;
   }
@@ -3728,6 +3753,10 @@
   }
   .shadow-\[5px_5px_0_var\(--shadow-color\)\] {
     --tw-shadow: 5px 5px 0 var(--tw-shadow-color, var(--shadow-color));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .shadow-\[6px_6px_0_var\(--shadow-color\)\] {
+    --tw-shadow: 6px 6px 0 var(--tw-shadow-color, var(--shadow-color));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
   .shadow-\[6px_6px_0px_rgba\(0\,0\,0\,1\)\] {
@@ -3863,6 +3892,17 @@
       color: color-mix(in oklab, var(--muted) 60%, transparent);
     }
   }
+  .backdrop\:bg-black\/60::backdrop {
+    background-color: color-mix(in srgb, #000 60%, transparent);
+  }
+  @supports (color: color-mix(in lab, red, red)) {
+    .backdrop\:bg-black\/60::backdrop {
+      background-color: color-mix(in oklab, var(--color-black) 60%, transparent);
+    }
+  }
+  .first\:pt-0:first-child {
+    padding-top: 0px;
+  }
   .last\:border-b-0:last-child {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 0px;
@@ -3981,6 +4021,17 @@
   .focus\:ring-0:focus {
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .focus\:ring-2:focus {
+    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .focus\:ring-accent:focus {
+    --tw-ring-color: var(--accent);
+  }
+  .focus\:ring-offset-2:focus {
+    --tw-ring-offset-width: 2px;
+    --tw-ring-offset-shadow: var(--tw-ring-inset,) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   }
   .focus\:outline-none:focus {
     --tw-outline-style: none;
@@ -4182,6 +4233,9 @@
     }
     .sm\:p-5 {
       padding: calc(var(--spacing) * 5);
+    }
+    .sm\:p-7 {
+      padding: calc(var(--spacing) * 7);
     }
     .sm\:p-8 {
       padding: calc(var(--spacing) * 8);
@@ -4902,6 +4956,11 @@
   inherits: false;
   initial-value: 0;
 }
+@property --tw-divide-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
 @property --tw-border-style {
   syntax: "*";
   inherits: false;
@@ -5101,6 +5160,7 @@
       --tw-scale-y: 1;
       --tw-scale-z: 1;
       --tw-space-y-reverse: 0;
+      --tw-divide-y-reverse: 0;
       --tw-border-style: solid;
       --tw-leading: initial;
       --tw-font-weight: initial;
