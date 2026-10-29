@@ -31,14 +31,14 @@
         <!-- Event -->
         <li>
             {% if app == 'event' or '/event' in path %}
-                <a href="#"
+                <a href="{% url 'event:event_page' %}"
                    aria-current="page"
                    class="group relative inline-flex items-center py-1 font-bold text-foreground">
                     <span>Event</span>
                     <span class="absolute -bottom-1 left-0 h-[2.5px] w-full bg-foreground rounded-full transition-all duration-200" aria-hidden="true"></span>
                 </a>
             {% else %}
-                <a href="#"
+                <a href="{% url 'event:event_page' %}"
                    class="group relative inline-flex items-center py-1 font-medium text-foreground/60 transition-colors duration-150 hover:text-foreground">
                     <span>Event</span>
                     <span class="absolute -bottom-1 left-0 h-[2.5px] w-0 bg-foreground rounded-full transition-all duration-200 ease-out group-hover:w-full" aria-hidden="true"></span>
@@ -85,14 +85,14 @@
         <!-- Outfit Builder -->
         <li>
             {% if app == 'outfit' or '/outfit' in path %}
-                <a href="#"
+                <a href="{% url 'outfitbuilder:ob_page' %}"
                    aria-current="page"
                    class="group relative inline-flex items-center py-1 font-bold text-foreground">
                     <span>Outfit Builder</span>
                     <span class="absolute -bottom-1 left-0 h-[2.5px] w-full bg-foreground rounded-full transition-all duration-200" aria-hidden="true"></span>
                 </a>
             {% else %}
-                <a href="#"
+                <a href="{% url 'outfitbuilder:ob_page' %}"
                    class="group relative inline-flex items-center py-1 font-medium text-foreground/60 transition-colors duration-150 hover:text-foreground">
                     <span>Outfit Builder</span>
                     <span class="absolute -bottom-1 left-0 h-[2.5px] w-0 bg-foreground rounded-full transition-all duration-200 ease-out group-hover:w-full" aria-hidden="true"></span>

@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include("user.urls")),
     path('', include('marketplace.urls')),
     path('', include('outfitbuilder.urls')),
+    path('', include('event.urls')),
 ]
 
 if settings.DEBUG:

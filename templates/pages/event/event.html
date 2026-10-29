@@ -1,1 +1,337 @@
 {% extends 'base.html' %}
+
+{% block meta %}
+<title>Event fashion di sekitarmu - Thrift.io</title>
+<meta name="description" content="Temukan bazar thrift, workshop, dan acara fashion sirkular di sekitarmu.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+{% endblock meta %}
+
+{% block content %}
+<main class="bg-[#fbf2da] font-main text-[#17140e] dark:bg-[#151a15] dark:text-[#f3e6c4]">
+  <section class="border-b-2 border-[#17140e] bg-[#f2c14e] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 dark:border-[#d6c99f] dark:bg-[#0f2a20]">
+    <div class="mx-auto max-w-[1180px]">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+        <div>
+          <p class="mb-1.5 text-[10px] font-extrabold tracking-[.08em] dark:text-[#f7d26a]">EVENT / JELAJAH AGENDA LOKAL</p>
+          <h1 class="font-heading text-[clamp(30px,4vw,44px)] font-extrabold leading-[1.05] tracking-[-.035em]">Event fashion di sekitarmu</h1>
+        </div>
+        <p class="mb-0.5 max-w-[355px] text-[13px] leading-relaxed">Temukan swap, workshop reparasi, dan bazaar thrift berdasarkan lokasi. Guest dapat melihat agenda tanpa akun.</p>
+      </div>
+
+      <form class="mt-5 grid grid-cols-2 gap-1.5 border-2 border-[#17140e] bg-[#fbf2da] p-2 shadow-[3px_3px_0_#17140e] sm:gap-2 lg:grid-cols-[repeat(4,minmax(0,1fr))_auto] dark:border-[#d6c99f] dark:bg-[#242c24] dark:shadow-[3px_3px_0_#080b09]" id="event-filters">
+        <label class="col-span-2 flex min-h-[38px] min-w-0 items-center gap-2.5 border border-[#bcae8c] bg-[#f8e9b9] px-2.5 lg:col-span-4 dark:border-[#596454] dark:bg-[#202820]">
+          <span class="text-xl" aria-hidden="true">⌖</span>
+          <input class="min-w-0 flex-1 border-0 bg-transparent text-xs text-[#17140e] outline-none dark:text-[#f3e6c4]" id="city-filter" type="search" value="Bandung, Jawa Barat" aria-label="Lokasi">
+          <button class="shrink-0 cursor-pointer bg-transparent text-[9px] font-bold underline" type="button" id="use-location-button">Gunakan lokasi saya</button>
+        </label>
+        <button class="min-h-[38px] cursor-pointer border border-[#17140e] bg-[#d95a2b] px-3 text-[11px] font-extrabold text-white lg:col-start-5 lg:row-start-1 dark:border-[#d6c99f] dark:bg-[#f08a53] dark:text-[#151a15]" type="submit">Cari event</button>
+
+        <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
+          <span class="row-span-2 text-sm" aria-hidden="true">▦</span>
+          <span class="overflow-hidden text-[8px] font-extrabold">TANGGAL</span>
+          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="date-filter" aria-label="Filter tanggal">
+            <option value="all">Semua tanggal</option>
+            <option value="week">7 hari ke depan</option>
+            <option value="month">30 hari ke depan</option>
+          </select>
+        </label>
+        <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
+          <span class="row-span-2 text-sm" aria-hidden="true">⚒</span>
+          <span class="overflow-hidden text-[8px] font-extrabold">TIPE ACARA</span>
+          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="type-filter" aria-label="Filter tipe acara">
+            <option value="all">Semua tipe</option>
+            <option value="Swap">Swap</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Bazar">Bazar</option>
+          </select>
+        </label>
+        <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
+          <span class="row-span-2 text-sm" aria-hidden="true">◇</span>
+          <span class="overflow-hidden text-[8px] font-extrabold">KATEGORI</span>
+          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="category-filter" aria-label="Filter kategori">
+            <option value="all">Semua kategori</option>
+            <option value="Fashion sirkular">Fashion sirkular</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Bazar thrift">Bazar thrift</option>
+          </select>
+        </label>
+        <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
+          <span class="row-span-2 text-sm" aria-hidden="true">➤</span>
+          <span class="overflow-hidden text-[8px] font-extrabold">JARAK</span>
+          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="distance-filter" aria-label="Filter jarak">
+            <option value="25">Maks. 25 km</option>
+            <option value="5">Maks. 5 km</option>
+            <option value="10">Maks. 10 km</option>
+          </select>
+        </label>
+        <div class="col-span-2 flex items-stretch lg:col-span-1">
+          <button class="flex-1 cursor-pointer border border-[#17140e] bg-[#d95a2b] px-3 text-[11px] font-extrabold text-white dark:border-[#d6c99f] dark:bg-[#f08a53] dark:text-[#151a15]" id="map-view-button" type="button" aria-pressed="true">▧ Peta</button>
+          <button class="flex-1 cursor-pointer border-y border-r border-[#17140e] px-3 text-[11px] font-extrabold dark:border-[#d6c99f]" id="list-view-button" type="button" aria-pressed="false">☷ Daftar</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1228px] px-4 py-[18px] sm:px-6 lg:px-6" aria-labelledby="nearby-heading">
+    <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="font-heading text-xl font-extrabold tracking-[-.035em]" id="nearby-heading">Event terdekat dari Bandung</h2>
+        <p class="mt-[3px] text-[10px] text-[#695b3d] dark:text-[#c2b58e]" id="results-count" aria-live="polite"></p>
+      </div>
+      <span class="hidden text-[10px] text-[#695b3d] sm:inline dark:text-[#c2b58e]">Peta diperbarui sesuai filter</span>
+    </div>
+
+    <div class="grid h-auto grid-cols-1 gap-3 lg:h-[390px] lg:grid-cols-[minmax(0,1.45fr)_minmax(330px,1fr)]" id="event-explorer">
+      <div class="relative h-[310px] min-w-0 overflow-hidden border-2 border-[#17140e] bg-[#e8dfc7] lg:h-auto dark:border-[#d6c99f] dark:bg-[#242c24]">
+        <div class="z-[1] h-full w-full bg-[#e8dfc7] dark:bg-[#242c24]" id="event-map" aria-label="Peta OpenStreetMap event fashion di Bandung"></div>
+        <p class="absolute left-2.5 top-[45px] z-[400] m-0 max-w-[calc(100%-20px)] border border-[#17140e] bg-[#fbf2da] px-[9px] py-[7px] text-[10px] dark:border-[#d6c99f] dark:bg-[#242c24] dark:text-[#f3e6c4]" id="map-tile-status" role="status" hidden></p>
+        <span class="absolute left-2.5 top-2.5 z-[400] border border-[#17140e] bg-[#fbf2da] px-2 py-[5px] text-[8px] font-extrabold dark:border-[#d6c99f] dark:bg-[#242c24] dark:text-[#f3e6c4]">OPENSTREETMAP · BANDUNG</span>
+        <div class="absolute bottom-2.5 left-2.5 z-[400] flex items-center gap-1.5 border border-[#17140e] bg-[#fbf2da] px-2 py-[5px] text-[8px] dark:border-[#d6c99f] dark:bg-[#242c24] dark:text-[#f3e6c4]">
+          <span class="size-2 rounded-full bg-[#d95a2b] dark:bg-[#f08a53]"></span> Event lain
+        </div>
+      </div>
+      <aside class="flex min-h-[300px] min-w-0 flex-col overflow-hidden border-2 border-[#17140e] bg-[#fbf2da] dark:border-[#d6c99f] dark:bg-[#242c24]" aria-label="Daftar event terdekat">
+        <div class="mx-2 mt-2 flex min-h-[43px] shrink-0 items-center gap-1 border border-[#c9ab4e] bg-[#f8df83] px-[9px] text-[10px] font-extrabold dark:border-[#d6c99f] dark:bg-[#e7bc55] dark:text-[#151a15]">
+          <label for="sort-filter">Urutkan:</label>
+          <select class="w-full flex-1 cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#151a15]" id="sort-filter" aria-label="Urutkan event">
+            <option value="distance">Paling dekat</option>
+            <option value="date">Tanggal terdekat</option>
+          </select>
+          <span class="shrink-0 text-[9px] font-medium" id="distance-caption">≤ 25 km</span>
+        </div>
+        <div class="max-h-[320px] min-h-0 overflow-y-auto px-2.5 lg:max-h-none" id="event-list"></div>
+      </aside>
+    </div>
+
+    <div class="mt-2 flex flex-wrap items-start gap-[9px] border border-[#b9ad91] bg-[#f8e9b9] p-[9px_12px] text-[9px] sm:items-center dark:border-[#596454] dark:bg-[#202820]">
+      <span aria-hidden="true">◉</span>
+      <p class="m-0 flex-1 basis-[calc(100%-35px)] sm:basis-auto">Guest dapat melihat seluruh detail acara. Pengguna terdaftar dapat menyimpan event ke agenda pribadi.</p>
+      {% if not user.is_authenticated %}
+      <a class="ml-[25px] whitespace-nowrap font-extrabold text-inherit sm:ml-0" href="{% url 'user:login' %}?next={{ request.path }}">Masuk untuk menyimpan <span aria-hidden="true">→</span></a>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="border-t-2 border-[#17140e] bg-[#f2c14e] px-4 pb-[34px] pt-[18px] sm:px-6 lg:px-8 dark:border-[#d6c99f] dark:bg-[#0f2a20]">
+    <div class="mx-auto max-w-[1180px]">
+      <div class="mb-3.5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p class="mb-[3px] text-[8px] font-extrabold tracking-[.08em] dark:text-[#f7d26a]">AGENDA BERIKUTNYA</p>
+          <h2 class="font-heading text-xl font-extrabold tracking-[-.035em]" id="recommendations-heading">Event mendatang &amp; rekomendasi</h2>
+        </div>
+        <p class="m-0 max-w-[500px] text-[10px] leading-relaxed sm:max-w-[330px] dark:text-[#f3e6c4]">Pilihan agenda yang sesuai dengan lokasi, minat fashion sirkular, dan filter yang sedang aktif.</p>
+      </div>
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3" id="recommendation-list"></div>
+      <p class="mb-0 mt-[13px] text-[8px] text-[#695b3d] dark:text-[#c2b58e]">Rekomendasi diperbarui setiap minggu berdasarkan agenda komunitas.</p>
+    </div>
+  </section>
+</main>
+
+{{ events|json_script:"event-data" }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+  (() => {
+    const events = JSON.parse(document.getElementById("event-data").textContent);
+    const eventList = document.getElementById("event-list");
+    const resultsCount = document.getElementById("results-count");
+    const mapViewButton = document.getElementById("map-view-button");
+    const listViewButton = document.getElementById("list-view-button");
+    const explorer = document.getElementById("event-explorer");
+    const mapTileStatus = document.getElementById("map-tile-status");
+    const markerLayer = L.layerGroup();
+    const map = L.map("event-map", {scrollWheelZoom: false}).setView([-6.9147, 107.6098], 12);
+    map.getPane("tilePane").classList.add("dark:brightness-75", "dark:saturate-50");
+    const tileAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    const primaryTiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: tileAttribution
+    });
+    const fallbackTiles = L.tileLayer("https://tile.openstreetmap.de/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: tileAttribution
+    });
+
+    primaryTiles.once("tileerror", () => {
+      mapTileStatus.textContent = "Menggunakan server peta OpenStreetMap alternatif…";
+      mapTileStatus.hidden = false;
+      map.removeLayer(primaryTiles);
+      fallbackTiles.addTo(map);
+    });
+    fallbackTiles.once("tileload", () => {
+      mapTileStatus.hidden = true;
+    });
+    fallbackTiles.once("tileerror", () => {
+      mapTileStatus.textContent = "Peta tidak dapat dimuat. Silakan coba lagi nanti.";
+      mapTileStatus.hidden = false;
+    });
+    primaryTiles.addTo(map);
+    markerLayer.addTo(map);
+    map.on("popupopen", ({popup}) => {
+      const popupElement = popup.getElement();
+      popupElement.querySelector(".leaflet-popup-content-wrapper").classList.add(
+        "dark:bg-[#242c24]",
+        "dark:text-[#f3e6c4]"
+      );
+      popupElement.querySelector(".leaflet-popup-tip").classList.add("dark:bg-[#242c24]");
+    });
+
+    const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[character]);
+    const formatDate = (dateString, options = {day: "2-digit", month: "short"}) =>
+      new Intl.DateTimeFormat("id-ID", options).format(new Date(`${dateString}T12:00:00`));
+    const savedEvents = new Set(JSON.parse(localStorage.getItem("thriftio-saved-events") || "[]"));
+    let activeEvents = [];
+    const tagColors = {
+      Swap: "bg-[#e5b0a1] dark:border-[#d6c99f] dark:bg-[#593b35] dark:text-[#f3e6c4]",
+      Workshop: "bg-[#9ab18c] dark:border-[#d6c99f] dark:bg-[#344534] dark:text-[#f3e6c4]",
+      Bazar: "bg-[#d3b86e] dark:border-[#d6c99f] dark:bg-[#594b27] dark:text-[#f3e6c4]"
+    };
+
+    const eventMarkup = (event) => `
+      <article class="grid min-h-[75px] cursor-pointer grid-cols-[43px_minmax(0,1fr)_auto] items-center gap-[9px] border-b border-[#b9ad91] py-2 dark:border-[#596454]" data-event-id="${event.id}">
+        <div class="flex h-[42px] w-10 flex-col items-center justify-center border border-[#17140e] bg-[#f8df83] dark:border-[#d6c99f] dark:bg-[#344534]">
+          <strong class="font-heading text-[15px] leading-none">${formatDate(event.date, {day: "2-digit"})}</strong>
+          <span class="mt-[3px] text-[8px] font-extrabold uppercase">${formatDate(event.date, {month: "short"}).toUpperCase()}</span>
+        </div>
+        <div class="min-w-0">
+          <span class="inline-block max-w-full overflow-hidden border border-[#465540] ${tagColors[event.type] || "bg-[#9ab18c]"} px-[5px] py-[3px] text-ellipsis whitespace-nowrap text-[7px] font-black leading-none">${escapeHtml(event.tag)}</span>
+          <h3 class="my-1 overflow-hidden text-ellipsis whitespace-nowrap text-[11px] font-extrabold">${escapeHtml(event.name)}</h3>
+          <p class="m-0 text-[8px] text-[#695b3d] dark:text-[#c2b58e]">${escapeHtml(event.location)} · ${escapeHtml(event.time)}</p>
+        </div>
+        <span class="col-start-3 row-start-1 self-start whitespace-nowrap pt-[5px] text-[8px]">${event.distance.toLocaleString("id-ID", {maximumFractionDigits: 1})} km</span>
+        <button class="col-start-3 row-start-1 mt-[17px] cursor-pointer whitespace-nowrap border-2 border-[#17140e] px-[7px] py-1.5 text-[8px] font-extrabold hover:bg-[#f8df83] dark:border-[#d6c99f] dark:hover:bg-[#344534]" type="button" data-save-id="${event.id}" aria-label="Simpan ${escapeHtml(event.name)}">${savedEvents.has(event.id) ? "✓ Tersimpan" : "♧ Simpan"}</button>
+      </article>`;
+
+    const renderRecommendations = () => {
+      const recommended = [...events].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
+      document.getElementById("recommendation-list").innerHTML = recommended.map((event, index) => `
+        <article class="border-2 border-[#17140e] bg-[#fbf2da] shadow-[2px_2px_0_#17140e] dark:border-[#d6c99f] dark:bg-[#242c24] dark:shadow-[2px_2px_0_#080b09]">
+          <div class="flex items-center justify-between border-b-2 border-[#17140e] p-2 font-heading text-[22px] font-extrabold dark:border-[#d6c99f]">
+            ${String(index + 1).padStart(2, "0")}
+            <span class="border border-[#17140e] bg-[#fff9e9] px-[5px] py-1 font-main text-[8px] dark:border-[#d6c99f] dark:bg-[#344534] dark:text-[#f3e6c4]">${formatDate(event.date).toUpperCase()}</span>
+          </div>
+          <div class="p-[9px]">
+            <span class="inline-block max-w-full overflow-hidden border border-[#465540] ${tagColors[event.type] || "bg-[#9ab18c]"} px-[5px] py-[3px] text-ellipsis whitespace-nowrap text-[7px] font-black leading-none">${escapeHtml(event.tag)}</span>
+            <h3 class="mb-0 mt-1.5 text-xs font-extrabold">${escapeHtml(event.name)}</h3>
+            <p class="m-0 text-[9px] text-[#695b3d] dark:text-[#c2b58e]">${escapeHtml(event.location)}</p>
+            <div class="mt-3 flex items-end justify-between gap-2 text-[8px] font-extrabold">
+              <span>${escapeHtml(event.time)}<small class="mt-[3px] block text-[8px] font-medium text-[#695b3d] dark:text-[#c2b58e]">${event.distance.toLocaleString("id-ID", {maximumFractionDigits: 1})} km dari lokasi</small></span>
+              <a class="border-2 border-[#17140e] px-3 py-1.5 text-inherit no-underline hover:bg-[#f8df83] dark:border-[#d6c99f] dark:hover:bg-[#344534]" href="https://www.openstreetmap.org/?mlat=${event.latitude}&amp;mlon=${event.longitude}#map=16/${event.latitude}/${event.longitude}" target="_blank" rel="noopener noreferrer">Detail</a>
+            </div>
+          </div>
+        </article>`).join("");
+    };
+
+    const renderEvents = () => {
+      const city = document.getElementById("city-filter").value.trim().toLocaleLowerCase("id");
+      const type = document.getElementById("type-filter").value;
+      const category = document.getElementById("category-filter").value;
+      const maxDistance = Number(document.getElementById("distance-filter").value);
+      const dateRange = document.getElementById("date-filter").value;
+      const sortBy = document.getElementById("sort-filter").value;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      activeEvents = events.filter((event) => {
+        const eventDate = new Date(`${event.date}T00:00:00`);
+        const daysAway = Math.ceil((eventDate - today) / 86400000);
+        return (!city || event.location.toLocaleLowerCase("id").includes(city.split(",")[0]))
+          && (type === "all" || event.type === type)
+          && (category === "all" || event.category === category)
+          && event.distance <= maxDistance
+          && (dateRange === "all" || (dateRange === "week" && daysAway <= 7 && daysAway >= 0)
+            || (dateRange === "month" && daysAway <= 30 && daysAway >= 0));
+      }).sort((a, b) => sortBy === "date"
+        ? a.date.localeCompare(b.date)
+        : a.distance - b.distance);
+
+      resultsCount.textContent = `${activeEvents.length} event ditemukan · menampilkan ${activeEvents.length} terdekat`;
+      document.getElementById("distance-caption").textContent = `≤ ${maxDistance} km`;
+      eventList.innerHTML = activeEvents.length
+        ? activeEvents.map(eventMarkup).join("")
+        : '<p class="my-[25px] mx-[6px] text-xs leading-relaxed">Belum ada event yang cocok. Coba ubah lokasi atau filternya.</p>';
+
+      markerLayer.clearLayers();
+      activeEvents.forEach((event, index) => {
+        const marker = L.marker([event.latitude, event.longitude], {
+          icon: L.divIcon({
+            className: "border-0 bg-transparent",
+            html: `<span class="grid size-[34px] place-items-center border-2 border-[#17140e] bg-[#f2c14e] text-[10px] font-black text-[#17140e] shadow-[2px_2px_0_#17140e] hover:bg-[#d95a2b] hover:text-white dark:border-[#d6c99f] dark:bg-[#e7bc55] dark:text-[#151a15]">${String(index + 1).padStart(2, "0")}</span>`,
+            iconSize: [36, 36],
+            iconAnchor: [18, 18]
+          })
+        }).bindPopup(`<strong>${escapeHtml(event.name)}</strong><br>${escapeHtml(event.location)}<br>${formatDate(event.date, {day: "numeric", month: "long"})} · ${escapeHtml(event.time)}`);
+        marker.addTo(markerLayer);
+      });
+    };
+
+    document.getElementById("event-filters").addEventListener("submit", (event) => {
+      event.preventDefault();
+      renderEvents();
+    });
+    ["date-filter", "type-filter", "category-filter", "distance-filter", "sort-filter"].forEach((id) => {
+      document.getElementById(id).addEventListener("change", renderEvents);
+    });
+    document.getElementById("use-location-button").addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        document.getElementById("city-filter").value = "Bandung, Jawa Barat";
+        renderEvents();
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(({coords}) => {
+        map.setView([coords.latitude, coords.longitude], 13);
+        document.getElementById("city-filter").value = "Bandung, Jawa Barat";
+        renderEvents();
+      }, () => {
+        document.getElementById("city-filter").value = "Bandung, Jawa Barat";
+        renderEvents();
+      });
+    });
+    eventList.addEventListener("click", (event) => {
+      const saveButton = event.target.closest("[data-save-id]");
+      if (saveButton) {
+        {% if user.is_authenticated %}
+        const id = Number(saveButton.dataset.saveId);
+        savedEvents.has(id) ? savedEvents.delete(id) : savedEvents.add(id);
+        localStorage.setItem("thriftio-saved-events", JSON.stringify([...savedEvents]));
+        renderEvents();
+        {% else %}
+        window.location.href = "{% url 'user:login' %}?next={{ request.path|urlencode }}";
+        {% endif %}
+        return;
+      }
+      const item = event.target.closest("[data-event-id]");
+      if (item) {
+        const selected = activeEvents.find((entry) => entry.id === Number(item.dataset.eventId));
+        if (selected) map.setView([selected.latitude, selected.longitude], 15);
+      }
+    });
+
+    const setView = (view) => {
+      const showMap = view === "map";
+      explorer.classList.toggle("lg:grid-cols-[minmax(0,1.45fr)_minmax(330px,1fr)]", showMap);
+      explorer.classList.toggle("lg:grid-cols-1", !showMap);
+      explorer.classList.toggle("lg:h-[390px]", showMap);
+      explorer.classList.toggle("lg:h-auto", !showMap);
+      document.getElementById("event-map").parentElement.classList.toggle("hidden", !showMap);
+      mapViewButton.classList.toggle("bg-[#d95a2b]", showMap);
+      mapViewButton.classList.toggle("text-white", showMap);
+      mapViewButton.classList.toggle("dark:bg-[#f08a53]", showMap);
+      mapViewButton.classList.toggle("dark:text-[#151a15]", showMap);
+      listViewButton.classList.toggle("bg-[#d95a2b]", !showMap);
+      listViewButton.classList.toggle("text-white", !showMap);
+      listViewButton.classList.toggle("dark:bg-[#f08a53]", !showMap);
+      listViewButton.classList.toggle("dark:text-[#151a15]", !showMap);
+      mapViewButton.setAttribute("aria-pressed", String(showMap));
+      listViewButton.setAttribute("aria-pressed", String(!showMap));
+      if (showMap) window.setTimeout(() => map.invalidateSize(), 0);
+    };
+    mapViewButton.addEventListener("click", () => setView("map"));
+    listViewButton.addEventListener("click", () => setView("list"));
+
+    renderRecommendations();
+    renderEvents();
+  })();
+</script>
+{% endblock %}
