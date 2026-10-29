@@ -95,6 +95,28 @@ class ForumModelTests(TestCase):
         self.forum.delete()
         self.assertEqual(Comment.objects.count(), 0)
 
+    def test_forum_model_clean_and_xss_escaping(self):
+        post = Forum(
+            author_username=self.user.username,
+            title="<script>alert('xss')</script>",
+            content="<b>Tebal</b>",
+            image_caption="<i>Miring</i>",
+        )
+        post.clean()
+        self.assertEqual(post.title, "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;")
+        self.assertEqual(post.content, "&lt;b&gt;Tebal&lt;/b&gt;")
+        self.assertEqual(post.image_caption, "&lt;i&gt;Miring&lt;/i&gt;")
+
+    def test_forum_model_clean_individual_fields(self):
+        post = Forum(
+            title="<script>alert('title')</script>",
+            content="<div>content</div>",
+            image_caption="<span>caption</span>",
+        )
+        self.assertEqual(post.clean_title(), "&lt;script&gt;alert(&#x27;title&#x27;)&lt;/script&gt;")
+        self.assertEqual(post.clean_content(), "&lt;div&gt;content&lt;/div&gt;")
+        self.assertEqual(post.clean_image_caption(), "&lt;span&gt;caption&lt;/span&gt;")
+
 
 class CommentModelTests(TestCase):
     def setUp(self):
@@ -159,6 +181,16 @@ class CommentModelTests(TestCase):
         self.assertEqual(Comment.objects.count(), 1)
         self.user.delete()
         self.assertEqual(Comment.objects.count(), 0)
+
+    def test_comment_model_clean_and_clean_content(self):
+        comment = Comment(
+            forum=self.forum,
+            author_username="test",
+            content="<script>alert('comment')</script>",
+        )
+        self.assertEqual(comment.clean_content(), "&lt;script&gt;alert(&#x27;comment&#x27;)&lt;/script&gt;")
+        comment.clean()
+        self.assertEqual(comment.content, "&lt;script&gt;alert(&#x27;comment&#x27;)&lt;/script&gt;")
 
 
 class ForumFormTests(TestCase):
