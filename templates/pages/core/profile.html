@@ -50,6 +50,12 @@
             <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             {{ listings.count }} listing aktif
           </span>
+          {% if request.user == profile_user %}
+          <a href="{% url 'marketplace:wishlist' %}" class="flex items-center gap-1.5 text-[0.75rem] text-muted hover:text-foreground transition-colors">
+            <svg class="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            Wishlist saya
+          </a>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -85,7 +91,7 @@
       <div class="flex flex-col items-center gap-3 border-2 border-line bg-surface py-16 text-center shadow-[3px_3px_0_var(--shadow-color)]">
         <p class="text-[0.8125rem] text-muted">Belum ada listing.</p>
         {% if request.user == profile_user %}
-        <a href="{% url 'marketplace:item_create' %}"
+        <a href="{% url 'marketplace:tambah_barang' %}"
            class="inline-flex min-h-9 items-center border-2 border-line bg-accent px-4 text-[0.75rem] font-bold text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)]">
           Buat listing pertama
         </a>

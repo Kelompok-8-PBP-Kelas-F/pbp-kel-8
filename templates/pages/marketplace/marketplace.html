@@ -6,93 +6,41 @@
 
 {% block content %}
 <main class="w-full min-h-screen bg-[#f2c14e] font-main text-[#121212]">
+
+  <!-- ===== MOBILE FILTER BUTTON ===== -->
+  <div class="md:hidden flex items-center gap-2 px-4 pt-4">
+    <button id="filter-toggle" class="flex items-center gap-2 px-4 py-2 bg-[#fbf1d5] font-bold text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] cursor-pointer">
+      <svg class="w-4 h-4 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      Filter & Urutkan
+    </button>
+  </div>
+
+  <!-- ===== FILTER DRAWER OVERLAY (mobile) ===== -->
+  <div id="filter-overlay" class="fixed inset-0 bg-black/40 z-40 hidden md:hidden" aria-hidden="true"></div>
+
   <div class="flex gap-0">
 
     <!-- ===== SIDEBAR FILTER ===== -->
-    <aside class="w-64 shrink-0 border-r-2 border-[#121212] bg-[#f2c14e] p-5 self-start sticky top-0 min-h-screen overflow-y-auto">
-      <h2 class="font-extrabold text-base mb-4">Filter produk</h2>
+    <aside id="filter-sidebar" class="fixed md:static top-0 left-0 h-full md:h-auto w-72 md:w-64 z-50 md:z-auto -translate-x-full md:translate-x-0 transition-transform duration-300 shrink-0 border-r-2 border-[#121212] bg-[#f2c14e] p-5 overflow-y-auto md:self-start md:sticky md:top-0 md:min-h-screen">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-extrabold text-base">Filter produk</h2>
+        <button id="filter-close" class="md:hidden text-xl font-bold leading-none cursor-pointer">&times;</button>
+      </div>
 
       <!-- Kategori -->
       <div class="mb-5">
         <h3 class="font-bold text-sm mb-2">Kategori</h3>
         <ul class="text-xs space-y-1">
+          <li>
+            <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+              <input type="radio" name="category" value="" class="accent-[#E2652B]" checked> Semua
+            </label>
+          </li>
           {% for cat in categories %}
           <li>
-            <div class="flex items-center justify-between font-semibold">
-              <label class="flex items-center gap-1.5 cursor-pointer">
-                <input type="checkbox" name="kategori" value="{{ cat.slug }}" class="accent-[#E2652B]" {% if cat.slug in selected_categories %}checked{% endif %}>
-                {{ cat.name }} <span class="text-[#5c4a1a] font-normal">{{ cat.count }}</span>
-              </label>
-              <span class="text-[#5c4a1a]">{{ cat.cart_count }}</span>
-            </div>
-            {% if cat.subcategories %}
-            <ul class="ml-3 mt-1 space-y-1">
-              {% for sub in cat.subcategories %}
-              <li class="flex items-center justify-between text-[11px]">
-                <label class="flex items-center gap-1.5 cursor-pointer">
-                  <input type="checkbox" name="subkategori" value="{{ sub.slug }}" class="accent-[#E2652B]">
-                  {{ sub.name }} <span class="text-[#5c4a1a] font-normal">{{ sub.count }}</span>
-                </label>
-                <span class="text-[#5c4a1a]">{{ sub.cart_count }}</span>
-              </li>
-              {% endfor %}
-            </ul>
-            {% endif %}
-          </li>
-          {% empty %}
-          <!-- Static fallback -->
-          <li>
-            <div class="flex items-center justify-between font-semibold">
-              <span>Atasan <span class="text-[#5c4a1a] font-normal">8</span></span>
-              <span class="text-[#5c4a1a]">2</span>
-            </div>
-            <ul class="ml-3 mt-1 space-y-1 text-[11px]">
-              <li class="flex justify-between"><span>T-Shirt <span class="text-[#5c4a1a]">4</span></span><span class="text-[#5c4a1a]">1</span></li>
-              <li class="flex justify-between"><span>Jacket <span class="text-[#5c4a1a]">2</span></span><span class="text-[#5c4a1a]">1</span></li>
-              <li class="flex justify-between"><span>Knitwear <span class="text-[#5c4a1a]">2</span></span><span class="text-[#5c4a1a]">0</span></li>
-            </ul>
-          </li>
-          <li class="mt-1">
-            <div class="flex items-center justify-between font-semibold">
-              <span>Bawahan <span class="text-[#5c4a1a] font-normal">6</span></span>
-              <span class="text-[#5c4a1a]">2</span>
-            </div>
-            <ul class="ml-3 mt-1 space-y-1 text-[11px]">
-              <li class="flex justify-between"><span>Jeans <span class="text-[#5c4a1a]">3</span></span><span class="text-[#5c4a1a]">1</span></li>
-              <li class="flex justify-between"><span>Chino <span class="text-[#5c4a1a]">2</span></span><span class="text-[#5c4a1a]">1</span></li>
-              <li class="flex justify-between"><span>Shorts <span class="text-[#5c4a1a]">1</span></span><span class="text-[#5c4a1a]">0</span></li>
-            </ul>
-          </li>
-          <li class="mt-1">
-            <div class="flex items-center justify-between font-semibold">
-              <span>Outer <span class="text-[#5c4a1a] font-normal">4</span></span>
-              <span class="text-[#5c4a1a]">1</span>
-            </div>
-            <ul class="ml-3 mt-1 space-y-1 text-[11px]">
-              <li class="flex justify-between"><span>Denim jacket <span class="text-[#5c4a1a]">2</span></span><span class="text-[#5c4a1a]">1</span></li>
-              <li class="flex justify-between"><span>Windbreaker <span class="text-[#5c4a1a]">1</span></span><span class="text-[#5c4a1a]">0</span></li>
-              <li class="flex justify-between"><span>Blazer <span class="text-[#5c4a1a]">1</span></span><span class="text-[#5c4a1a]">0</span></li>
-            </ul>
-          </li>
-          <li class="mt-1">
-            <div class="flex items-center justify-between font-semibold">
-              <span>Aksesoris <span class="text-[#5c4a1a] font-normal">3</span></span>
-              <span class="text-[#5c4a1a]">1</span>
-            </div>
-            <ul class="ml-3 mt-1 space-y-1 text-[11px]">
-              <li class="flex justify-between"><span>Tas <span class="text-[#5c4a1a]">2</span></span><span class="text-[#5c4a1a]">1</span></li>
-              <li class="flex justify-between"><span>Topi <span class="text-[#5c4a1a]">1</span></span><span class="text-[#5c4a1a]">0</span></li>
-            </ul>
-          </li>
-          <li class="mt-1">
-            <div class="flex items-center justify-between font-semibold">
-              <span>Sepatu <span class="text-[#5c4a1a] font-normal">3</span></span>
-              <span class="text-[#5c4a1a]">1</span>
-            </div>
-            <ul class="ml-3 mt-1 space-y-1 text-[11px]">
-              <li class="flex justify-between"><span>Sneaker <span class="text-[#5c4a1a]">2</span></span><span class="text-[#5c4a1a]">1</span></li>
-              <li class="flex justify-between"><span>Boots <span class="text-[#5c4a1a]">1</span></span><span class="text-[#5c4a1a]">0</span></li>
-            </ul>
+            <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+              <input type="radio" name="category" value="{{ cat.id }}" class="accent-[#E2652B]"> {{ cat.name }}
+            </label>
           </li>
           {% endfor %}
         </ul>
@@ -103,128 +51,212 @@
       <!-- Kondisi -->
       <div class="mb-5">
         <h3 class="font-bold text-sm mb-2">Kondisi</h3>
-        <div class="flex flex-wrap gap-2">
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212] hover:bg-white transition-all">Baru</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212] hover:bg-white transition-all">Preloved</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212] hover:bg-white transition-all">Bekas</button>
+        <div class="flex flex-col gap-1.5 text-xs">
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="condition" value="" class="accent-[#E2652B]" checked> Semua
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="condition" value="new" class="accent-[#E2652B]"> Baru
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="condition" value="preloved" class="accent-[#E2652B]"> Preloved
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="condition" value="used" class="accent-[#E2652B]"> Bekas
+          </label>
         </div>
       </div>
 
       <hr class="border-[#121212]/20 mb-4">
 
-      <!-- Warna -->
-      <div class="mb-5">
-        <h3 class="font-bold text-sm mb-2">Warna</h3>
-        <div class="flex flex-wrap gap-2">
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Hitam</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Putih</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Abu-abu</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Coklat</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Biru</button>
-        </div>
-      </div>
-
-      <hr class="border-[#121212]/20 mb-4">
-
-      <!-- Ukuran -->
-      <div class="mb-5">
-        <h3 class="font-bold text-sm mb-2">Ukuran</h3>
-        <div class="flex flex-wrap gap-2">
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">S</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">M</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">L</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">XL</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Free</button>
-        </div>
-      </div>
-
-      <hr class="border-[#121212]/20 mb-4">
-
-      <!-- Fit -->
+      <!-- Urutkan -->
       <div class="mb-6">
-        <h3 class="font-bold text-sm mb-2">Fit</h3>
-        <div class="flex flex-wrap gap-2">
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Slim</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Regular</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Oversized</button>
-          <button class="px-3 py-1 text-xs font-semibold border-2 border-[#121212] bg-[#fbf1d5] shadow-[2px_2px_0_#121212]">Loose</button>
+        <h3 class="font-bold text-sm mb-2">Urutkan</h3>
+        <div class="flex flex-col gap-1.5 text-xs">
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="sort" value="newest" class="accent-[#E2652B]" checked> Terbaru
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="sort" value="oldest" class="accent-[#E2652B]"> Terlama
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="sort" value="price_asc" class="accent-[#E2652B]"> Harga Terendah
+          </label>
+          <label class="flex items-center gap-1.5 cursor-pointer font-semibold">
+            <input type="radio" name="sort" value="price_desc" class="accent-[#E2652B]"> Harga Tertinggi
+          </label>
         </div>
       </div>
 
-      <!-- Apply Button -->
-      <button class="w-full py-3 bg-[#E2652B] text-white font-bold text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
-        Terapkan filter
+      <!-- Reset -->
+      <button id="reset-filters" class="w-full py-2 bg-[#fbf1d5] font-bold text-sm border-2 border-[#121212] shadow-[3px_3px_0_#121212] hover:bg-white transition-all cursor-pointer mb-2">
+        Reset Filter
       </button>
     </aside>
 
     <!-- ===== MAIN CONTENT ===== -->
-    <div class="flex-1 p-5">
+    <div class="flex-1 p-4 md:p-5 min-w-0">
 
       <!-- Search Bar -->
-      <form method="get" class="flex gap-0 mb-4 border-2 border-[#121212] shadow-[3px_3px_0_#121212]">
+      <div class="flex gap-0 mb-4 border-2 border-[#121212] shadow-[3px_3px_0_#121212]">
         <div class="flex items-center gap-2 flex-1 bg-[#fbf1d5] px-4 py-2.5">
           <svg class="w-4 h-4 shrink-0 text-[#5c4a1a] stroke-current fill-none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
           </svg>
-          <input type="text" name="q" value="{{ q }}" placeholder="Cari item, kategori, atau penjual" class="bg-transparent text-sm text-[#121212] placeholder:text-[#5c4a1a]/70 outline-none w-full font-medium">
+          <input id="search-input" type="text" placeholder="Cari item, kategori, atau penjual" class="bg-transparent text-sm text-[#121212] placeholder:text-[#5c4a1a]/70 outline-none w-full font-medium">
         </div>
-        <button type="submit" class="px-6 py-2.5 bg-[#E2652B] text-white font-bold text-sm border-l-2 border-[#121212] hover:opacity-95 transition-all">
-          Cari
-        </button>
-      </form>
-
-      <!-- Category Tabs -->
-      <div class="flex gap-2 mb-5 flex-wrap">
-        <button class="px-4 py-1.5 text-xs font-bold border-2 border-[#121212] shadow-[2px_2px_0_#121212] bg-[#E2652B] text-white">Semua</button>
-        <button class="px-4 py-1.5 text-xs font-bold border-2 border-[#121212] shadow-[2px_2px_0_#121212] bg-[#fbf1d5] hover:bg-white transition-all">Atasan</button>
-        <button class="px-4 py-1.5 text-xs font-bold border-2 border-[#121212] shadow-[2px_2px_0_#121212] bg-[#fbf1d5] hover:bg-white transition-all">Bawahan</button>
-        <button class="px-4 py-1.5 text-xs font-bold border-2 border-[#121212] shadow-[2px_2px_0_#121212] bg-[#fbf1d5] hover:bg-white transition-all">Outer</button>
-        <button class="px-4 py-1.5 text-xs font-bold border-2 border-[#121212] shadow-[2px_2px_0_#121212] bg-[#fbf1d5] hover:bg-white transition-all">Aksesoris</button>
-        <button class="px-4 py-1.5 text-xs font-bold border-2 border-[#121212] shadow-[2px_2px_0_#121212] bg-[#fbf1d5] hover:bg-white transition-all">Sepatu</button>
       </div>
 
       <!-- Listing Header -->
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-extrabold text-base">Daftar produk</h2>
-        <span class="text-xs text-[#5c4a1a] font-medium">{{ items|length }} listing aktif</span>
+        <span id="item-count" class="text-xs text-[#5c4a1a] font-medium">— listing aktif</span>
       </div>
 
       <!-- Product Grid -->
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {% for item in items %}
-        <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] flex flex-col">
-          <!-- Image -->
-          <div class="w-full aspect-square border-b-2 border-[#121212] flex items-center justify-center
-            {% cycle 'bg-[#f09a67]' 'bg-[#86a981]' 'bg-[#fbf1d5]' 'bg-[#E2652B]' %}">
-            {% if item.image %}
-            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
-            {% else %}
-            <svg class="w-10 h-10 stroke-current fill-none text-[#121212]/50" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>
-            </svg>
-            {% endif %}
-          </div>
-          <!-- Info -->
-          <div class="p-3 flex flex-col gap-1 flex-1">
-            <p class="text-sm font-bold text-[#121212] leading-tight">{{ item.title }}</p>
-            <p class="text-xs text-[#5c4a1a]">{{ item.get_condition_display }} · {{ item.seller.username }}</p>
-            <p class="text-sm font-extrabold text-[#121212] mt-0.5">Rp {{ item.price|floatformat:0 }}</p>
-          </div>
-          <!-- Button -->
-          <div class="px-3 pb-3">
-            <button class="w-full py-2 bg-[#E2652B] text-white font-bold text-xs border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_#121212]">
-              Tambah keranjang
-            </button>
-          </div>
-        </div>
-        {% empty %}
-        <div class="col-span-full text-center py-16 text-[#5c4a1a] font-medium">
-          Belum ada item yang tersedia.
-        </div>
-        {% endfor %}
+      <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div class="col-span-full text-center py-16 text-[#5c4a1a] font-medium">Memuat...</div>
       </div>
 
     </div>
   </div>
 </main>
+
+<script>
+const FILTER_URL = "{% url 'marketplace:filter_barang' %}";
+const IS_AUTHENTICATED = {{ user.is_authenticated|yesno:"true,false" }};
+const CSRF_TOKEN = "{{ csrf_token }}";
+const BG_COLORS = ['bg-[#f09a67]', 'bg-[#86a981]', 'bg-[#fbf1d5]', 'bg-[#E2652B]'];
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function getFilters() {
+  return {
+    q: document.getElementById('search-input').value,
+    category: document.querySelector('input[name="category"]:checked')?.value || '',
+    condition: document.querySelector('input[name="condition"]:checked')?.value || '',
+    sort: document.querySelector('input[name="sort"]:checked')?.value || 'newest',
+  };
+}
+
+function buildCard(item, index) {
+  const bg = BG_COLORS[index % BG_COLORS.length];
+  const img = item.image_url
+    ? `<img src="${esc(item.image_url)}" alt="${esc(item.title)}" class="w-full h-full object-cover">`
+    : `<svg class="w-10 h-10 stroke-current fill-none text-[#121212]/50" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>`;
+
+  const wishlistBtn = IS_AUTHENTICATED
+    ? `<form method="post" action="${esc(item.wishlist_url)}" class="wishlist-form">
+        <input type="hidden" name="csrfmiddlewaretoken" value="${CSRF_TOKEN}">
+        <button type="submit" class="px-2 py-2 border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:opacity-95 transition-all cursor-pointer ${item.wishlisted ? 'bg-[#E2652B] text-white' : 'bg-[#fbf1d5]'}">♥</button>
+      </form>`
+    : '';
+
+  return `
+    <div class="bg-[#fbf1d5] border-2 border-[#121212] shadow-[3px_3px_0_#121212] flex flex-col">
+      <div class="w-full aspect-[3/4] border-b-2 border-[#121212] flex items-center justify-center overflow-hidden ${bg}">
+        ${img}
+      </div>
+      <a href="${esc(item.detail_url)}" class="p-3 flex flex-col gap-1 flex-1 hover:underline">
+        <p class="text-sm font-bold text-[#121212] leading-tight line-clamp-2">${esc(item.title)}</p>
+        <p class="text-xs text-[#5c4a1a] truncate">${esc(item.condition)} · ${esc(item.seller)}</p>
+        <p class="text-sm font-extrabold text-[#121212] mt-auto pt-1">Rp ${Number(item.price).toLocaleString('id-ID')}</p>
+      </a>
+      <div class="px-3 pb-3 flex gap-2">
+        <a href="${esc(item.detail_url)}" class="flex-1 py-2 text-center bg-[#E2652B] text-white font-bold text-xs border-2 border-[#121212] shadow-[2px_2px_0_#121212] hover:opacity-95 transition-all">
+          Lihat Barang
+        </a>
+        ${wishlistBtn}
+      </div>
+    </div>`;
+}
+
+function renderGrid(items) {
+  const grid = document.getElementById('product-grid');
+  document.getElementById('item-count').textContent = `${items.length} listing aktif`;
+  if (!items.length) {
+    grid.innerHTML = '<div class="col-span-full text-center py-16 text-[#5c4a1a] font-medium">Tidak ada item yang ditemukan.</div>';
+    return;
+  }
+  grid.innerHTML = items.map((item, i) => buildCard(item, i)).join('');
+
+  // Attach AJAX wishlist toggle to each form
+  grid.querySelectorAll('.wishlist-form').forEach(form => {
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': CSRF_TOKEN, 'X-Requested-With': 'XMLHttpRequest' },
+        body: new FormData(form),
+      });
+      const data = await res.json();
+      btn.classList.toggle('bg-[#E2652B]', data.wishlisted);
+      btn.classList.toggle('text-white', data.wishlisted);
+      btn.classList.toggle('bg-[#fbf1d5]', !data.wishlisted);
+    });
+  });
+}
+
+async function fetchItems() {
+  const params = new URLSearchParams(getFilters());
+  const res = await fetch(`${FILTER_URL}?${params}`);
+  const data = await res.json();
+  renderGrid(data.items);
+}
+
+// Debounce helper
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+}
+
+const debouncedFetch = debounce(fetchItems, 300);
+
+// Wire up inputs
+document.getElementById('search-input').addEventListener('input', debouncedFetch);
+document.querySelectorAll('input[name="category"], input[name="condition"], input[name="sort"]')
+  .forEach(el => el.addEventListener('change', fetchItems));
+
+document.getElementById('reset-filters').addEventListener('click', () => {
+  document.getElementById('search-input').value = '';
+  document.querySelector('input[name="category"][value=""]').checked = true;
+  document.querySelector('input[name="condition"][value=""]').checked = true;
+  document.querySelector('input[name="sort"][value="newest"]').checked = true;
+  fetchItems();
+});
+
+// Initial load
+fetchItems();
+
+// ===== MOBILE FILTER DRAWER =====
+const sidebar = document.getElementById('filter-sidebar');
+const overlay = document.getElementById('filter-overlay');
+
+function openDrawer() {
+  sidebar.classList.remove('-translate-x-full');
+  overlay.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('filter-toggle').addEventListener('click', openDrawer);
+document.getElementById('filter-close').addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+
+// Close drawer on filter change (mobile UX)
+document.querySelectorAll('input[name="category"], input[name="condition"], input[name="sort"]')
+  .forEach(el => el.addEventListener('change', () => {
+    if (window.innerWidth < 768) closeDrawer();
+  }));
+</script>
 {% endblock content %}
