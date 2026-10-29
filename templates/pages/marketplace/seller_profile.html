@@ -92,31 +92,31 @@
                     <div>
                         <!-- Container Gambar -->
                         <div class="h-48 border-b-2 border-black bg-gray-100 flex items-center justify-center relative overflow-hidden">
-                            {% if item.gambar %}
-                                <img src="{{ item.gambar.url }}" alt="{{ item.nama }}" class="w-full h-full object-cover">
+                            {% if item.image %}
+                                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
                             {% else %}
                                 <span class="text-xs font-bold text-gray-400">No Image</span>
                             {% endif %}
 
                             <!-- Badge Status -->
-                            <span class="absolute top-2 right-2 text-[10px] font-extrabold px-2 py-0.5 border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] {% if item.status == 'Tersedia' %} bg-green-300 {% else %} bg-red-300 {% endif %}">
-                                {{ item.status }}
+                            <span class="absolute top-2 right-2 text-[10px] font-extrabold px-2 py-0.5 border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] {% if item.is_available %} bg-green-300 {% else %} bg-red-300 {% endif %}">
+                                {% if item.is_available %}Tersedia{% else %}Terjual{% endif %}
                             </span>
                         </div>
 
                         <!-- Info Barang -->
                         <div class="p-3">
-                            <h3 class="font-bold text-sm truncate mb-1">{{ item.nama }}</h3>
-                            <p class="font-extrabold text-base">Rp{{ item.harga|floatformat:0 }}</p>
+                            <h3 class="font-bold text-sm truncate mb-1">{{ item.title }}</h3>
+                            <p class="font-extrabold text-base">Rp{{ item.price|floatformat:0 }}</p>
                         </div>
                     </div>
 
                     <!-- Tombol Aksi Card -->
                     <div class="p-3 pt-0">
-                        {% if item.status == 'Tersedia' %}
-                            <button class="w-full bg-[#e05628] text-white border-2 border-black font-bold py-1.5 text-xs shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b]">
-                                Tambah keranjang
-                            </button>
+                        {% if item.is_available %}
+                            <a href="{% url 'marketplace:item_detail' item.id %}" class="block w-full text-center bg-[#e05628] text-white border-2 border-black font-bold py-1.5 text-xs shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b]">
+                                Lihat Barang
+                            </a>
                         {% else %}
                             <button disabled class="w-full bg-gray-300 text-gray-600 border-2 border-black font-bold py-1.5 text-xs cursor-not-allowed">
                                 Habis Terjual

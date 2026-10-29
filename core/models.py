@@ -10,6 +10,7 @@ class UserProfile(models.Model):
     avatar = models.ImageField(upload_to='profiles/avatars/', blank=True, null=True)
     location = models.CharField(max_length=100, blank=True)
     phone = models.CharField(max_length=20, blank=True)
+    line_id = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return f"Profile of {self.user.username}"
