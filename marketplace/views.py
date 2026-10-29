@@ -54,7 +54,7 @@ def tambah_barang(request):
             return redirect('marketplace:marketplace_penjual')
     else:
         form = ItemForm()
-    return render(request, 'pages/marketplace_seller/form_barang.html', {'form': form, 'title': 'Tambah Barang'})
+    return render(request, 'pages/marketplace/form_barang.html', {'form': form, 'title': 'Tambah Barang'})
 
 
 @login_required
@@ -68,7 +68,7 @@ def edit_barang(request, pk):
             return redirect('marketplace:marketplace_penjual')
     else:
         form = ItemForm(instance=item)
-    return render(request, 'pages/marketplace_seller/form_barang.html', {'form': form, 'title': 'Edit Barang'})
+    return render(request, 'pages/marketplace/form_barang.html', {'form': form, 'title': 'Edit Barang'})
 
 
 @login_required
@@ -77,7 +77,7 @@ def hapus_barang(request, pk):
     if request.method == 'POST':
         item.delete()
         return redirect('marketplace:marketplace_penjual')
-    return render(request, 'pages/marketplace_seller/konfirmasi_hapus.html', {'item': item})
+    return render(request, 'pages/marketplace/konfirmasi_hapus.html', {'item': item})
 
 
 @login_required
