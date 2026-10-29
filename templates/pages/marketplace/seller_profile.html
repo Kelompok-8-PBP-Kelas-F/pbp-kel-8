@@ -3,125 +3,141 @@
 {% block title %}Profil Toko {{ seller.username }} — Thrift.io{% endblock %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-8">
-    
+<main class="w-full min-h-screen bg-background font-main text-foreground">
+  <div class="mx-auto w-full max-w-360 px-4 py-8 sm:px-6 lg:px-8">
+
     <!-- Header Toko / Seller Banner -->
-    <div class="border-3 border-black bg-[#fdf8eb] dark:bg-slate-800 dark:border-white p-6 shadow-[6px_6px_0px_rgba(0,0,0,1)] dark:shadow-[6px_6px_0px_rgba(255,255,255,1)] mb-8 transition-colors">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            
-            <!-- Info Utama Penjual -->
-            <div class="flex items-center gap-4">
-                <!-- Avatar dari UserProfile atau Fallback Inisial -->
-                {% if profile.avatar %}
-                <img src="{{ profile.avatar.url }}" alt="{{ seller.username }}" 
-                     class="w-16 h-16 border-2 border-black dark:border-white object-cover shadow-[3px_3px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_rgba(255,255,255,1)]">
-                {% else %}
-                <div class="w-16 h-16 bg-[#f8d775] border-2 border-black dark:border-white flex items-center justify-center font-black text-2xl uppercase shadow-[3px_3px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_rgba(255,255,255,1)] text-black">
-                    {{ seller.username|make_list|first|upper }}
-                </div>
-                {% endif %}
-
-                <div>
-                    <h1 class="text-2xl font-black uppercase text-black dark:text-white tracking-wide">
-                        {{ seller.username }}
-                    </h1>
-                    
-                    <p class="text-xs font-bold text-gray-700 dark:text-gray-300 mt-0.5 flex flex-wrap items-center gap-2">
-                        <span>📍 {{ profile.location|default:"Lokasi belum diatur" }}</span>
-                        <span>•</span>
-                        <span>📅 Bergabung {{ seller.date_joined|date:"M Y" }}</span>
-                    </p>
-
-                    <!-- Kontak Penjual -->
-                    <div class="mt-2 flex flex-wrap gap-2 text-xs font-bold">
-                        {% if profile.phone %}
-                        <span class="bg-white dark:bg-slate-700 border border-black dark:border-white px-2 py-0.5 text-black dark:text-white">
-                            📞 {{ profile.phone }}
-                        </span>
-                        {% endif %}
-                        {% if profile.line_id %}
-                        <span class="bg-green-100 dark:bg-green-900 border border-black dark:border-white px-2 py-0.5 text-black dark:text-white">
-                            LINE: {{ profile.line_id }}
-                        </span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tombol Ikuti Toko -->
-            {% if user != seller %}
-            <button id="btnFollow" 
-                    onclick="toggleFollow()" 
-                    class="bg-[#e05628] text-white border-2 border-black dark:border-white px-5 py-2.5 font-black text-xs uppercase shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_rgba(255,255,255,1)] hover:bg-[#c8461b] active:translate-x-[2px] active:translate-y-[2px] transition-all">
-                + Ikuti Toko
-            </button>
+    <div class="mb-8 flex flex-col gap-6 border-2 border-line bg-surface p-6 shadow-[4px_4px_0_var(--shadow-color)] sm:p-8">
+      
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <!-- Info Utama Penjual -->
+        <div class="flex items-center sm:items-start gap-4">
+          <!-- Avatar dari UserProfile atau Fallback Inisial -->
+          <div class="flex size-20 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-2xl font-bold text-foreground sm:size-24">
+            {% if profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt="{{ seller.username }}" class="h-full w-full object-cover">
             {% else %}
-            <span class="bg-[#f8d775] text-black border-2 border-black dark:border-white px-4 py-2 font-black text-xs uppercase shadow-[3px_3px_0px_rgba(0,0,0,1)]">
-                Toko Milikmu
-            </span>
+              {{ seller.username|first|upper }}
             {% endif %}
+          </div>
+
+          <!-- Info Detail Penjual -->
+          <div class="flex flex-col gap-1.5 min-w-0">
+            <!-- Nama Toko (Tanpa uppercase forced) -->
+            <h1 class="font-heading text-xl sm:text-2xl font-bold leading-tight text-foreground">
+              {{ seller.username }}
+            </h1>
+            
+            <div class="flex flex-wrap items-center gap-3 text-xs text-muted">
+              <span class="flex items-center gap-1">
+                📍 {{ profile.location|default:"Lokasi belum diatur" }}
+              </span>
+              <span>•</span>
+              <span class="flex items-center gap-1">
+                📅 Bergabung {{ seller.date_joined|date:"M Y" }}
+              </span>
+            </div>
+
+            <!-- Kontak Penjual -->
+            <div class="mt-1 flex flex-wrap gap-2 text-xs font-bold">
+              {% if profile.phone %}
+              <span class="border-2 border-line bg-background px-2.5 py-0.5 text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
+                📞 {{ profile.phone }}
+              </span>
+              {% endif %}
+              {% if profile.line_id %}
+              <span class="border-2 border-line bg-background px-2.5 py-0.5 text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
+                LINE: {{ profile.line_id }}
+              </span>
+              {% endif %}
+            </div>
+          </div>
         </div>
 
-        <!-- Bio Penjual -->
-        <div class="mt-6 pt-4 border-t-2 border-black dark:border-white">
-            <p class="text-xs font-semibold leading-relaxed text-black dark:text-gray-200">
-                {{ profile.bio|default:"Penjual ini belum menuliskan deskripsi toko." }}
-            </p>
-        </div>
+        <!-- Tombol Ikuti Toko / Penanda Milik Sendiri -->
+        {% if user != seller %}
+        <button id="btnFollow" 
+                onclick="toggleFollow()" 
+                class="border-2 border-line bg-accent text-accent-foreground px-5 py-2.5 font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_var(--shadow-color)] hover:opacity-90 active:translate-x-[1px] active:translate-y-[1px] transition-all">
+          + Ikuti Toko
+        </button>
+        {% else %}
+        <span class="border-2 border-line bg-accent text-accent-foreground px-4 py-2 font-bold text-xs uppercase tracking-wider shadow-[2px_2px_0_var(--shadow-color)]">
+          Toko Milikmu
+        </span>
+        {% endif %}
+      </div>
 
-        <!-- Ringkasan Statistik -->
-        <div class="grid grid-cols-3 gap-3 mt-6">
-            <div class="bg-white dark:bg-slate-700 border-2 border-black dark:border-white p-3 text-center shadow-[3px_3px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_rgba(255,255,255,1)]">
-                <span class="block text-lg font-black text-black dark:text-white">{{ total_items }}</span>
-                <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-300">Total Barang</span>
-            </div>
-            <div class="bg-white dark:bg-slate-700 border-2 border-black dark:border-white p-3 text-center shadow-[3px_3px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_rgba(255,255,255,1)]">
-                <span class="block text-lg font-black text-green-600 dark:text-green-400">{{ items_tersedia }}</span>
-                <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-300">Tersedia</span>
-            </div>
-            <div class="bg-white dark:bg-slate-700 border-2 border-black dark:border-white p-3 text-center shadow-[3px_3px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_rgba(255,255,255,1)]">
-                <span class="block text-lg font-black text-red-500 dark:text-red-400">{{ items_terjual }}</span>
-                <span class="text-[10px] font-bold uppercase text-gray-600 dark:text-gray-300">Terjual</span>
-            </div>
+      <!-- Bio Penjual -->
+      <div class="pt-4 border-t-2 border-line">
+        <p class="text-xs leading-relaxed text-foreground">
+          {{ profile.bio|default:"Penjual ini belum menuliskan deskripsi toko." }}
+        </p>
+      </div>
+
+      <!-- Ringkasan Statistik -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="border-2 border-line bg-background p-3 text-center shadow-[2px_2px_0_var(--shadow-color)]">
+          <span class="block font-heading text-lg font-bold text-foreground">{{ total_items }}</span>
+          <span class="text-[10px] font-bold uppercase text-muted">Total Barang</span>
         </div>
+        <div class="border-2 border-line bg-background p-3 text-center shadow-[2px_2px_0_var(--shadow-color)]">
+          <span class="block font-heading text-lg font-bold text-foreground">{{ items_tersedia }}</span>
+          <span class="text-[10px] font-bold uppercase text-muted">Tersedia</span>
+        </div>
+        <div class="border-2 border-line bg-background p-3 text-center shadow-[2px_2px_0_var(--shadow-color)]">
+          <span class="block font-heading text-lg font-bold text-foreground">{{ items_terjual }}</span>
+          <span class="text-[10px] font-bold uppercase text-muted">Terjual</span>
+        </div>
+      </div>
+
     </div>
 
     <!-- Katalog Barang Penjual -->
-    <h2 class="text-xl font-black uppercase text-black dark:text-white mb-4 tracking-wide">
+    <div class="flex flex-col gap-4">
+      <h2 class="font-heading text-xl font-bold uppercase text-foreground tracking-wide">
         Barang Dagangan ({{ total_items }})
-    </h2>
+      </h2>
 
-    {% if items %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% if items %}
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {% for item in items %}
-        <div class="border-2 border-black dark:border-white bg-white dark:bg-slate-800 shadow-[4px_4px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_rgba(255,255,255,1)] overflow-hidden flex flex-col justify-between">
+        <div class="group flex flex-col border-2 border-line bg-surface shadow-[3px_3px_0_var(--shadow-color)] transition-shadow hover:shadow-[5px_5px_0_var(--shadow-color)]">
+          <div class="flex h-44 items-center justify-center overflow-hidden border-b-2 border-line bg-background">
+            {% if item.gambar %}
+            <img src="{{ item.gambar.url }}" alt="{{ item.nama }}" class="h-full w-full object-cover">
+            {% else %}
+            <span class="text-xs font-bold text-muted">Tanpa Gambar</span>
+            {% endif %}
+          </div>
+          <div class="flex flex-col gap-1 p-3">
+            <h3 class="font-heading text-[0.9375rem] font-bold leading-tight text-foreground truncate">{{ item.nama }}</h3>
+            <p class="font-heading text-[1rem] font-bold text-foreground">Rp{{ item.harga|floatformat:0 }}</p>
             <div>
-                {% if item.gambar %}
-                <img src="{{ item.gambar.url }}" alt="{{ item.nama }}" class="w-full h-48 object-cover border-b-2 border-black dark:border-white">
-                {% else %}
-                <div class="w-full h-48 bg-gray-200 dark:bg-slate-700 border-b-2 border-black dark:border-white flex items-center justify-center font-bold text-xs text-gray-500">
-                    Tanpa Gambar
-                </div>
-                {% endif %}
-                
-                <div class="p-4">
-                    <h3 class="font-black text-base truncate text-black dark:text-white">{{ item.nama }}</h3>
-                    <p class="font-black text-sm text-[#e05628] dark:text-amber-400 mt-1">Rp{{ item.harga }}</p>
-                    <span class="inline-block mt-2 text-[10px] font-black uppercase px-2 py-0.5 border border-black dark:border-white {% if item.status == 'Tersedia' %}bg-green-300 text-black{% else %}bg-gray-300 text-black{% endif %}">
-                        {{ item.status }}
-                    </span>
-                </div>
+              <span class="inline-block text-[10px] font-bold uppercase px-2 py-0.5 border border-line bg-background text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
+                {{ item.status }}
+              </span>
             </div>
+          </div>
         </div>
         {% endfor %}
+      </div>
+      {% else %}
+      <!-- Empty State Box yang Lebih Proporsional -->
+      <div class="flex flex-col items-center justify-center gap-4 border-2 border-line bg-surface py-16 px-4 text-center shadow-[3px_3px_0_var(--shadow-color)] min-h-[220px]">
+        <p class="text-sm font-bold text-muted">Penjual ini belum memiliki barang dagangan.</p>
+        {% if user == seller %}
+        <a href="{% url 'marketplace:tambah_barang' %}" 
+           class="inline-flex items-center gap-2 border-2 border-line bg-accent px-4 py-2 text-xs font-bold text-accent-foreground uppercase tracking-wide shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-90 active:translate-x-[1px] active:translate-y-[1px] transition-all">
+          + Tambah Barang Pertama
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
     </div>
-    {% else %}
-    <div class="p-8 border-2 border-black dark:border-white bg-[#fdf8eb] dark:bg-slate-800 text-center shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-        <p class="font-bold text-sm text-black dark:text-white">Penjual ini belum memiliki barang dagangan.</p>
-    </div>
-    {% endif %}
 
-</div>
+  </div>
+</main>
 
 <script>
 let isFollowing = false;
@@ -134,12 +150,12 @@ function toggleFollow() {
 
     if (isFollowing) {
         btn.innerText = '✓ Mengikuti';
-        btn.classList.remove('bg-[#e05628]', 'hover:bg-[#c8461b]', 'text-white');
-        btn.classList.add('bg-gray-200', 'text-black', 'hover:bg-gray-300');
+        btn.classList.remove('bg-accent', 'text-accent-foreground');
+        btn.classList.add('bg-background', 'text-foreground');
     } else {
         btn.innerText = '+ Ikuti Toko';
-        btn.classList.remove('bg-gray-200', 'text-black', 'hover:bg-gray-300');
-        btn.classList.add('bg-[#e05628]', 'hover:bg-[#c8461b]', 'text-white');
+        btn.classList.remove('bg-background', 'text-foreground');
+        btn.classList.add('bg-accent', 'text-accent-foreground');
     }
 }
 </script>
