@@ -1,4 +1,5 @@
 from django.forms import ModelForm, Select, TextInput, Textarea, URLInput
+from django.utils.html import escape
 
 from .models import Forum, Comment
 
@@ -21,6 +22,12 @@ class CommentForm(ModelForm):
                 }
             ),
         }
+
+    def clean_content(self):
+        content = self.cleaned_data.get("content", "")
+        if content:
+            return escape(content.strip())
+        return content
 
 
 class ForumForm(ModelForm):
@@ -76,3 +83,21 @@ class ForumForm(ModelForm):
                 }
             ),
         }
+
+    def clean_title(self):
+        title = self.cleaned_data.get("title", "")
+        if title:
+            return escape(title.strip())
+        return title
+
+    def clean_content(self):
+        content = self.cleaned_data.get("content", "")
+        if content:
+            return escape(content.strip())
+        return content
+
+    def clean_image_caption(self):
+        caption = self.cleaned_data.get("image_caption")
+        if caption:
+            return escape(caption.strip())
+        return caption

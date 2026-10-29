@@ -362,6 +362,12 @@
 <!-- Interactive Script for Detail Page -->
 <script>
   (() => {
+    function getCsrfToken() {
+      const input = document.querySelector('[name=csrfmiddlewaretoken]');
+      if (input && input.value) return input.value;
+      const match = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
+      return match ? match[1] : "";
+    }
     // 1. Post Options Dropdown
     const optionsBtn = document.getElementById("post-options-btn");
     const optionsMenu = document.getElementById("post-options-menu");
@@ -569,7 +575,7 @@
         description: "Apakah kamu yakin ingin menghapus komentar ini? Komentar yang telah dihapus tidak dapat dipulihkan.",
         confirmText: "Hapus Komentar",
         onConfirm: async ({ setError, close }) => {
-          const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+          const csrfToken = getCsrfToken();
           const response = await fetch(url, {
             method: "DELETE",
             headers: {
@@ -643,7 +649,7 @@
       if (btnText) btnText.textContent = "Mengirim...";
 
       try {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+        const csrfToken = getCsrfToken();
         const response = await fetch(commentForm.dataset.action, {
           method: "POST",
           headers: {
@@ -763,9 +769,7 @@
         updateLikeUI(nextLiked, nextCount);
 
         try {
-          const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
-          const csrfCookie = document.cookie.match(/(?:^|;\s*)csrftoken=([^;]+)/);
-          const csrfToken = csrfInput?.value || (csrfCookie ? csrfCookie[1] : "");
+          const csrfToken = getCsrfToken();
 
           const response = await fetch("{% url 'forum:like_post_api' post.id %}", {
             method: "POST",
@@ -825,7 +829,7 @@
         description: "Apakah kamu yakin ingin menghapus thread forum ini? Seluruh komentar di dalamnya juga akan terhapus dan tindakan ini tidak dapat dibatalkan.",
         confirmText: "Hapus Thread",
         onConfirm: async ({ setError }) => {
-          const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+          const csrfToken = getCsrfToken();
           const response = await fetch("{% url 'forum:delete_post_api' post.id %}", {
             method: "DELETE",
             headers: {
@@ -997,7 +1001,7 @@
         image_url: editImageUrlInput.value.trim(),
         image_caption: editCaptionInput.value.trim(),
       };
-      const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || "";
+      const csrfToken = getCsrfToken();
 
       try {
         const response = await fetch("{% url 'forum:edit_post_api' post.id %}", {

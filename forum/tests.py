@@ -226,11 +226,30 @@ class ForumFormTests(TestCase):
         self.assertIn(post.image_url, ("", None))
         self.assertIn(post.image_caption, ("", None))
 
+    def test_forum_form_xss_escaping(self):
+        form = ForumForm(
+            data={
+                "title": "<script>alert('XSS Title')</script>",
+                "content": "<p>Konten <b>berbahaya</b></p>",
+                "category": "DISCUSSION",
+                "image_caption": "<i>Caption</i>",
+            }
+        )
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["title"], "&lt;script&gt;alert(&#x27;XSS Title&#x27;)&lt;/script&gt;")
+        self.assertEqual(form.cleaned_data["content"], "&lt;p&gt;Konten &lt;b&gt;berbahaya&lt;/b&gt;&lt;/p&gt;")
+        self.assertEqual(form.cleaned_data["image_caption"], "&lt;i&gt;Caption&lt;/i&gt;")
+
 
 class CommentFormTests(TestCase):
     def test_comment_form_valid_data(self):
         form = CommentForm(data={"content": "Komentar yang valid dan membangun."})
         self.assertTrue(form.is_valid())
+
+    def test_comment_form_xss_escaping(self):
+        form = CommentForm(data={"content": "<script>alert('XSS Comment')</script>"})
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data["content"], "&lt;script&gt;alert(&#x27;XSS Comment&#x27;)&lt;/script&gt;")
 
     def test_comment_form_empty_content(self):
         form = CommentForm(data={"content": ""})
@@ -557,6 +576,19 @@ class ForumCreatePostAPITests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 405)
 
+    def test_create_post_api_escapes_xss_tags(self):
+        self.client.force_login(self.user)
+        payload = {
+            "title": "<script>alert('xss')</script>",
+            "content": "<h1>Test Header</h1>",
+            "category": "DISCUSSION",
+        }
+        res = self.client.post(self.url, data=payload)
+        self.assertEqual(res.status_code, 201)
+        post = Forum.objects.get(pk=res.json()["post"]["id"])
+        self.assertEqual(post.title, "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;")
+        self.assertEqual(post.content, "&lt;h1&gt;Test Header&lt;/h1&gt;")
+
 
 class ForumEditPostAPITests(TestCase):
     def setUp(self):
@@ -857,6 +889,18 @@ class ForumCommentAPITests(TestCase):
 
         self.post.refresh_from_db()
         self.assertEqual(self.post.total_comments, 1)
+
+    def test_add_comment_api_escapes_xss_tags(self):
+        self.client.force_login(self.comment_author)
+        payload = {"content": "<script>alert('hack')</script>"}
+        res = self.client.post(
+            self.add_comment_url,
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(res.status_code, 201)
+        comment = Comment.objects.get(pk=res.json()["comment"]["id"])
+        self.assertEqual(comment.content, "&lt;script&gt;alert(&#x27;hack&#x27;)&lt;/script&gt;")
 
     def test_add_comment_api_unauthenticated(self):
         response = self.client.post(
