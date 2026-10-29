@@ -3,94 +3,148 @@
 {% block title %}News - Thrift.io{% endblock %}
 
 {% block content %}
-<main class="mx-auto w-full max-w-7xl px-4 py-8 text-foreground sm:px-6 lg:px-8">
-  <header class="mb-8">
-    <p class="mb-2 text-sm font-bold uppercase tracking-wider text-muted">
-      01 / Fashion News
-    </p>
-    <h1 class="font-heading text-3xl font-bold sm:text-4xl">
-      Berita pilihan &amp; Terkini
-    </h1>
-    <p class="mt-3 max-w-2xl text-sm leading-relaxed text-muted sm:text-base">
-      Artikel pilihan tentang fashion, thrifting, dan gaya hidup berkelanjutan.
-    </p>
+<main class="w-full bg-background font-main text-foreground">
+  <section class="bg-background px-4 pb-6 pt-5 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-2">
+  <header class="flex flex-col gap-2">
+    <p class="forum-intro__label text-[0.625rem] font-bold uppercase tracking-[0.0875rem] text-muted">Artikel pilihan tentang fashion, thrifting, dan gaya hidup berkelanjutan.</p>
   </header>
 
-  <form method="get" action="{% url 'news:news_page' %}" role="search" class="mb-8 flex flex-col gap-3 sm:flex-row">
-    <label for="news-search" class="sr-only">Cari berita</label>
-    <input
-      id="news-search"
-      type="search"
-      name="q"
-      value="{{ title_query }}"
-      placeholder="Cari judul, topik, atau sumber berita..."
-      class="h-16 w-full border-2 border-line bg-surface px-5 text-base text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 sm:max-w-2xl"
-    >
-    <button
-      type="submit"
-      class="inline-flex h-16 items-center justify-center gap-2 border-2 border-line bg-hero px-8 text-base font-bold text-hero-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
-    >
-      <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  <form method="get" action="{% url 'news:news_page' %}" role="search" class="flex flex-col gap-2 sm:flex-row">
+    <div class="flex min-w-0 flex-1 items-center gap-2.5 border-2 border-line bg-surface px-3 shadow-[3px_3px_0_var(--shadow-color)] sm:px-3.5">
+      <svg class="size-4 shrink-0 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
         <circle cx="11" cy="11" r="7"></circle>
         <path d="m20 20-4-4"></path>
       </svg>
-      Cari
+      <label for="news-search" class="sr-only">Cari berita</label>
+      <input
+        id="news-search"
+        type="search"
+        name="q"
+        value="{{ title_query }}"
+        placeholder="Cari judul, topik, atau sumber berita..."
+        class="min-w-0 flex-1 bg-transparent py-2.5 text-xs text-foreground outline-none placeholder:text-muted sm:text-[0.8125rem]"
+      >
+    </div>
+    <button
+      type="submit"
+      class="inline-flex min-h-9.5 items-center justify-center gap-2 border-2 border-line bg-accent px-4 text-xs font-bold text-accent-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-all hover:opacity-95 active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)] focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 sm:text-[0.8125rem]"
+    >
+      <svg class="size-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </svg>
+      Cari berita
     </button>
     {% if title_query %}
-      <a href="{% url 'news:news_page' %}" class="inline-flex h-16 items-center justify-center px-3 text-sm font-semibold text-foreground underline underline-offset-4 hover:text-accent">
+      <a href="{% url 'news:news_page' %}" class="inline-flex min-h-9.5 items-center justify-center px-3 text-xs font-semibold text-foreground underline underline-offset-4 hover:text-accent sm:text-[0.8125rem]">
         Hapus pencarian
       </a>
     {% endif %}
   </form>
+    </div>
+  </section>
 
+  <section class="bg-background px-4 pb-10 pt-2 sm:px-6 lg:px-8">
+    <div class="mx-auto flex w-full max-w-6xl flex-col gap-4">
   {% if error_message %}
     <p class="border-2 border-line bg-surface p-4 text-sm text-foreground" role="alert">
       {{ error_message }}
     </p>
   {% elif articles %}
-    <p class="mb-4 text-sm text-muted" role="status">
+    <p class="text-sm text-muted" role="status">
       {% if title_query %}
         Menampilkan {{ articles|length }} hasil untuk “{{ title_query }}”.
       {% else %}
         Menampilkan {{ articles|length }} berita terbaru.
       {% endif %}
     </p>
-    <section aria-label="Fashion news" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {% for article in articles %}
-        <article class="flex flex-col overflow-hidden border-2 border-line bg-surface shadow-[4px_4px_0_var(--shadow-color)]">
-          {% if article.urlToImage %}
+    {% if title_query %}
+      <section aria-label="Search results" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {% for article in articles %}
+          <article class="flex flex-col overflow-hidden border-2 border-line bg-surface shadow-[4px_4px_0_var(--shadow-color)]">
+            {% if article.urlToImage %}
+              <img
+                class="aspect-[16/10] w-full object-cover"
+                src="{{ article.urlToImage }}"
+                alt=""
+                loading="lazy"
+              >
+            {% else %}
+              <div class="grid aspect-[16/10] place-items-center bg-hero text-sm text-hero-foreground">
+                Thrift.io News
+              </div>
+            {% endif %}
+
+            <div class="flex flex-1 flex-col p-4">
+              {% if article.source.name %}
+                <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+                  {{ article.source.name }}
+                </p>
+              {% endif %}
+              <h2 class="font-heading text-xl font-bold leading-snug">
+                {{ article.title }}
+              </h2>
+              {% if article.description %}
+                <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">
+                  {{ article.description }}
+                </p>
+              {% endif %}
+              <a
+                class="news-article-link mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"
+                href="{{ article.url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Baca artikel
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </section>
+    {% else %}
+    <section aria-labelledby="top-news-heading">
+      <div aria-hidden="true" class="mb-6 border-t-2 border-line" style="width: 100vw; margin-left: calc(50% - 50vw);"></div>
+      <h2 id="top-news-heading" class="mb-4 text-[11px] font-bold uppercase tracking-wider text-muted sm:text-xs">
+        01 / Berita Teratas
+      </h2>
+      <div class="grid gap-4 {% if articles|length > 1 %}lg:grid-cols-3{% endif %}">
+      {% with headline=articles|first %}
+        <article class="flex flex-col overflow-hidden border-2 border-line bg-surface shadow-[4px_4px_0_var(--shadow-color)] {% if articles|length > 1 %}lg:col-span-2{% endif %}">
+          {% if headline.urlToImage %}
             <img
-              class="aspect-[16/10] w-full object-cover"
-              src="{{ article.urlToImage }}"
+              class="aspect-[16/9] w-full object-cover"
+              src="{{ headline.urlToImage }}"
               alt=""
-              loading="lazy"
+              fetchpriority="high"
             >
           {% else %}
-            <div class="grid aspect-[16/10] place-items-center bg-hero text-sm text-hero-foreground">
+            <div class="grid aspect-[16/9] place-items-center bg-hero text-sm text-hero-foreground">
               Thrift.io News
             </div>
           {% endif %}
 
-          <div class="flex flex-1 flex-col p-4">
-            {% if article.source.name %}
+          <div class="flex flex-1 flex-col p-5 sm:p-7">
+            {% if headline.source.name %}
               <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
-                {{ article.source.name }}
+                {{ headline.source.name }}
               </p>
             {% endif %}
 
-            <h2 class="font-heading text-xl font-bold leading-snug">
-              {{ article.title }}
+            <h2 class="font-heading text-2xl font-bold leading-snug sm:text-3xl">
+              {{ headline.title }}
             </h2>
 
-            {% if article.description %}
-              <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">
-                {{ article.description }}
+            {% if headline.description %}
+              <p class="mt-3 text-sm leading-relaxed text-muted sm:text-base">
+                {{ headline.description }}
               </p>
             {% endif %}
 
             <a
               class="news-article-link mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"
-              href="{{ article.url }}"
+              href="{{ headline.url }}"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -99,8 +153,99 @@
             </a>
           </div>
         </article>
-      {% endfor %}
+      {% endwith %}
+
+      {% if articles|length > 1 %}
+        <aside class="border-2 border-line bg-surface p-4 shadow-[4px_4px_0_var(--shadow-color)]">
+          <h2 class="mb-4 font-heading text-xl font-bold">Top Stories</h2>
+          <div class="divide-y-2 divide-line">
+            {% for article in articles|slice:"1:4" %}
+              <article class="py-3 first:pt-0 last:pb-0">
+                {% if article.source.name %}
+                  <p class="mb-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
+                    {{ article.source.name }}
+                  </p>
+                {% endif %}
+                <h3 class="font-heading text-base font-bold leading-snug">
+                  {{ article.title }}
+                </h3>
+                {% if article.description %}
+                  <p class="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted">
+                    {{ article.description }}
+                  </p>
+                {% endif %}
+                <a
+                  class="news-article-link mt-2 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"
+                  href="{{ article.url }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Baca artikel
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              </article>
+            {% endfor %}
+          </div>
+        </aside>
+      {% endif %}
+      </div>
     </section>
+
+    {% if articles|length > 4 %}
+      <section aria-labelledby="more-news-heading">
+        <div aria-hidden="true" class="mb-6 border-t-2 border-line" style="width: 100vw; margin-left: calc(50% - 50vw);"></div>
+        <h2 id="more-news-heading" class="mb-4 text-[11px] font-bold uppercase tracking-wider text-muted sm:text-xs">
+          02 / Berita Lainnya
+        </h2>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {% for article in articles|slice:"4:" %}
+            <article class="flex flex-col overflow-hidden border-2 border-line bg-surface shadow-[4px_4px_0_var(--shadow-color)]">
+              {% if article.urlToImage %}
+                <img
+                  class="aspect-[16/10] w-full object-cover"
+                  src="{{ article.urlToImage }}"
+                  alt=""
+                  loading="lazy"
+                >
+              {% else %}
+                <div class="grid aspect-[16/10] place-items-center bg-hero text-sm text-hero-foreground">
+                  Thrift.io News
+                </div>
+              {% endif %}
+
+              <div class="flex flex-1 flex-col p-4">
+                {% if article.source.name %}
+                  <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+                    {{ article.source.name }}
+                  </p>
+                {% endif %}
+
+                <h3 class="font-heading text-xl font-bold leading-snug">
+                  {{ article.title }}
+                </h3>
+
+                {% if article.description %}
+                  <p class="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">
+                    {{ article.description }}
+                  </p>
+                {% endif %}
+
+                <a
+                  class="news-article-link mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"
+                  href="{{ article.url }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Baca artikel
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+    {% endif %}
   {% else %}
     <p class="border-2 border-line bg-surface p-4 text-sm text-muted">
       {% if title_query %}
@@ -110,6 +255,8 @@
       {% endif %}
     </p>
   {% endif %}
+    </div>
+  </section>
 </main>
 {% include 'pages/news/warning_modal.html' %}
 {% endblock %}
