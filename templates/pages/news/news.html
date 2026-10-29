@@ -16,11 +16,45 @@
     </p>
   </header>
 
+  <form method="get" action="{% url 'news:news_page' %}" role="search" class="mb-8 flex flex-col gap-3 sm:flex-row">
+    <label for="news-search" class="sr-only">Cari berita</label>
+    <input
+      id="news-search"
+      type="search"
+      name="q"
+      value="{{ title_query }}"
+      placeholder="Cari judul, topik, atau sumber berita..."
+      class="h-16 w-full border-2 border-line bg-surface px-5 text-base text-foreground placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 sm:max-w-2xl"
+    >
+    <button
+      type="submit"
+      class="inline-flex h-16 items-center justify-center gap-2 border-2 border-line bg-hero px-8 text-base font-bold text-hero-foreground shadow-[3px_3px_0_var(--shadow-color)] transition-transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+    >
+      <svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </svg>
+      Cari
+    </button>
+    {% if title_query %}
+      <a href="{% url 'news:news_page' %}" class="inline-flex h-16 items-center justify-center px-3 text-sm font-semibold text-foreground underline underline-offset-4 hover:text-accent">
+        Hapus pencarian
+      </a>
+    {% endif %}
+  </form>
+
   {% if error_message %}
     <p class="border-2 border-line bg-surface p-4 text-sm text-foreground" role="alert">
       {{ error_message }}
     </p>
   {% elif articles %}
+    <p class="mb-4 text-sm text-muted" role="status">
+      {% if title_query %}
+        Menampilkan {{ articles|length }} hasil untuk “{{ title_query }}”.
+      {% else %}
+        Menampilkan {{ articles|length }} berita terbaru.
+      {% endif %}
+    </p>
     <section aria-label="Fashion news" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {% for article in articles %}
         <article class="flex flex-col overflow-hidden border-2 border-line bg-surface shadow-[4px_4px_0_var(--shadow-color)]">
@@ -55,7 +89,7 @@
             {% endif %}
 
             <a
-              class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"
+              class="news-article-link mt-5 inline-flex items-center gap-2 text-sm font-bold text-accent hover:underline"
               href="{{ article.url }}"
               target="_blank"
               rel="noopener noreferrer"
@@ -69,8 +103,13 @@
     </section>
   {% else %}
     <p class="border-2 border-line bg-surface p-4 text-sm text-muted">
-      Belum ada artikel fashion yang ditemukan.
+      {% if title_query %}
+        Tidak ada berita yang cocok dengan “{{ title_query }}”. Coba kata kunci lain.
+      {% else %}
+        Belum ada artikel fashion yang ditemukan.
+      {% endif %}
     </p>
   {% endif %}
 </main>
+{% include 'pages/news/warning_modal.html' %}
 {% endblock %}

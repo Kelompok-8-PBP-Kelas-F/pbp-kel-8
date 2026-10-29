@@ -69,5 +69,5 @@ def fetch_fashion_articles():
 
         if any(term in text for term in FASHION_TERMS):
             fashion_articles.append(article)
-
+    
     return fashion_articles
