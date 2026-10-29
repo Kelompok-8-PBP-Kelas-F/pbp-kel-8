@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'user',
     'marketplace',
     'outfitbuilder',
+    'event',
 ]
 
 TAILWIND_APP_NAME = 'theme'
