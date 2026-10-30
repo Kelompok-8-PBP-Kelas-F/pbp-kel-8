@@ -95,9 +95,8 @@
           <h2 class="mb-2 font-heading text-lg font-extrabold" id="location-heading">Lokasi</h2>
           <div class="overflow-hidden border-2 border-[#17140e] bg-[#fbf2da] p-2 dark:border-[#d6c99f] dark:bg-[#242c24]">
             {% if event.latitude is not None and event.longitude is not None %}
-            <div class="relative h-64 border border-[#b9ad91] bg-[#e8dfc7] dark:border-[#596454] dark:bg-[#202820]">
+            <div class="relative isolate h-64 overflow-hidden border border-[#b9ad91] bg-[#e8dfc7] dark:border-[#596454] dark:bg-[#202820]">
               <div class="size-full bg-[#e8dfc7] dark:bg-[#202820]" id="event-detail-map" data-latitude="{{ event.latitude }}" data-longitude="{{ event.longitude }}" aria-label="Peta OpenStreetMap lokasi {{ event.location }}"></div>
-              <p class="absolute left-2 top-2 z-[400] border border-[#17140e] bg-[#fbf2da] px-2 py-1 text-[8px] font-bold dark:border-[#d6c99f] dark:bg-[#242c24]">OPENSTREETMAP</p>
               <p class="absolute bottom-2 left-2 z-[400] max-w-[calc(100%-16px)] border border-[#17140e] bg-[#fbf2da] px-2 py-1 text-[9px] font-semibold dark:border-[#d6c99f] dark:bg-[#242c24]" id="map-status" role="status" hidden></p>
             </div>
             {% else %}
