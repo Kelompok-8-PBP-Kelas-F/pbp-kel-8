@@ -30,8 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PRODUCTION = os.getenv('PRODUCTION', 'False').lower() == 'true'
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://luthfi.ahmad51-thriftio.pws.cs.ui.ac.id",
-    "https://luthfi.ahmad51-thriftio.pws.cs.ui.ac.id",
+    "http://luthfi-ahmad51-thriftio.pws.cs.ui.ac.id",
+    "https://luthfi-ahmad51-thriftio.pws.cs.ui.ac.id",
+    "http://*.pws.cs.ui.ac.id",
+    "https://*.pws.cs.ui.ac.id",
 ]
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-32a+-=divf1k7qe(zqaawg#y)ccg9i(8$22f-aejkuz1rc-#an'
@@ -39,7 +41,7 @@ SECRET_KEY = 'django-insecure-32a+-=divf1k7qe(zqaawg#y)ccg9i(8$22f-aejkuz1rc-#an
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = not PRODUCTION
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "luthfi.ahmad51-thriftio.pws.cs.ui.ac.id", ".pws.cs.ui.ac.id"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "luthfi-ahmad51-thriftio.pws.cs.ui.ac.id", ".pws.cs.ui.ac.id"]
 
 NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
 
@@ -162,12 +164,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-WHITENOISE_USE_FINDERS = True
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+WHITENOISE_USE_FINDERS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
