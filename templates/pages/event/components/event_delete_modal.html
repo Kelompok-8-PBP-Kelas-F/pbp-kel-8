@@ -1,0 +1,13 @@
+<section class="mx-auto max-w-xl border-2 border-[#17140e] bg-[#fbf2da] p-5 shadow-[4px_4px_0_#17140e] dark:border-[#d6c99f] dark:bg-[#242c24] dark:shadow-[4px_4px_0_#080b09] sm:p-8">
+  <div class="mb-6">
+    <h2 class="font-heading text-xl font-extrabold">Hapus event ini?</h2>
+    <p class="mt-2 text-sm leading-relaxed text-[#695b3d] dark:text-[#c2b58e]">
+      Event <strong class="text-inherit">{{ event.name }}</strong> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.
+    </p>
+  </div>
+  <form method="post" action="{% url 'event:event_delete' event.pk %}" class="flex flex-wrap gap-3">
+    {% csrf_token %}
+    <button class="border-2 border-[#17140e] bg-red-700 px-5 py-2.5 text-sm font-extrabold text-white hover:bg-red-800 dark:border-[#d6c99f]" type="submit">Ya, hapus event</button>
+    <a class="border-2 border-[#17140e] bg-transparent px-5 py-2.5 text-sm font-bold text-inherit no-underline hover:bg-black/5 dark:border-[#d6c99f] dark:hover:bg-white/5" href="{% url 'event:event_detail' event.pk %}">Batal</a>
+  </form>
+</section>
