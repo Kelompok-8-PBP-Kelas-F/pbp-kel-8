@@ -16,6 +16,10 @@ class EventPageTests(TestCase):
         response = self.client.get(reverse("event:event_page"))
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.headers["Referrer-Policy"],
+            "strict-origin-when-cross-origin",
+        )
         self.assertContains(response, "dark:bg-[#151a15]")
         self.assertContains(response, "dark:brightness-75")
         self.assertContains(response, "https://tile.openstreetmap.org/{z}/{x}/{y}.png")

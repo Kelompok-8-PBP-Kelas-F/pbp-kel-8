@@ -35,6 +35,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://*.pws.cs.ui.ac.id",
     "https://*.pws.cs.ui.ac.id",
 ]
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-32a+-=divf1k7qe(zqaawg#y)ccg9i(8$22f-aejkuz1rc-#an'
 
