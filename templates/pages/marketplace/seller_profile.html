@@ -1,137 +1,162 @@
 {% extends 'base.html' %}
 
-{% block title %}Profil {{ seller.username }} — Thrift.io{% endblock %}
+{% block title %}Profil Toko {{ seller.username }} — Thrift.io{% endblock %}
 
 {% block content %}
-<div class="bg-[#fef4e0] min-h-screen p-6 font-sans text-black">
-    <div class="max-w-6xl mx-auto space-y-8">
+<main class="w-full min-h-screen bg-background font-main text-foreground">
+  <div class="mx-auto w-full max-w-360 px-4 py-8 sm:px-6 lg:px-8">
 
-        <!-- Banner & Header Profil Penjual -->
-        <div class="border-3 border-black bg-[#f8d775] p-6 shadow-[6px_6px_0px_rgba(0,0,0,1)] relative">
-            <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
-                
-                <!-- Avatar Penjual -->
-                <div class="w-24 h-24 bg-black text-white font-black text-4xl flex items-center justify-center border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] shrink-0">
-                    {{ seller.username|make_list|first|upper }}
-                </div>
+    <!-- Header Toko / Seller Banner -->
+    <div class="mb-8 flex flex-col gap-6 border-2 border-line bg-surface p-6 shadow-[4px_4px_0_var(--shadow-color)] sm:p-8">
+      
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+        <!-- Info Utama Penjual -->
+        <div class="flex items-center sm:items-start gap-4">
+          <!-- Avatar dari UserProfile atau Fallback Inisial -->
+          <div class="flex size-20 shrink-0 items-center justify-center border-2 border-line bg-background font-heading text-2xl font-bold text-foreground sm:size-24">
+            {% if profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt="{{ seller.username }}" class="h-full w-full object-cover">
+            {% else %}
+              {{ seller.username|first|upper }}
+            {% endif %}
+          </div>
 
-                <!-- Info Utama Penjual -->
-                <div class="flex-1 text-center md:text-left">
-                    <div class="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-                        <h1 class="text-3xl font-black">{{ seller.username }}</h1>
-                        <span class="bg-[#e05628] text-white text-xs font-extrabold px-2.5 py-1 border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] w-fit mx-auto md:mx-0">
-                            STAR SELLER
-                        </span>
-                    </div>
-                    
-                    <p class="text-xs font-semibold text-gray-800 mb-4 max-w-xl">
-                        Koleksi pakaian preloved, vintage, dan streetwear pilihan. Kondisi terjamin & siap kirim!
-                    </p>
-
-                    <!-- Informasi Kontak / Lokasi -->
-                    <div class="flex flex-wrap justify-center md:justify-start gap-4 text-xs font-bold">
-                        <span class="flex items-center gap-1">
-                            📍 Jakarta Selatan
-                        </span>
-                        <span class="flex items-center gap-1">
-                            🗓️ Bergabung sejak 2024
-                        </span>
-                    </div>
-                </div>
-
-                <!-- Tombol Aksi (Edit Profil / Chat) -->
-                <div class="flex gap-2">
-                    <button class="bg-white border-2 border-black px-4 py-2 font-bold text-xs shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-gray-100 active:translate-x-[1px] active:translate-y-[1px] transition-all">
-                        💬 Hubungi Penjual
-                    </button>
-                    <button class="bg-[#e05628] text-white border-2 border-black px-4 py-2 font-bold text-xs shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b] active:translate-x-[1px] active:translate-y-[1px] transition-all">
-                        ⭐ Ikuti Toko
-                    </button>
-                </div>
-
+          <!-- Info Detail Penjual -->
+          <div class="flex flex-col gap-1.5 min-w-0">
+            <!-- Nama Toko (Tanpa uppercase forced) -->
+            <h1 class="font-heading text-xl sm:text-2xl font-bold leading-tight text-foreground">
+              {{ seller.username }}
+            </h1>
+            
+            <div class="flex flex-wrap items-center gap-3 text-xs text-muted">
+              <span class="flex items-center gap-1">
+                📍 {{ profile.location|default:"Lokasi belum diatur" }}
+              </span>
+              <span>•</span>
+              <span class="flex items-center gap-1">
+                📅 Bergabung {{ seller.date_joined|date:"M Y" }}
+              </span>
             </div>
 
-            <!-- Kartu Statistik Toko -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-6 border-t-2 border-black">
-                <div class="bg-[#fdf8eb] border-2 border-black p-3 text-center shadow-[3px_3px_0px_rgba(0,0,0,1)]">
-                    <p class="text-xs text-gray-600 font-bold uppercase">Total Barang</p>
-                    <p class="text-2xl font-black">{{ total_items }}</p>
-                </div>
-                <div class="bg-[#fdf8eb] border-2 border-black p-3 text-center shadow-[3px_3px_0px_rgba(0,0,0,1)]">
-                    <p class="text-xs text-gray-600 font-bold uppercase">Tersedia</p>
-                    <p class="text-2xl font-black text-green-700">{{ items_tersedia }}</p>
-                </div>
-                <div class="bg-[#fdf8eb] border-2 border-black p-3 text-center shadow-[3px_3px_0px_rgba(0,0,0,1)]">
-                    <p class="text-xs text-gray-600 font-bold uppercase">Terjual</p>
-                    <p class="text-2xl font-black text-red-600">{{ items_terjual }}</p>
-                </div>
-                <div class="bg-[#fdf8eb] border-2 border-black p-3 text-center shadow-[3px_3px_0px_rgba(0,0,0,1)]">
-                    <p class="text-xs text-gray-600 font-bold uppercase">Rating Toko</p>
-                    <p class="text-2xl font-black">4.9 / 5.0</p>
-                </div>
+            <!-- Kontak Penjual -->
+            <div class="mt-1 flex flex-wrap gap-2 text-xs font-bold">
+              {% if profile.phone %}
+              <span class="border-2 border-line bg-background px-2.5 py-0.5 text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
+                📞 {{ profile.phone }}
+              </span>
+              {% endif %}
+              {% if profile.line_id %}
+              <span class="border-2 border-line bg-background px-2.5 py-0.5 text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
+                LINE: {{ profile.line_id }}
+              </span>
+              {% endif %}
             </div>
+          </div>
         </div>
 
-        <!-- Section Etalase Barang Penjual -->
-        <div>
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-black">Etalase Toko ({{ total_items }})</h2>
-                
-                <!-- Quick Filter status -->
-                <div class="flex gap-2 text-xs font-bold">
-                    <button class="bg-[#e05628] text-white border-2 border-black px-3 py-1 shadow-[2px_2px_0px_rgba(0,0,0,1)]">Semua</button>
-                    <button class="bg-white border-2 border-black px-3 py-1 shadow-[2px_2px_0px_rgba(0,0,0,1)]">Tersedia</button>
-                    <button class="bg-white border-2 border-black px-3 py-1 shadow-[2px_2px_0px_rgba(0,0,0,1)]">Terjual</button>
-                </div>
-            </div>
+        <!-- Tombol Ikuti Toko / Penanda Milik Sendiri -->
+        {% if user != seller %}
+        <button id="btnFollow" 
+                onclick="toggleFollow()" 
+                class="border-2 border-line bg-accent text-accent-foreground px-5 py-2.5 font-bold text-xs uppercase tracking-wider shadow-[3px_3px_0_var(--shadow-color)] hover:opacity-90 active:translate-x-[1px] active:translate-y-[1px] transition-all">
+          + Ikuti Toko
+        </button>
+        {% else %}
+        <span class="border-2 border-line bg-accent text-accent-foreground px-4 py-2 font-bold text-xs uppercase tracking-wider shadow-[2px_2px_0_var(--shadow-color)]">
+          Toko Milikmu
+        </span>
+        {% endif %}
+      </div>
 
-            <!-- Grid Barang -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {% for item in items %}
-                <div class="border-2 border-black bg-[#fdf8eb] shadow-[4px_4px_0px_rgba(0,0,0,1)] flex flex-col justify-between overflow-hidden">
-                    <div>
-                        <!-- Container Gambar -->
-                        <div class="h-48 border-b-2 border-black bg-gray-100 flex items-center justify-center relative overflow-hidden">
-                            {% if item.image %}
-                                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
-                            {% else %}
-                                <span class="text-xs font-bold text-gray-400">No Image</span>
-                            {% endif %}
+      <!-- Bio Penjual -->
+      <div class="pt-4 border-t-2 border-line">
+        <p class="text-xs leading-relaxed text-foreground">
+          {{ profile.bio|default:"Penjual ini belum menuliskan deskripsi toko." }}
+        </p>
+      </div>
 
-                            <!-- Badge Status -->
-                            <span class="absolute top-2 right-2 text-[10px] font-extrabold px-2 py-0.5 border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] {% if item.is_available %} bg-green-300 {% else %} bg-red-300 {% endif %}">
-                                {% if item.is_available %}Tersedia{% else %}Terjual{% endif %}
-                            </span>
-                        </div>
-
-                        <!-- Info Barang -->
-                        <div class="p-3">
-                            <h3 class="font-bold text-sm truncate mb-1">{{ item.title }}</h3>
-                            <p class="font-extrabold text-base">Rp{{ item.price|floatformat:0 }}</p>
-                        </div>
-                    </div>
-
-                    <!-- Tombol Aksi Card -->
-                    <div class="p-3 pt-0">
-                        {% if item.is_available %}
-                            <a href="{% url 'marketplace:item_detail' item.id %}" class="block w-full text-center bg-[#e05628] text-white border-2 border-black font-bold py-1.5 text-xs shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:bg-[#c8461b]">
-                                Lihat Barang
-                            </a>
-                        {% else %}
-                            <button disabled class="w-full bg-gray-300 text-gray-600 border-2 border-black font-bold py-1.5 text-xs cursor-not-allowed">
-                                Habis Terjual
-                            </button>
-                        {% endif %}
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-span-full border-2 border-black bg-white p-8 text-center shadow-[4px_4px_0px_rgba(0,0,0,1)]">
-                    <p class="font-bold text-sm">Penjual ini belum memiliki barang dagangan.</p>
-                </div>
-                {% endfor %}
-            </div>
+      <!-- Ringkasan Statistik -->
+      <div class="grid grid-cols-3 gap-3">
+        <div class="border-2 border-line bg-background p-3 text-center shadow-[2px_2px_0_var(--shadow-color)]">
+          <span class="block font-heading text-lg font-bold text-foreground">{{ total_items }}</span>
+          <span class="text-[10px] font-bold uppercase text-muted">Total Barang</span>
         </div>
+        <div class="border-2 border-line bg-background p-3 text-center shadow-[2px_2px_0_var(--shadow-color)]">
+          <span class="block font-heading text-lg font-bold text-foreground">{{ items_tersedia }}</span>
+          <span class="text-[10px] font-bold uppercase text-muted">Tersedia</span>
+        </div>
+        <div class="border-2 border-line bg-background p-3 text-center shadow-[2px_2px_0_var(--shadow-color)]">
+          <span class="block font-heading text-lg font-bold text-foreground">{{ items_terjual }}</span>
+          <span class="text-[10px] font-bold uppercase text-muted">Terjual</span>
+        </div>
+      </div>
 
     </div>
-</div>
+
+    <!-- Katalog Barang Penjual -->
+    <div class="flex flex-col gap-4">
+      <h2 class="font-heading text-xl font-bold uppercase text-foreground tracking-wide">
+        Barang Dagangan ({{ total_items }})
+      </h2>
+
+      {% if items %}
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {% for item in items %}
+        <div class="group flex flex-col border-2 border-line bg-surface shadow-[3px_3px_0_var(--shadow-color)] transition-shadow hover:shadow-[5px_5px_0_var(--shadow-color)]">
+          <div class="flex h-44 items-center justify-center overflow-hidden border-b-2 border-line bg-background">
+            {% if item.gambar %}
+            <img src="{{ item.gambar.url }}" alt="{{ item.nama }}" class="h-full w-full object-cover">
+            {% else %}
+            <span class="text-xs font-bold text-muted">Tanpa Gambar</span>
+            {% endif %}
+          </div>
+          <div class="flex flex-col gap-1 p-3">
+            <h3 class="font-heading text-[0.9375rem] font-bold leading-tight text-foreground truncate">{{ item.nama }}</h3>
+            <p class="font-heading text-[1rem] font-bold text-foreground">Rp{{ item.harga|floatformat:0 }}</p>
+            <div>
+              <span class="inline-block text-[10px] font-bold uppercase px-2 py-0.5 border border-line bg-background text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
+                {{ item.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <!-- Empty State Box yang Lebih Proporsional -->
+      <div class="flex flex-col items-center justify-center gap-4 border-2 border-line bg-surface py-16 px-4 text-center shadow-[3px_3px_0_var(--shadow-color)] min-h-[220px]">
+        <p class="text-sm font-bold text-muted">Penjual ini belum memiliki barang dagangan.</p>
+        {% if user == seller %}
+        <a href="{% url 'marketplace:tambah_barang' %}" 
+           class="inline-flex items-center gap-2 border-2 border-line bg-accent px-4 py-2 text-xs font-bold text-accent-foreground uppercase tracking-wide shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-90 active:translate-x-[1px] active:translate-y-[1px] transition-all">
+          + Tambah Barang Pertama
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</main>
+
+<script>
+let isFollowing = false;
+
+function toggleFollow() {
+    const btn = document.getElementById('btnFollow');
+    if (!btn) return;
+
+    isFollowing = !isFollowing;
+
+    if (isFollowing) {
+        btn.innerText = '✓ Mengikuti';
+        btn.classList.remove('bg-accent', 'text-accent-foreground');
+        btn.classList.add('bg-background', 'text-foreground');
+    } else {
+        btn.innerText = '+ Ikuti Toko';
+        btn.classList.remove('bg-background', 'text-foreground');
+        btn.classList.add('bg-accent', 'text-accent-foreground');
+    }
+}
+</script>
 {% endblock %}

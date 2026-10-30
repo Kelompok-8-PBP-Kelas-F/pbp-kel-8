@@ -3,6 +3,7 @@ from django.db.models import Q
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.html import escape
 from .models import Forum, Comment
 from .forms import ForumForm, CommentForm
 
@@ -238,6 +239,12 @@ def add_comment_api(request, id):
             return JsonResponse({'error': 'Komentar tidak boleh kosong.'}, status=400)
         if len(content) > 2000:
             return JsonResponse({'error': 'Komentar maksimal 2.000 karakter.'}, status=400)
+
+        comment_form = CommentForm({'content': content})
+        if comment_form.is_valid():
+            content = comment_form.cleaned_data['content']
+        else:
+            content = escape(content)
 
         comment = Comment.objects.create(
             forum=post,
