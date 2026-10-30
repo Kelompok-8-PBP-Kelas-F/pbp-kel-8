@@ -3,7 +3,10 @@ from django.db import migrations
 
 def create_schema(apps, schema_editor):
     if schema_editor.connection.vendor == 'postgresql':
-        schema_editor.execute("CREATE SCHEMA IF NOT EXISTS tugas_kelompok;")
+        try:
+            schema_editor.execute("CREATE SCHEMA IF NOT EXISTS tugas_kelompok;")
+        except Exception:
+            pass
 
 
 def drop_schema(apps, schema_editor):
