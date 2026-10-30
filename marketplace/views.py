@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import Item, Category, Wishlist
+from .models import Item, Category, PrelovedItem, Wishlist
+from core.models import UserProfile
 from django.db.models import Q
+from django.contrib.auth.models import User
 
 
 def marketplace(request):
@@ -52,7 +54,7 @@ def tambah_barang(request):
             return redirect('marketplace:marketplace_penjual')
     else:
         form = ItemForm()
-    return render(request, 'pages/marketplace_seller/form_barang.html', {'form': form, 'title': 'Tambah Barang'})
+    return render(request, 'pages/marketplace/form_barang.html', {'form': form, 'title': 'Tambah Barang'})
 
 
 @login_required
@@ -66,7 +68,7 @@ def edit_barang(request, pk):
             return redirect('marketplace:marketplace_penjual')
     else:
         form = ItemForm(instance=item)
-    return render(request, 'pages/marketplace_seller/form_barang.html', {'form': form, 'title': 'Edit Barang'})
+    return render(request, 'pages/marketplace/form_barang.html', {'form': form, 'title': 'Edit Barang'})
 
 
 @login_required
@@ -75,7 +77,7 @@ def hapus_barang(request, pk):
     if request.method == 'POST':
         item.delete()
         return redirect('marketplace:marketplace_penjual')
-    return render(request, 'pages/marketplace_seller/konfirmasi_hapus.html', {'item': item})
+    return render(request, 'pages/marketplace/konfirmasi_hapus.html', {'item': item})
 
 
 @login_required
@@ -105,16 +107,20 @@ def wishlist_page(request):
 
 
 def seller_profile(request, username):
-    from django.contrib.auth.models import User
     seller = get_object_or_404(User, username=username)
-    items = Item.objects.filter(seller=seller).order_by('-created_at')
-    return render(request, 'pages/marketplace/seller_profile.html', {
+    profile, _ = UserProfile.objects.get_or_create(user=seller)
+    
+    items = PrelovedItem.objects.filter(seller=seller).order_by('-created_at')
+    
+    context = {
         'seller': seller,
+        'profile': profile,
         'items': items,
         'total_items': items.count(),
-        'items_tersedia': items.filter(is_available=True).count(),
-        'items_terjual': items.filter(is_available=False).count(),
-    })
+        'items_tersedia': items.filter(status='Tersedia').count(),
+        'items_terjual': items.filter(status='Terjual').count(),
+    }
+    return render(request, 'pages/marketplace/seller_profile.html', context)
 
 
 def item_detail(request, pk):
