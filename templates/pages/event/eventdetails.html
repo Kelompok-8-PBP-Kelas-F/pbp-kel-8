@@ -31,8 +31,17 @@
       {% if can_manage %}
       <div class="mt-4 flex flex-wrap gap-2">
         <a class="border-2 border-[#17140e] bg-[#f8df83] px-3 py-2 text-xs font-extrabold text-[#17140e] no-underline hover:opacity-80 dark:border-[#d6c99f] dark:bg-[#e7bc55]" href="{% url 'event:event_edit' event.pk %}">Edit event</a>
-        <a class="border-2 border-[#17140e] bg-red-700 px-3 py-2 text-xs font-extrabold text-white no-underline hover:bg-red-800 dark:border-[#d6c99f]" href="{% url 'event:event_delete' event.pk %}">Hapus event</a>
+        <button class="cursor-pointer border-2 border-[#17140e] bg-red-700 px-3 py-2 text-xs font-extrabold text-white hover:bg-red-800 dark:border-[#d6c99f]" id="open-delete-event-dialog" type="button">Hapus event</button>
       </div>
+      <dialog class="m-auto w-[calc(100%-2rem)] max-w-lg border-2 border-[#17140e] bg-[#fbf2da] p-5 text-[#17140e] shadow-[4px_4px_0_#17140e] backdrop:bg-black/60 dark:border-[#d6c99f] dark:bg-[#242c24] dark:text-[#f3e6c4] dark:shadow-[4px_4px_0_#080b09] sm:p-8" id="delete-event-dialog" aria-labelledby="delete-event-heading" aria-describedby="delete-event-description">
+        <h2 class="font-heading text-xl font-extrabold" id="delete-event-heading">Hapus event ini?</h2>
+        <p class="mt-2 text-sm leading-relaxed text-[#695b3d] dark:text-[#c2b58e]" id="delete-event-description">Event <strong class="text-inherit">{{ event.name }}</strong> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
+        <form class="mt-6 flex flex-wrap gap-3" method="post" action="{% url 'event:event_delete' event.pk %}">
+          {% csrf_token %}
+          <button class="cursor-pointer border-2 border-[#17140e] bg-red-700 px-5 py-2.5 text-sm font-extrabold text-white hover:bg-red-800 dark:border-[#d6c99f]" type="submit">Ya, hapus event</button>
+          <button class="cursor-pointer border-2 border-[#17140e] bg-transparent px-5 py-2.5 text-sm font-bold text-inherit hover:bg-black/5 dark:border-[#d6c99f] dark:hover:bg-white/5" type="button" id="close-delete-event-dialog">Batal</button>
+        </form>
+      </dialog>
       {% endif %}
     </header>
 
@@ -203,6 +212,20 @@
 
 {% if event.latitude is not None and event.longitude is not None %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+{% endif %}
+{% if can_manage %}
+<script>
+  (() => {
+    const deleteDialog = document.getElementById("delete-event-dialog");
+    document.getElementById("open-delete-event-dialog").addEventListener("click", () => deleteDialog.showModal());
+    document.getElementById("close-delete-event-dialog").addEventListener("click", () => deleteDialog.close());
+    deleteDialog.addEventListener("click", (event) => {
+      if (event.target === deleteDialog) deleteDialog.close();
+    });
+  })();
+</script>
+{% endif %}
+{% if event.latitude is not None and event.longitude is not None %}
 <script>
   (() => {
     const mapElement = document.getElementById("event-detail-map");

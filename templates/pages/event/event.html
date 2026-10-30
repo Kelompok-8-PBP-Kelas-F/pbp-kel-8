@@ -40,7 +40,7 @@
         <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
           <span class="row-span-2 text-sm" aria-hidden="true">▦</span>
           <span class="overflow-hidden text-[8px] font-extrabold">TANGGAL</span>
-          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="date-filter" aria-label="Filter tanggal">
+          <select class="w-full cursor-pointer appearance-auto border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="date-filter" aria-label="Filter tanggal">
             <option value="all">Semua tanggal</option>
             <option value="week">7 hari ke depan</option>
             <option value="month">30 hari ke depan</option>
@@ -49,7 +49,7 @@
         <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
           <span class="row-span-2 text-sm" aria-hidden="true">⚒</span>
           <span class="overflow-hidden text-[8px] font-extrabold">TIPE ACARA</span>
-          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="type-filter" aria-label="Filter tipe acara">
+          <select class="w-full cursor-pointer appearance-auto border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="type-filter" aria-label="Filter tipe acara">
             <option value="all">Semua tipe</option>
             <option value="Swap">Swap</option>
             <option value="Workshop">Workshop</option>
@@ -59,7 +59,7 @@
         <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
           <span class="row-span-2 text-sm" aria-hidden="true">◇</span>
           <span class="overflow-hidden text-[8px] font-extrabold">KATEGORI</span>
-          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="category-filter" aria-label="Filter kategori">
+          <select class="w-full cursor-pointer appearance-auto border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="category-filter" aria-label="Filter kategori">
             <option value="all">Semua kategori</option>
             <option value="Fashion sirkular">Fashion sirkular</option>
             <option value="Workshop">Workshop</option>
@@ -69,7 +69,7 @@
         <label class="grid min-w-0 grid-cols-[19px_1fr] grid-rows-[12px_20px] items-center gap-x-[5px] border border-[#bcae8c] bg-[#f8e9b9] px-[7px] py-[5px] dark:border-[#596454] dark:bg-[#202820]">
           <span class="row-span-2 text-sm" aria-hidden="true">➤</span>
           <span class="overflow-hidden text-[8px] font-extrabold">JARAK</span>
-          <select class="w-full cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="distance-filter" aria-label="Filter jarak">
+          <select class="w-full cursor-pointer appearance-auto border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#f3e6c4]" id="distance-filter" aria-label="Filter jarak">
             <option value="25">Maks. 25 km</option>
             <option value="5">Maks. 5 km</option>
             <option value="10">Maks. 10 km</option>
@@ -103,7 +103,7 @@
       <aside class="flex min-h-[300px] min-w-0 flex-col overflow-hidden border-2 border-[#17140e] bg-[#fbf2da] dark:border-[#d6c99f] dark:bg-[#242c24]" aria-label="Daftar event terdekat">
         <div class="mx-2 mt-2 flex min-h-[43px] shrink-0 items-center gap-1 border border-[#c9ab4e] bg-[#f8df83] px-[9px] text-[10px] font-extrabold dark:border-[#d6c99f] dark:bg-[#e7bc55] dark:text-[#151a15]">
           <label for="sort-filter">Urutkan:</label>
-          <select class="w-full flex-1 cursor-pointer appearance-none border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#151a15]" id="sort-filter" aria-label="Urutkan event">
+          <select class="w-full flex-1 cursor-pointer appearance-auto border-0 bg-transparent text-[10px] font-bold text-[#17140e] outline-none dark:text-[#151a15]" id="sort-filter" aria-label="Urutkan event">
             <option value="distance">Paling dekat</option>
             <option value="date">Tanggal terdekat</option>
           </select>
@@ -215,6 +215,30 @@
           + Math.cos(toRadians(latitude)) * Math.cos(toRadians(event.latitude))
           * Math.sin(longitudeDelta / 2) ** 2;
         event.distance = 6371 * 2 * Math.asin(Math.sqrt(Math.min(1, haversine)));
+      });
+    };
+
+    const useDeviceLocation = () => {
+      if (!navigator.geolocation) {
+        mapTileStatus.textContent = "Browser ini tidak mendukung akses lokasi.";
+        mapTileStatus.hidden = false;
+        fitToEventLocations();
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(({coords}) => {
+        setUserCoordinates(coords.latitude, coords.longitude);
+        map.setView([coords.latitude, coords.longitude], 13);
+        document.getElementById("city-filter").value = "";
+        usingDeviceLocation = true;
+        document.getElementById("location-heading").textContent = "lokasimu saat ini";
+        mapTileStatus.hidden = true;
+        renderEvents();
+      }, (error) => {
+        mapTileStatus.textContent = error.code === error.PERMISSION_DENIED
+          ? "Izin lokasi ditolak. Masukkan kota atau alamat secara manual."
+          : "Lokasi perangkat tidak dapat ditemukan. Coba masukkan lokasi secara manual.";
+        mapTileStatus.hidden = false;
+        fitToEventLocations();
       });
     };
 
@@ -363,27 +387,7 @@
     ["date-filter", "type-filter", "category-filter", "distance-filter", "sort-filter"].forEach((id) => {
       document.getElementById(id).addEventListener("change", renderEvents);
     });
-    document.getElementById("use-location-button").addEventListener("click", () => {
-      if (!navigator.geolocation) {
-        mapTileStatus.textContent = "Browser ini tidak mendukung akses lokasi.";
-        mapTileStatus.hidden = false;
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(({coords}) => {
-        setUserCoordinates(coords.latitude, coords.longitude);
-        map.setView([coords.latitude, coords.longitude], 13);
-        document.getElementById("city-filter").value = "";
-        usingDeviceLocation = true;
-        document.getElementById("location-heading").textContent = "lokasimu saat ini";
-        mapTileStatus.hidden = true;
-        renderEvents();
-      }, (error) => {
-        mapTileStatus.textContent = error.code === error.PERMISSION_DENIED
-          ? "Izin lokasi ditolak. Masukkan kota atau alamat secara manual."
-          : "Lokasi perangkat tidak dapat ditemukan. Coba masukkan lokasi secara manual.";
-        mapTileStatus.hidden = false;
-      });
-    });
+    document.getElementById("use-location-button").addEventListener("click", useDeviceLocation);
     eventList.addEventListener("click", (event) => {
       if (event.target.closest("a")) return;
       const saveButton = event.target.closest("[data-save-id]");
@@ -441,7 +445,7 @@
         fitToEventLocations();
       });
     } else {
-      fitToEventLocations();
+      useDeviceLocation();
     }
 
     renderRecommendations();
