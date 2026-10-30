@@ -62,9 +62,9 @@
           + Ikuti Toko
         </button>
         {% else %}
-        <span class="border-2 border-line bg-accent text-accent-foreground px-4 py-2 font-bold text-xs uppercase tracking-wider shadow-[2px_2px_0_var(--shadow-color)]">
-          Toko Milikmu
-        </span>
+        <a href="{% url 'marketplace:marketplace_penjual' %}" class="border-2 border-line bg-accent text-accent-foreground px-4 py-2 font-bold text-xs uppercase tracking-wider shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-90 active:translate-x-[1px] active:translate-y-[1px] transition-all">
+          Kelola Barang
+        </a>
         {% endif %}
       </div>
 
@@ -104,18 +104,18 @@
         {% for item in items %}
         <div class="group flex flex-col border-2 border-line bg-surface shadow-[3px_3px_0_var(--shadow-color)] transition-shadow hover:shadow-[5px_5px_0_var(--shadow-color)]">
           <div class="flex h-44 items-center justify-center overflow-hidden border-b-2 border-line bg-background">
-            {% if item.gambar %}
-            <img src="{{ item.gambar.url }}" alt="{{ item.nama }}" class="h-full w-full object-cover">
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="h-full w-full object-cover">
             {% else %}
             <span class="text-xs font-bold text-muted">Tanpa Gambar</span>
             {% endif %}
           </div>
           <div class="flex flex-col gap-1 p-3">
-            <h3 class="font-heading text-[0.9375rem] font-bold leading-tight text-foreground truncate">{{ item.nama }}</h3>
-            <p class="font-heading text-[1rem] font-bold text-foreground">Rp{{ item.harga|floatformat:0 }}</p>
+            <a href="{% url 'marketplace:item_detail' item.id %}" class="font-heading text-[0.9375rem] font-bold leading-tight text-foreground truncate">{{ item.title }}</a>
+            <p class="font-heading text-[1rem] font-bold text-foreground">Rp{{ item.price|floatformat:0 }}</p>
             <div>
               <span class="inline-block text-[10px] font-bold uppercase px-2 py-0.5 border border-line bg-background text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
-                {{ item.status }}
+                {% if item.is_available %}Tersedia{% else %}Terjual{% endif %}
               </span>
             </div>
           </div>

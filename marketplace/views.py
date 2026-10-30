@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import JsonResponse
-from .models import Item, Category, PrelovedItem, Wishlist
+from .models import Item, Category, Wishlist
 from core.models import UserProfile
 from django.db.models import Q
-from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+
+PAGE_SIZE = 20
 
 
 def marketplace(request):
@@ -16,7 +19,7 @@ def marketplace(request):
     condition = request.GET.get('condition')
 
     if q:
-        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q))
+        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q) | Q(category__name__icontains=q))
     if category_id:
         items = items.filter(category_id=category_id)
     if condition:
@@ -77,7 +80,7 @@ def hapus_barang(request, pk):
     if request.method == 'POST':
         item.delete()
         return redirect('marketplace:marketplace_penjual')
-    return render(request, 'pages/marketplace/konfirmasi_hapus.html', {'item': item})
+    return render(request, 'pages/marketplace/hapus_barang.html', {'item': item})
 
 
 @login_required
@@ -110,15 +113,15 @@ def seller_profile(request, username):
     seller = get_object_or_404(User, username=username)
     profile, _ = UserProfile.objects.get_or_create(user=seller)
     
-    items = PrelovedItem.objects.filter(seller=seller).order_by('-created_at')
+    items = Item.objects.filter(seller=seller).order_by('-created_at')
     
     context = {
         'seller': seller,
         'profile': profile,
         'items': items,
         'total_items': items.count(),
-        'items_tersedia': items.filter(status='Tersedia').count(),
-        'items_terjual': items.filter(status='Terjual').count(),
+        'items_tersedia': items.filter(is_available=True).count(),
+        'items_terjual': items.filter(is_available=False).count(),
     }
     return render(request, 'pages/marketplace/seller_profile.html', context)
 
@@ -157,7 +160,7 @@ def filter_barang(request):
 
     items = Item.objects.filter(is_available=True).select_related('seller', 'category').order_by(order)
     if q:
-        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q))
+        items = items.filter(Q(title__icontains=q) | Q(seller__username__icontains=q) | Q(category__name__icontains=q))
     if condition:
         items = items.filter(condition=condition)
     if category_id:
@@ -166,6 +169,10 @@ def filter_barang(request):
     wishlist_ids = set()
     if request.user.is_authenticated:
         wishlist_ids = set(Wishlist.objects.filter(user=request.user).values_list('item_id', flat=True))
+
+    page = int(request.GET.get('page', 1))
+    paginator = Paginator(items, PAGE_SIZE)
+    page_obj = paginator.get_page(page)
 
     data = [{
         'id': str(i.id),
@@ -177,5 +184,12 @@ def filter_barang(request):
         'detail_url': f'/marketplace/{i.id}/',
         'wishlist_url': f'/wishlist/toggle/{i.id}/',
         'wishlisted': i.id in wishlist_ids,
-    } for i in items]
-    return JsonResponse({'items': data, 'count': len(data)})
+    } for i in page_obj]
+    return JsonResponse({
+        'items': data,
+        'count': paginator.count,
+        'num_pages': paginator.num_pages,
+        'page': page_obj.number,
+        'has_next': page_obj.has_next(),
+        'has_prev': page_obj.has_previous(),
+    })
