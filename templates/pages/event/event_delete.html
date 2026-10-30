@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Hapus event - Thrift.io</title>
+<meta name="description" content="Konfirmasi penghapusan event.">
+{% endblock meta %}
+
+{% block content %}
+<main class="min-h-screen bg-[#f2c14e] px-4 py-12 font-main text-[#17140e] dark:bg-[#151a15] dark:text-[#f3e6c4] sm:px-6">
+  <div class="mx-auto max-w-3xl">
+    <nav class="mb-5 text-xs font-semibold">
+      <a class="text-inherit no-underline hover:underline" href="{% url 'event:event_detail' event.pk %}">← Kembali ke event</a>
+    </nav>
+    {% include "pages/event/components/event_delete_modal.html" %}
+  </div>
+</main>
+{% endblock content %}

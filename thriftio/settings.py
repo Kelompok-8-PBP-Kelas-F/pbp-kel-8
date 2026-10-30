@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'core',
     'tailwind',
     'theme',
@@ -59,6 +60,8 @@ INSTALLED_APPS = [
     'news',
     'user',
     'marketplace',
+    'outfitbuilder',
+    'event',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -159,6 +162,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 WHITENOISE_USE_FINDERS = True
 
 MEDIA_URL = '/media/'

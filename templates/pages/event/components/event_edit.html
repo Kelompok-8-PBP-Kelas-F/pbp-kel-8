@@ -1,0 +1,10 @@
+<section class="mx-auto max-w-3xl border-2 border-[#17140e] bg-[#fbf2da] p-5 shadow-[4px_4px_0_#17140e] dark:border-[#d6c99f] dark:bg-[#242c24] dark:shadow-[4px_4px_0_#080b09] sm:p-8">
+  <form method="post" action="{% url 'event:event_edit' event.pk %}" enctype="multipart/form-data" class="space-y-5">
+    {% csrf_token %}
+    {% include "pages/event/components/event_form_fields.html" %}
+    <div class="flex flex-wrap gap-3 border-t border-[#b9ad91] pt-5 dark:border-[#596454]">
+      <button class="border-2 border-[#17140e] bg-[#d95a2b] px-5 py-2.5 text-sm font-extrabold text-white hover:opacity-90 dark:border-[#d6c99f] dark:bg-[#f08a53] dark:text-[#151a15]" type="submit">Simpan perubahan</button>
+      <a class="border-2 border-[#17140e] bg-transparent px-5 py-2.5 text-sm font-bold text-inherit no-underline hover:bg-black/5 dark:border-[#d6c99f] dark:hover:bg-white/5" href="{% url 'event:event_detail' event.pk %}">Batal</a>
+    </div>
+  </form>
+</section>
