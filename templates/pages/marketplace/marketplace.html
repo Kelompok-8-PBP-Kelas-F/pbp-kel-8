@@ -110,7 +110,14 @@
       <!-- Listing Header -->
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-extrabold text-base">Daftar produk</h2>
-        <span id="item-count" class="text-xs text-muted font-medium">— listing aktif</span>
+        <div class="flex items-center gap-3">
+          <span id="item-count" class="text-xs text-muted font-medium">— listing aktif</span>
+          {% if user.is_authenticated %}
+          <a href="{% url 'marketplace:marketplace_penjual' %}" class="px-4 py-1.5 text-xs font-bold border-2 border-line bg-accent text-accent-foreground shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-95 transition-all active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0_var(--shadow-color)]">
+            + Jual Barang
+          </a>
+          {% endif %}
+        </div>
       </div>
 
       <!-- Product Grid -->

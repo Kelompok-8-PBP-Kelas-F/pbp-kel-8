@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import JsonResponse
-from .models import Item, Category, PrelovedItem, Wishlist
+from .models import Item, Category, Wishlist
 from core.models import UserProfile
 from django.db.models import Q
 from django.core.paginator import Paginator
@@ -79,7 +80,7 @@ def hapus_barang(request, pk):
     if request.method == 'POST':
         item.delete()
         return redirect('marketplace:marketplace_penjual')
-    return render(request, 'pages/marketplace/konfirmasi_hapus.html', {'item': item})
+    return render(request, 'pages/marketplace/hapus_barang.html', {'item': item})
 
 
 @login_required
@@ -112,15 +113,15 @@ def seller_profile(request, username):
     seller = get_object_or_404(User, username=username)
     profile, _ = UserProfile.objects.get_or_create(user=seller)
     
-    items = PrelovedItem.objects.filter(seller=seller).order_by('-created_at')
+    items = Item.objects.filter(seller=seller).order_by('-created_at')
     
     context = {
         'seller': seller,
         'profile': profile,
         'items': items,
         'total_items': items.count(),
-        'items_tersedia': items.filter(status='Tersedia').count(),
-        'items_terjual': items.filter(status='Terjual').count(),
+        'items_tersedia': items.filter(is_available=True).count(),
+        'items_terjual': items.filter(is_available=False).count(),
     }
     return render(request, 'pages/marketplace/seller_profile.html', context)
 

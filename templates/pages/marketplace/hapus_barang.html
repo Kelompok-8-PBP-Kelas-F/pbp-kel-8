@@ -18,17 +18,17 @@
         <!-- Preview Card Barang -->
         <div class="border-2 border-line bg-background p-4 mb-6 shadow-[3px_3px_0_var(--shadow-color)] flex gap-4 items-center">
             <div class="w-20 h-20 border-2 border-line bg-surface shrink-0 overflow-hidden flex items-center justify-center">
-                {% if item.gambar %}
-                    <img src="{{ item.gambar.url }}" alt="{{ item.nama }}" class="w-full h-full object-cover">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover">
                 {% else %}
                     <span class="text-[10px] font-bold text-muted">No Image</span>
                 {% endif %}
             </div>
             <div class="overflow-hidden">
-                <h3 class="font-heading font-bold text-base truncate mb-1 text-foreground">{{ item.nama }}</h3>
-                <p class="font-heading font-bold text-sm text-foreground mb-1">Rp{{ item.harga|floatformat:0 }}</p>
+                <h3 class="font-heading font-bold text-base truncate mb-1 text-foreground">{{ item.title }}</h3>
+                <p class="font-heading font-bold text-sm text-foreground mb-1">Rp{{ item.price|floatformat:0 }}</p>
                 <span class="inline-block text-[10px] font-bold px-2 py-0.5 border border-line bg-surface text-foreground shadow-[1px_1px_0_var(--shadow-color)]">
-                    {{ item.status }}
+                    {% if item.is_available %}Tersedia{% else %}Terjual{% endif %}
                 </span>
             </div>
         </div>

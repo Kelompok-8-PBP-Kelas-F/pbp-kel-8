@@ -2,12 +2,12 @@
 {% block content %}
 <div class="max-w-6xl mx-auto mt-8 p-4">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Marketplace Penjual</h1>
+        <h1 class="text-2xl font-bold text-foreground">Kelola Barang</h1>
         <div class="flex gap-3">
-            <a href="{% url 'marketplace:tambah_barang' %}" class="bg-orange-600 text-white px-4 py-2 border-2 border-black shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-orange-700 font-bold text-sm flex items-center">
+            <a href="{% url 'marketplace:tambah_barang' %}" class="bg-accent text-accent-foreground px-4 py-2 border-2 border-line shadow-[3px_3px_0_var(--shadow-color)] hover:opacity-90 font-bold text-sm flex items-center">
                 + Tambah Barang
             </a>
-            <a href="{% url 'marketplace:seller_profile' username=user.username %}" class="bg-white text-black border-2 border-black px-4 py-2 font-bold text-sm shadow-[3px_3px_0px_rgba(0,0,0,1)] hover:bg-gray-100 flex items-center gap-2">
+            <a href="{% url 'marketplace:seller_profile' username=user.username %}" class="bg-surface text-foreground border-2 border-line px-4 py-2 font-bold text-sm shadow-[3px_3px_0_var(--shadow-color)] hover:opacity-90 flex items-center gap-2">
                 👤 Lihat Profil Saya
             </a>
         </div>
@@ -15,43 +15,42 @@
 
     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {% for item in items %}
-        <div class="border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] bg-orange-100 overflow-hidden flex flex-col">
+        <div class="border-2 border-line shadow-[4px_4px_0_var(--shadow-color)] bg-surface overflow-hidden flex flex-col">
             <div class="relative">
                 {% if item.image %}
-                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-48 object-cover border-b-2 border-black">
+                <img src="{{ item.image.url }}" alt="{{ item.title }}" class="w-full h-48 object-cover border-b-2 border-line">
                 {% else %}
-                <div class="w-full h-48 bg-gray-200 border-b-2 border-black flex items-center justify-center text-xs font-bold text-gray-400">No Image</div>
+                <div class="w-full h-48 bg-background border-b-2 border-line flex items-center justify-center text-xs font-bold text-muted">No Image</div>
                 {% endif %}
-                <span class="absolute top-2 right-2 text-[10px] font-extrabold px-2 py-0.5 border border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] {% if item.is_available %}bg-green-300{% else %}bg-red-300{% endif %}">
+                <span class="absolute top-2 right-2 text-[10px] font-extrabold px-2 py-0.5 border border-line shadow-[2px_2px_0_var(--shadow-color)] {% if item.is_available %}bg-[#86a981] text-foreground{% else %}bg-accent text-accent-foreground{% endif %}">
                     {% if item.is_available %}Tersedia{% else %}Terjual{% endif %}
                 </span>
             </div>
-            <div class="p-4 bg-white flex flex-col flex-1">
-                <h3 class="font-bold text-lg truncate">{{ item.title }}</h3>
-                <p class="text-gray-700 mb-2">Rp{{ item.price|floatformat:0 }}</p>
-                <p class="text-xs text-gray-500 mb-3">{{ item.get_condition_display }}</p>
+            <div class="p-4 bg-surface flex flex-col flex-1">
+                <h3 class="font-bold text-lg truncate text-foreground">{{ item.title }}</h3>
+                <p class="text-muted mb-2">Rp{{ item.price|floatformat:0 }}</p>
+                <p class="text-xs text-muted mb-3">{{ item.get_condition_display }}</p>
 
                 <div class="mt-auto flex flex-col gap-2">
-                    <!-- Tandai Terjual / Tersedia toggle -->
                     <form action="{% url 'marketplace:tandai_terjual' item.id %}" method="POST">
                         {% csrf_token %}
-                        <button type="submit" class="w-full font-bold py-1.5 text-xs border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] {% if item.is_available %}bg-green-400 hover:bg-green-500{% else %}bg-gray-300 hover:bg-gray-400{% endif %}">
+                        <button type="submit" class="w-full font-bold py-1.5 text-xs border-2 border-line shadow-[2px_2px_0_var(--shadow-color)] cursor-pointer {% if item.is_available %}bg-[#86a981] text-foreground hover:opacity-90{% else %}bg-surface text-muted hover:bg-background{% endif %}">
                             {% if item.is_available %}✓ Tandai Terjual{% else %}↩ Tandai Tersedia{% endif %}
                         </button>
                     </form>
 
                     <div class="flex gap-2">
-                        <a href="{% url 'marketplace:edit_barang' item.id %}" class="flex-1 text-center bg-yellow-400 border-2 border-black font-bold py-1.5 text-xs shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:bg-yellow-500">Edit</a>
+                        <a href="{% url 'marketplace:edit_barang' item.id %}" class="flex-1 text-center bg-highlight border-2 border-line text-foreground font-bold py-1.5 text-xs shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-90">Edit</a>
                         <form action="{% url 'marketplace:hapus_barang' item.id %}" method="POST" class="flex-1">
                             {% csrf_token %}
-                            <button type="submit" class="w-full text-center bg-red-500 text-white border-2 border-black font-bold py-1.5 text-xs shadow-[2px_2px_0px_rgba(0,0,0,1)] hover:bg-red-600">Hapus</button>
+                            <button type="submit" class="w-full text-center bg-accent text-accent-foreground border-2 border-line font-bold py-1.5 text-xs shadow-[2px_2px_0_var(--shadow-color)] hover:opacity-90 cursor-pointer">Hapus</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
         {% empty %}
-        <div class="col-span-full text-center py-16 text-gray-500 font-medium">
+        <div class="col-span-full text-center py-16 text-muted font-medium">
             Kamu belum punya listing. <a href="{% url 'marketplace:tambah_barang' %}" class="underline font-bold">Tambah sekarang</a>.
         </div>
         {% endfor %}
